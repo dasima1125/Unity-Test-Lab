@@ -42,9 +42,15 @@ public class scInteraction : MonoBehaviour
             mode2sector(); //ㅈ같네진짜 왜 케이스문에서 작동을 안하는거야 타이밍문제인가 ,.
 
         }
+        
+        
+        
+    }
+
+    void FixedUpdate()
+    {
         pressObjSenser();
-        
-        
+
     }
 
     void pressObjSenser()
