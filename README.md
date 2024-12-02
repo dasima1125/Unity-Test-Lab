@@ -43,4 +43,5 @@ https://github.com/dasima1125/Unity-Test-Lab/blob/main/Assets/scripts/sc%20proje
 
 https://github.com/dasima1125/Unity-Test-Lab/blob/main/Assets/scripts/scNpc_text.cs
 - 대화용 npc
-   - 간단한 대화 기능 첫 조우와 나머지 상태 분할 
+   - 간단한 대화 기능 첫 조우와 나머지 상태 분할
+     - 2024 12 02 현재 구현 기능 ==> 다층구조를 이용한 대화 내용 저장 , 대화 상호작용 알파버전 구현 (자연스러운 대화 출력 , 대화 스킵 , 이동시 대화 종료)
