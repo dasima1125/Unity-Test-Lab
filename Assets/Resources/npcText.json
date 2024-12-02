@@ -1,0 +1,41 @@
+{
+    "npcs": [
+      {
+        "id": "1",
+        "dialogs": 
+        {
+            "greeting": [
+              "Hello, traveler!", 
+              "Welcome to our village!", 
+              "It's good to see you!",
+              "How can I assist you today?"
+            ],
+            "farewell": [
+              "Take care, traveler!", 
+              "Goodbye and safe travels!", 
+              "Farewell, come back soon!"
+            ],
+            "quest": [
+              "Can you help me gather some herbs?", 
+              "We need your assistance with a task.", 
+              "The herbs are located deep in the forest."
+            ]
+          }
+      },
+      {
+        "id": "2",
+        "dialogs": {
+          
+        }
+      },
+      {
+        "id": "3",
+        "dialogs": {
+          "greeting": ["Ah, a new face!", "Hello there!"],
+          "trade": ["I have rare items for sale.", "Take a look at my goods."],
+          "farewell": ["Come back anytime.", "Don't be a stranger."]
+        }
+      }
+    ]
+}
+  
