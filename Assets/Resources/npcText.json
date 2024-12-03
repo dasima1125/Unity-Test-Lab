@@ -1,33 +1,35 @@
 {
     "npcs": [
       {
-        "id": "1",
+        "id": "testNpc",
         "dialogs": 
-        {
-            "greeting": [
-              "Hello, traveler!", 
-              "Welcome to our village!", 
-              "It's good to see you!",
-              "How can I assist you today?"
+        {   
+            "greeting_1": [
+              "안녕?, 반가워!", 
+              "이건 일단 테스트야.", 
+              "어째뜬 잘 작동은 하네!",
+              "근데 이제뭐해?"
             ],
-            "farewell": [
-              "Take care, traveler!", 
-              "Goodbye and safe travels!", 
-              "Farewell, come back soon!"
+            "farewell_1": [
+              "갑자기 가버리면 서운하네!", 
+              "그래도 대사 스크립트는 잘 작동하네!", 
+              "그러면 된거겠지?!"
             ],
-            "quest": [
-              "Can you help me gather some herbs?", 
-              "We need your assistance with a task.", 
-              "The herbs are located deep in the forest."
+            "greeting_2": [
+              "상호 작용테스트야.", 
+              "성공은 했어!", 
+              "이제 버그잡아야지"
             ]
-          }
+        }
       },
+
       {
         "id": "2",
         "dialogs": {
           
         }
       },
+
       {
         "id": "3",
         "dialogs": {

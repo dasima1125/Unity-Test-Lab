@@ -2453,11 +2453,11 @@ RectTransform:
   - {fileID: 1061576784}
   - {fileID: 480239658}
   - {fileID: 811111252}
+  - {fileID: 1367693823}
   - {fileID: 2121058390}
   - {fileID: 492982922}
   - {fileID: 1018626503}
   - {fileID: 1678472068}
-  - {fileID: 1367693823}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3867,10 +3867,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trigger: {fileID: 90075392}
-  mode: 0
   talking: 0
+  skip: 0
   life: 0
   trigger_inside: 0
+  dialogs: farewell
+  id: 1
 --- !u!1 &615646247
 GameObject:
   m_ObjectHideFlags: 0
@@ -5278,8 +5280,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2cd475d48856a844783142e535b1d68b, type: 2}
+  m_sharedMaterial: {fileID: -457003395708552273, guid: 2cd475d48856a844783142e535b1d68b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5309,7 +5311,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -7217,7 +7219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1367693823
 RectTransform:
   m_ObjectHideFlags: 0
