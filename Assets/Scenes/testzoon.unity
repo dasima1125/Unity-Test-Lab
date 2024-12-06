@@ -3871,8 +3871,9 @@ MonoBehaviour:
   skip: 0
   life: 0
   trigger_inside: 0
-  dialogs: farewell
-  id: 1
+  id: testNpc
+  dialogs: dialogs
+  eventTrigger: 0
 --- !u!1 &615646247
 GameObject:
   m_ObjectHideFlags: 0

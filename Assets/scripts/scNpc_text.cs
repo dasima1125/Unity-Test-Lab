@@ -18,8 +18,9 @@ public class scNpc_text : MonoBehaviour
     [SerializeField] bool life;
     [SerializeField] bool trigger_inside;
     //테스트 라인 
-    [SerializeField]private string dialogs;
     [SerializeField]private string id;
+    [SerializeField]private string dialogs;
+    [SerializeField]private bool eventTrigger;
   
 
 
@@ -30,7 +31,7 @@ public class scNpc_text : MonoBehaviour
     {
         life    = true;
         talking = false;
-        jsonReadertest();
+        jsonReadertest2();
         
         
     }
@@ -118,6 +119,7 @@ public class scNpc_text : MonoBehaviour
     }
     string [] jsonReadertest()
     {
+      
         TextAsset jsonData = Resources.Load<TextAsset>("npcText"); //경로 중요함 하위면 루트 지정해줘야함
         if (jsonData != null)
         {
@@ -130,6 +132,40 @@ public class scNpc_text : MonoBehaviour
         }
         return null;
 
+    }
+    List<(string,string[])> jsonReadertest2()//가변형
+    {
+        Debug.Log("테스트 시작 : json 모드 가변");
+        TextAsset jsonData = Resources.Load<TextAsset>("npcText"); //경로 중요함 하위면 루트 지정해줘야함
+        if (jsonData != null)
+        {
+            JObject json = JObject.Parse(jsonData.text); 
+            
+            JToken extractionJson_phase_1 = json["npcs"]?.FirstOrDefault(b => b["id"]?.ToString() == id)?? "검색 실패";
+         
+            
+            List<(string,string[])> output = new List<(string,string[])>(); //딕셔너리는 중복된 값을 제거하므로 저장에 좋진않음 튜플식으로 전환
+            var name = extractionJson_phase_1[dialogs];
+            foreach (var keyName in (JObject)name) // 키 이름 추출용 토큰에선 키 추출이 안됨 고로 오브젝트로 변환 필요
+            {
+                Debug.Log("검색된 행동별 대사 타입 : " + keyName.Key); // "start", "end" 출력 >> 상황별 id를 저장할 예정
+                var dialogsValue = (JObject)keyName.Value;
+                foreach (var value in (JObject)dialogsValue)// 해당키의 json 내부 저장된 배열 순회
+                { 
+                    output.Add((keyName.Key, value.Value.ToObject<string[]>()));
+                }
+                
+            }
+            Debug.Log(String.Join("\n", output.Select(item => String.Join(", ", item.Item2))));//내부 배열만 출력 
+
+            // 저장 방식 
+            //    ㄴ 배열 이벤트 시작이랑 끝으로 두개 받음 
+            //           ㄴ 문자열 키  문자열 배열 쌍 값으로 저장.
+            //Dictionary<string , string[]> extractionJson_phase_dict = new Dictionary<string , string[]>();
+            return output;
+
+        }
+        return null;
     }
 
 
@@ -235,8 +271,18 @@ public class scNpc_text : MonoBehaviour
     IEnumerator talkertest3(TextMeshProUGUI insert)
     {
         Debug.Log("테스트 시작");
+        var output = jsonReadertest2();
+        
+        List<(string, string[])> start_dialogs = output.Where(item => item.Item1 == "start").ToList();
+        List<(string, string[])> end_dialogs = output.Where(item => item.Item1 == "end").ToList();
+        
         string[] sentences = jsonReadertest();
         int currentSentenceIndex = 0;
+        //이벤트 트리거에 따라 다이얼로그 투입이 달라지는 분기 설정
+        //    ㄴ  리스트가 2개 이상일시 첫번째 조우와 다음 조우가 대사가 다르다는걸 의미
+        //         ㄴ life 변수를 통해 첫번째 조우시 life 변수를 참으로 바꾸고 다음부터는 life변수가 참인 경로로 이동시킴
+        //              ㄴ 첫조우시 리스트 첫번째 값 문자열 추출 , 아닐시 두번째 분해 
+        //                   ㄴ 나중에 구조 변경을 쉽게 만들려면 스위치문으로 리스트 개수를 기준으로 행동양식별 구조를 생성
         
         
 
