@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using System;
 using Newtonsoft.Json.Linq;
 using System.Linq;
@@ -139,20 +140,18 @@ public class scNpc_text : MonoBehaviour
         TextAsset jsonData = Resources.Load<TextAsset>("npcText"); //경로 중요함 하위면 루트 지정해줘야함
         if (jsonData != null)
         {
-            JObject json = JObject.Parse(jsonData.text); 
-            
-            JToken extractionJson_phase_1 = json["npcs"]?.FirstOrDefault(b => b["id"]?.ToString() == id)?? "검색 실패";
-         
-            
+            JToken extractionJson_phase_1 = JObject.Parse(jsonData.text)["npcs"]?.FirstOrDefault(b => b["id"]?.ToString() == id)?? "null";
+            if (extractionJson_phase_1.ToString() == "null") return null;
+
             List<(string,string[])> output = new List<(string,string[])>(); //딕셔너리는 중복된 값을 제거하므로 저장에 좋진않음 튜플식으로 전환
-            var name = extractionJson_phase_1[dialogs];
+            var name = extractionJson_phase_1["dialogs"];
             foreach (var keyName in (JObject)name) // 키 이름 추출용 토큰에선 키 추출이 안됨 고로 오브젝트로 변환 필요
             {
                 //Debug.Log("검색된 행동별 대사 타입 : " + keyName.Key); // "start", "end" 출력 >> 상황별 id를 저장할 예정
                 var dialogsValue = (JObject)keyName.Value;
-                foreach (var value in (JObject)dialogsValue)// 해당키의 json 내부 저장된 배열 순회
+                foreach (var v in dialogsValue)// 해당키의 json 내부 저장된 배열 순회
                 { 
-                    output.Add((keyName.Key, value.Value.ToObject<string[]>()));
+                    output.Add((keyName.Key, v.Value.ToObject<string[]>()));
                 }
                 
             }
@@ -165,6 +164,22 @@ public class scNpc_text : MonoBehaviour
 
         }
         return null;
+    }
+    void infoAlram()
+    {
+        GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;
+        Image panelImage = panel.GetComponent<Image>();
+        panelImage.DOFade(1,1f).OnComplete(() =>
+        {
+            Sequence fadeOutSequence = DOTween.Sequence();
+
+            fadeOutSequence.AppendInterval(4f)
+            .Append(panelImage.DOFade(0, 1f).SetUpdate(true));
+
+            fadeOutSequence.Play();
+
+        });
+
     }
 
 
@@ -270,9 +285,15 @@ public class scNpc_text : MonoBehaviour
     IEnumerator talkertest3(TextMeshProUGUI insert)
     {
         var output = jsonReadertest2();
+        if (output == null)
+        {
+            insert.text = "잘못된 대사 접근중. 종료합니다";
+            Debug.Log("json 검색 실패.");
+            yield break;
+        }
         
         List<(string, string[])> start_dialogs = output.Where(item => item.Item1 == "start").ToList();
-        List<(string, string[])> end_dialogs = output.Where(item => item.Item1 == "end").ToList();
+        List<(string, string[])> end_dialogs   = output.Where(item => item.Item1 == "end").ToList();
         
         string[] sentences = {"데이터 불러오기 실패."};
         /////////////////////// 분기점 설정 ///////////////////
@@ -331,13 +352,21 @@ public class scNpc_text : MonoBehaviour
             currentSentenceIndex++; 
         }
         // 마무리단계
-   
+
+        infoAlram();
         talking = false; 
         camera.zoomOut();
         Debug.Log("대화종료");
         GameObject.Find("UI_veiwer")
             .transform.Find("ChatBox")
             .gameObject.SetActive(false);
+    }
+    IEnumerator infoAlram3()
+    {
+        GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;
+        
+
+        yield break;
     }
     
 }
