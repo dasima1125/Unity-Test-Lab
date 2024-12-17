@@ -45,25 +45,26 @@ public class scCamera : MonoBehaviour
 
         
     }
-    public void zoomIn()
+    //잠시 값 고정 이거 시야버그있음
+    public void zoomIn()//4.5
     {
         if (!isZoom)
         {
             isZoom = true;
             Camera camera = gameObject.GetComponent<Camera>();
-            float targetSize = camera.orthographicSize / 2f;
-            DOTween.To(() => camera.orthographicSize, x => camera.orthographicSize = x, targetSize, 1f); 
+            //float targetSize = camera.orthographicSize / 2f;
+            DOTween.To(() => camera.orthographicSize, x => camera.orthographicSize = x, 4.5f, 1f); 
         }
         
     }
-    public void zoomOut()
+    public void zoomOut()//9
     {
         if (isZoom)
         {
             isZoom = false;
             Camera camera = gameObject.GetComponent<Camera>();
-            float targetSize = camera.orthographicSize * 2f;
-            DOTween.To(() => camera.orthographicSize, x => camera.orthographicSize = x, targetSize, 1f); 
+            // targetSize = camera.orthographicSize * 2f;
+            DOTween.To(() => camera.orthographicSize, x => camera.orthographicSize = x, 9f, 1f); 
         }
           
         

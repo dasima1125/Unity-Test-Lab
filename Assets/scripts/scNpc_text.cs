@@ -22,6 +22,7 @@ public class scNpc_text : MonoBehaviour
     [SerializeField]private string id;
     [SerializeField]private string dialogs;
     [SerializeField]private bool eventCleared;
+    bool CoroutineRuning = false;
   
 
 
@@ -48,13 +49,14 @@ public class scNpc_text : MonoBehaviour
         
         if (!trigger_inside) //도중에 나갈시
         {
+        
+            //StopCoroutine("talkertest3");// <<=코루틴 중첩문제 발생가능성 있음 StopAllCoroutines로 걍 이 스크립트내 코루틴 싹다 미는게 안정적임
             StopAllCoroutines(); 
             //여기서부터 땜빵
             if(talking)
             {
                 if(life)
-                life = false;
-                
+                //life = false;
                 talking = false;
             }
             scCamera camera = GameObject.Find("Main Camera").GetComponent<scCamera>();
@@ -75,9 +77,6 @@ public class scNpc_text : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.E))
         {
             talking = true;
-
-            //Debug.Log("대화시작");
-            //대화 시작
             GameObject.Find("UI_veiwer")
                 .transform.Find("ChatBox")
                 .gameObject.SetActive(true);
@@ -165,18 +164,28 @@ public class scNpc_text : MonoBehaviour
         }
         return null;
     }
-    void infoAlram()
+    void infoAlram(List<string> text ,int type)
     {
-        GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;
-        Image panelImage = panel.GetComponent<Image>();
+        GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;//패널 접근
+        mainmenu_play coroutinplayer = GameObject.Find("UI_veiwer").GetComponent<mainmenu_play>();
+
+        //TextMeshProUGUI infoText = panel.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI infotitleText    = panel.transform.Find("infoTitle").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI infocontentText  = panel.transform.Find("infoContent").GetComponent<TextMeshProUGUI>();
+        CanvasGroup panelImage = panel.GetComponent<CanvasGroup>();
+        
+        if(panelImage.alpha != 0) return;
+
+        infotitleText.text   ="";//초기화
+        infocontentText.text ="";
+        
+        //infoText.DOText("hello", 2f, true);//유료버전만된다
         panelImage.DOFade(1,1f).OnComplete(() =>
         {
-            Sequence fadeOutSequence = DOTween.Sequence();
-
-            fadeOutSequence.AppendInterval(4f)
-            .Append(panelImage.DOFade(0, 1f).SetUpdate(true));
-
-            fadeOutSequence.Play();
+            Sequence sequence = DOTween.Sequence();        
+            sequence.AppendCallback(() => coroutinplayer.infoWrite(infotitleText,infocontentText, text,type));   
+            sequence.AppendInterval(4f).Append(panelImage.DOFade(0, 1f).SetUpdate(true));
+            sequence.Play();
 
         });
 
@@ -294,24 +303,27 @@ public class scNpc_text : MonoBehaviour
         
         List<(string, string[])> start_dialogs = output.Where(item => item.Item1 == "start").ToList();
         List<(string, string[])> end_dialogs   = output.Where(item => item.Item1 == "end").ToList();
+        List<string> infosender = output.Where(item => item.Item1 == "Quest").SelectMany(item => item.Item2).ToList();
         
         string[] sentences = {"데이터 불러오기 실패."};
         /////////////////////// 분기점 설정 ///////////////////
         // 퀘스트 처리 부분 나중에 옴길예정 아마 상속구조로 변경할꺼임
         GameObject gameManagerObject = GameObject.Find("game Manager");//직접 끌어와야지
+        
         if(!life && gameManagerObject.GetComponent<scManager>().key_count >= 1)
         {
+            gameManagerObject.GetComponent<scManager>().key_count -= 1;
             eventCleared = true;
+            life = true;
         }
         // 행동트리마냥 지정해줘야할려나?
         if(!eventCleared) // 이벤트 트리거 작동전
-        {
+        {   
             sentences = life ? start_dialogs[0].Item2 : start_dialogs[1].Item2;
-            life = false;
         } 
         else // 작동후
         {
-            sentences = end_dialogs[0].Item2; 
+            sentences = life ? end_dialogs[0].Item2 : end_dialogs[1].Item2;
         }
 
         int currentSentenceIndex = 0;
@@ -319,16 +331,15 @@ public class scNpc_text : MonoBehaviour
         //    ㄴ  리스트가 2개 이상일시 첫번째 조우와 다음 조우가 대사가 다르다는걸 의미
         //         ㄴ life 변수를 통해 첫번째 조우시 life 변수를 거짓으로 바꾸고 다음부터는 life변수가 거짓인 경로로 이동시킴
         //              ㄴ 첫조우시 리스트 첫번째 값 문자열 추출 , 아닐시 두번째 분해 
-        //                   ㄴ 나중에 구조 변경을 쉽게 만들려면 스위치문으로 리스트 개수를 기준으로 행동양식별 구조를 생성 즉 구조를 새로자야함 시벌탱
+        //                   ㄴ 나중에 구조 변경을 쉽게 만들려면 스위치문으로 리스트 개수를 기준으로 행동양식별 구조를 생성 즉 구조를 새로짜야함
         
         //줌인 기능 추가 
         scCamera camera = GameObject.Find("Main Camera").GetComponent<scCamera>();
         camera.zoomIn();
-
         while (currentSentenceIndex < sentences.Length)
         {
             insert.text = "";
-            skip   = false;
+            skip = false;
 
             foreach (char letter in sentences[currentSentenceIndex])
             {   
@@ -352,8 +363,11 @@ public class scNpc_text : MonoBehaviour
             currentSentenceIndex++; 
         }
         // 마무리단계
-
-        infoAlram();
+        if(life)
+        {   int infoType = !eventCleared ? 1 : 2; 
+            infoAlram(infosender,infoType);
+        }
+        life = false;
         talking = false; 
         camera.zoomOut();
         Debug.Log("대화종료");
@@ -361,14 +375,7 @@ public class scNpc_text : MonoBehaviour
             .transform.Find("ChatBox")
             .gameObject.SetActive(false);
     }
-    IEnumerator infoAlram3()
-    {
-        GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;
-        
-
-        yield break;
-    }
-    
+   
 }
 
 

@@ -4,7 +4,9 @@ using UnityEditor;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class mainmenu_play : MonoBehaviour
 {
@@ -243,5 +245,30 @@ public class mainmenu_play : MonoBehaviour
     ///아웃시 가장자리부터 어두워짐 
     ///인 진입시 중앙부터 밝아짐
     ///
+
+    //임시 코루틴 옴겨둠
+    public void infoWrite(TextMeshProUGUI Title,TextMeshProUGUI Content,List<string> text ,int type) 
+    {
+        StartCoroutine(infoAlramString(Title,Content,text,type));
+        
+    }
+    public IEnumerator infoAlramString(TextMeshProUGUI Title,TextMeshProUGUI Content,List<string> text ,int type)
+    {
+        
+        foreach (char letter in text[0])
+        {
+            Title.text += letter; 
+            yield return new WaitForSeconds(0.05f); 
+        }
+        yield return new WaitForSeconds(0.2f); 
+        Debug.Log("행동번호:"+type+String.Join(",",text[type]));
+        foreach (char letter in text[type])
+        {
+            Content.text += letter; 
+            yield return new WaitForSeconds(0.05f); 
+        }
+
+        yield return null;
+    }
    
 }
