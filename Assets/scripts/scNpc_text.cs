@@ -22,7 +22,8 @@ public class scNpc_text : MonoBehaviour
     [SerializeField]private string id;
     [SerializeField]private string dialogs;
     [SerializeField]private bool eventCleared;
-    bool CoroutineRuning = false;
+    [SerializeField]private bool Mission_Activation = false;
+
   
 
 
@@ -303,6 +304,7 @@ public class scNpc_text : MonoBehaviour
         
         List<(string, string[])> start_dialogs = output.Where(item => item.Item1 == "start").ToList();
         List<(string, string[])> end_dialogs   = output.Where(item => item.Item1 == "end").ToList();
+        
         List<string> infosender = output.Where(item => item.Item1 == "Quest").SelectMany(item => item.Item2).ToList();
         
         string[] sentences = {"데이터 불러오기 실패."};
@@ -317,15 +319,22 @@ public class scNpc_text : MonoBehaviour
             life = true;
         }
         // 행동트리마냥 지정해줘야할려나?
-        if(!eventCleared) // 이벤트 트리거 작동전
-        {   
-            sentences = life ? start_dialogs[0].Item2 : start_dialogs[1].Item2;
-        } 
-        else // 작동후
+        if(!Mission_Activation)
         {
-            sentences = life ? end_dialogs[0].Item2 : end_dialogs[1].Item2;
+            sentences = start_dialogs[0].Item2;
         }
-
+        else
+        {
+            if(!eventCleared) // 이벤트 트리거 작동전
+            {   
+                sentences = life ? start_dialogs[1].Item2 : start_dialogs[2].Item2;
+            } 
+            else // 작동후
+            {
+                sentences = life ? end_dialogs[0].Item2 : end_dialogs[1].Item2;
+            }
+        }
+        
         int currentSentenceIndex = 0;
         //이벤트 트리거에 따라 다이얼로그 투입이 달라지는 분기 설정
         //    ㄴ  리스트가 2개 이상일시 첫번째 조우와 다음 조우가 대사가 다르다는걸 의미
@@ -363,14 +372,15 @@ public class scNpc_text : MonoBehaviour
             currentSentenceIndex++; 
         }
         // 마무리단계
-        if(life)
-        {   int infoType = !eventCleared ? 1 : 2; 
+        if(life && Mission_Activation)
+        {   
+            int infoType = !eventCleared ? 1 : 2; 
             infoAlram(infosender,infoType);
         }
-        life = false;
+        if(Mission_Activation) life = false;
         talking = false; 
         camera.zoomOut();
-        Debug.Log("대화종료");
+        
         GameObject.Find("UI_veiwer")
             .transform.Find("ChatBox")
             .gameObject.SetActive(false);
