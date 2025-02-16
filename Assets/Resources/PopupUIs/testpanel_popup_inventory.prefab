@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 4870137672207112227}
   - component: {fileID: 5336094472275213316}
   - component: {fileID: 6999982936805934435}
+  - component: {fileID: 1116297228841218759}
   - component: {fileID: -1623570776405278197}
   m_Layer: 5
-  m_Name: testpanel
+  m_Name: testpanel_popup_inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,6 +92,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testBtn: {fileID: 2973304340708388859}
+--- !u!114 &1116297228841218759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828322746887663880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc337e43397c164c924a63d8450d8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!225 &-1623570776405278197
 CanvasGroup:
   m_ObjectHideFlags: 0
