@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class UImanager : MonoBehaviour
 {
     // Start is called before the first frame update
     private static UImanager instance;
-    
     public static UImanager UI_Instance
     {
         get 
@@ -14,17 +12,21 @@ public class UImanager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<UImanager>();
-                if(instance == null)
+                // 방어코드긴한데 이게 사라질일이.. 없을꺼같긴해
+                /**
+                if(instance == null) 
                 {
                     GameObject Object = new GameObject(nameof(UImanager));
                     instance = Object.AddComponent<UImanager>();
                 }
+                */
             }
             return instance;  
         }
     }
-    private Dictionary<string, Object> popupUIDictionary = new();//게임 시작시 딱한번 로드하고 저장 팝업ui 오브젝트 저장용
-    private Stack<Object> currentPopupUI = new Stack<Object>(); //씬이 바뀔때는 ui스택을 전부 날려야하기때문에  정적선언 X
+    public Dictionary<string, GameObject> popupUIDictionary = new();//게임 시작시 딱한번 로드하고 저장 팝업ui 오브젝트 저장용
+    public Stack<GameObject> currentPopupUI = new Stack<GameObject>(); //씬이 바뀔때는 ui스택을 전부 날려야함.. 근데 모르겟네,,,
+    public Canvas canvas;
     void Awake()
     {
         
@@ -36,23 +38,24 @@ public class UImanager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            
-            Object[] popupUIs = Resources.LoadAll<Object>("PopupUIs");
-            foreach (Object popupUI in popupUIs)
-            {
-                if (!popupUIDictionary.ContainsKey(popupUI.name)) popupUIDictionary.Add(popupUI.name, popupUI);
-            }
+            UIUpdater.Updater.RegisterPopupUI();
         }
     }
-    public GameObject testPanel;
-    private GameObject testPanelInstance;
+   
+    
     void Start()
     {
-        Debug.Log("hello world");
+        //Debug.Log("hello world");
         
     }
 
-    // Update is called once per frame
+    //레거시 부분 
+    //
+    //딱히.. 쓸일이없음.. 그래서 잠궈둠,,
+    //
+    //public GameObject testPanel;
+    //private GameObject testPanelInstance;
+    /**
     public void ShowPanel()
     {
 
@@ -83,41 +86,15 @@ public class UImanager : MonoBehaviour
         Debug.Log("왜 작동되는거?");
         testPanelInstance.SetActive(false); //널체크를 딱히 할필요가 없긴해..
     }
+    */
     public void ShowPanel_popup_info(string uiName)
     {
         if (!popupUIDictionary.ContainsKey(uiName)) 
         {
-            Debug.LogError("존재하지 않는 팝업UI");
+            Debug.LogError("해당팝업이 존재하지 않습니다.");
             return;
         }
-        
-
-        GameObject panelInstance = Instantiate(popupUIDictionary[uiName] as GameObject);
-        panelInstance.transform.SetParent(FindObjectOfType<Canvas>().transform, false);
-        
-        if(currentPopupUI.Count > 0)
-        {
-            Debug.Log("덮어쓰기");
-            GameObject newPosObject = currentPopupUI.Peek() as GameObject;
-            Vector2 newPos = newPosObject.transform.position;
-            panelInstance.transform.position = new Vector2(newPos.x + 20, newPos.y - 20);
-
-        }
-
-        currentPopupUI.Push(panelInstance);
-
-        
-
-        //Vector3 newPosition = panelInstance.transform.position;
-        //Debug.Log(newPosition);
-        //newPosition.x += 10; // 오른쪽으로 10
-        //newPosition.y += 10; // 위로 10
-        //panelInstance.transform.position = newPosition;
-        
-        
-
-        Debug.Log("저장된 작업 스택: " + currentPopupUI.Count);
-
+        UImanager_PopupUI.UI_Instance.showPopUp(uiName);
     }
     public void HidePanel_popup_info()
     {
@@ -126,10 +103,10 @@ public class UImanager : MonoBehaviour
             Debug.LogError("팝업UI가 씬에 존재하지 않습니다.");
             return;
         }
-        GameObject panelInstance = currentPopupUI.Pop() as GameObject;
-       
-        Destroy(panelInstance);
-        Debug.Log("저장된 작업 스택: " + currentPopupUI.Count);
-        
+        UImanager_PopupUI.UI_Instance.hidePopUp();
+    }
+    public void SceenUpdate()
+    {
+        UIUpdater.Updater.NewSceenUpdate();
     }
 }

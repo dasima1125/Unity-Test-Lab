@@ -19,6 +19,6 @@ public class UImanager_testPanel : MonoBehaviour
     }
     public void OnShowButtonClicked()
     {
-        UImanager.UI_Instance.HidePanel();
+        //UImanager.UI_Instance.HidePanel();
     }
 }

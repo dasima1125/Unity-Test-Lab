@@ -15,12 +15,12 @@ public class UIHandler : MonoBehaviour
     // Update is called once per frame
     public void OnShowButtonClicked()
     {
-        Debug.Log("팝업생성 명령");
+        //Debug.Log("팝업생성 명령");
         UImanager.UI_Instance.ShowPanel_popup_info(call_popupID);
     }
     public void OnHideButtonClicked()
     {
-        Debug.Log("뒤로가기 명령");
+        //Debug.Log("뒤로가기 명령");
         UImanager.UI_Instance.HidePanel_popup_info();
     }
 }

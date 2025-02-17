@@ -20,6 +20,6 @@ public class UImanager_testMain : MonoBehaviour
     public void OnShowButtonClicked()
     {
         Debug.Log("호출 시도중 : 테스트 패널");
-        UImanager.UI_Instance.ShowPanel();
+        //UImanager.UI_Instance.ShowPanel();
     }
 }
