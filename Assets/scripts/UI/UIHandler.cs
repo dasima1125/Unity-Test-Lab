@@ -16,11 +16,21 @@ public class UIHandler : MonoBehaviour
     public void OnShowButtonClicked()
     {
         //Debug.Log("팝업생성 명령");
-        UImanager.UI_Instance.ShowPanel_popup_info(call_popupID);
+        UImanager.manager.ShowPanel_popup_info(call_popupID);
     }
     public void OnHideButtonClicked()
     {
         //Debug.Log("뒤로가기 명령");
-        UImanager.UI_Instance.HidePanel_popup_info();
+        UImanager.manager.HidePanel_popup_info();
+    }
+    public void fullScreen_Clicked()
+    {
+        //Debug.Log("팝업생성 명령");
+        UImanager.manager.showPanel_fullScreen("resume panel");
+    }
+    public void fullScreenHide_Clicked()
+    {
+        //Debug.Log("팝업생성 명령");
+        UImanager.manager.hidePanel_fullScreen();
     }
 }

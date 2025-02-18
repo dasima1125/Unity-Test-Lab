@@ -14,9 +14,9 @@ public class UIUpdater : MonoBehaviour
             return instance; 
         }
     }
-    public void RegisterPopupUI () 
+    public void RegisterPopupUI() 
     {
-        var manager = UImanager.UI_Instance;
+        var manager = UImanager.manager;
         GameObject[] popupUIs = Resources.LoadAll<GameObject>("PopupUIs");
         foreach (GameObject popupUI in popupUIs)
             {
@@ -26,9 +26,22 @@ public class UIUpdater : MonoBehaviour
                 }
             }
     }
+    public void RegisterfullScreenUI()
+    {
+        var manager = UImanager.manager;
+        GameObject[] fullScreenUIs = Resources.LoadAll<GameObject>("FullScreenUIs");
+        foreach(GameObject fullScreenUI in fullScreenUIs)
+        {
+            if(!manager.fullScreenUIDictionary.ContainsKey(fullScreenUI.name))
+            {
+                manager.fullScreenUIDictionary.Add(fullScreenUI.name, fullScreenUI);
+            }
+        }
+        //Debug.Log(manager.fullScreenUIDictionary.Count);
+    }
     public void NewSceenUpdate()
     {
-        UImanager.UI_Instance.canvas = FindObjectOfType<Canvas>();
+        UImanager.manager.canvas = FindObjectOfType<Canvas>();
         
     }
 }

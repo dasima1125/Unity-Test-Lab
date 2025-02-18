@@ -20,7 +20,10 @@ public class UImanager_observer : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
-        UImanager.UI_Instance.currentPopupUI.Clear();
+        var manager = UImanager.manager;
+       
+        manager.currentPopupUI.Clear();// <-이거 업데이터로 넘겨야할거같네
+        manager.SceenUpdate();
     }
     private void OnDisable()
     {  
