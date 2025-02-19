@@ -8,12 +8,7 @@ public class UImanager : MonoBehaviour
     { 
         get => instance ?? (instance = FindObjectOfType<UImanager>());
     }
-    public Dictionary<string, GameObject> popupUIDictionary = new();
-    public Dictionary<string, GameObject> fullScreenUIDictionary = new();
-    public Stack<GameObject> currentPopupUI = new Stack<GameObject>(); 
-    public GameObject currentfullScreenUI = null;
-
-    [HideInInspector] public Canvas canvas;
+    
     void Awake()
     {
         
@@ -25,15 +20,30 @@ public class UImanager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            UIUpdater.Updater.Panels();
             UIUpdater.Updater.RegisterPopupUI();
             UIUpdater.Updater.RegisterfullScreenUI();
         }
     }
+    #region 자원 저장 관련
+    [HideInInspector] public Canvas canvas;
+    [HideInInspector] public GameObject blackoutPanel;
+    public Dictionary<string, GameObject> exUIDictionary = new();
+
+    public void SceenUpdate()
+    {
+        UIUpdater.Updater.NewSceenUpdate();
+    }
+    #endregion
+
+    #region 팝업 UI 관련
+    public Dictionary<string, GameObject> popupUIDictionary = new();
+    public Stack<GameObject> currentPopupUI = new Stack<GameObject>(); 
     public void ShowPanel_popup_info(string uiName)
     {
         if (!popupUIDictionary.ContainsKey(uiName)) 
         {
-            Debug.LogError("해당팝업이 존재하지 않습니다.");
+            //Debug.LogError("해당팝업이 존재하지 않습니다.");
             return;
         }
         UImanager_PopupUI.PopupUI.showPopUp(uiName);
@@ -42,17 +52,22 @@ public class UImanager : MonoBehaviour
     {
         if (currentPopupUI.Count < 1) 
         {
-            Debug.LogError("팝업UI가 씬에 존재하지 않습니다.");
+            //Debug.LogError("팝업UI가 씬에 존재하지 않습니다.");
             return;
         }
         UImanager_PopupUI.PopupUI.hidePopUp();
     }
+    #endregion
 
+
+    #region 풀스크린 UI 관련
+    public Dictionary<string, GameObject> fullScreenUIDictionary = new();
+    public GameObject currentfullScreenUI = null;
     public void showPanel_fullScreen(string uiName)
     {
         if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null )
         {
-            Debug.LogError("조건에 가로막힘");
+            //Debug.LogError("조건에 가로막힘");
             return; 
         }
         Debug.Log(currentfullScreenUI);
@@ -63,8 +78,6 @@ public class UImanager : MonoBehaviour
     {
         UImanager_fullScreen.fullScreen.hideScreen();
     }
-    public void SceenUpdate()
-    {
-        UIUpdater.Updater.NewSceenUpdate();
-    }
+    #endregion
+    
 }

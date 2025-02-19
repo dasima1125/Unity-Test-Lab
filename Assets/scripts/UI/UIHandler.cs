@@ -13,7 +13,7 @@ public class UIHandler : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void OnShowButtonClicked()
+    public void OnShowButtonClicked(string a)
     {
         //Debug.Log("팝업생성 명령");
         UImanager.manager.ShowPanel_popup_info(call_popupID);
@@ -23,9 +23,9 @@ public class UIHandler : MonoBehaviour
         //Debug.Log("뒤로가기 명령");
         UImanager.manager.HidePanel_popup_info();
     }
-    public void fullScreen_Clicked()
+    public void fullScreen_Clicked(string a)
     {
-        //Debug.Log("팝업생성 명령");
+        Debug.Log("팝업생성 명령");
         UImanager.manager.showPanel_fullScreen("resume panel");
     }
     public void fullScreenHide_Clicked()

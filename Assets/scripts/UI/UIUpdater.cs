@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIUpdater : MonoBehaviour
@@ -12,6 +13,18 @@ public class UIUpdater : MonoBehaviour
         {
             if(instance == null) instance = FindObjectOfType<UIUpdater>();
             return instance; 
+        }
+    }
+    public void Panels() 
+    {
+        var manager = UImanager.manager;
+        GameObject[] exUIs = Resources.LoadAll<GameObject>("exUIs");
+        foreach(GameObject panels in exUIs)
+        {
+            if(!manager.exUIDictionary.ContainsKey(panels.name)) 
+            {
+                manager.exUIDictionary.Add(panels.name,panels);   
+            }
         }
     }
     public void RegisterPopupUI() 
