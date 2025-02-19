@@ -45,3 +45,9 @@ https://github.com/dasima1125/Unity-Test-Lab/blob/main/Assets/scripts/scNpc_text
 - 대화용 npc
    - 간단한 대화 기능 첫 조우와 나머지 상태 분할
      - 2024 12 02 현재 구현 기능 ==> 다층구조를 이용한 대화 내용 저장 , 대화 상호작용 알파버전 구현 (자연스러운 대화 출력 , 대화 스킵 , 이동시 대화 종료)
+
+https://github.com/dasima1125/Unity-Test-Lab/tree/main/Assets/scripts/UI
+![Image](https://github.com/user-attachments/assets/0291e513-668c-4883-af99-2c982876a1a4)
+- UI 통합 구조
+  - UI생성 및 제어,통제 체계화
+    - 2025-02-18 구현 기능 ==> 핸들러,옵저버,트리거 > 매니저 > 각 타입별 컨트롤러 순의 객체간 역활분리 및 스트림 구성, 의존성 감소 및 확장성 증대와 동시에 하드코딩을 통한 자원수집을 폴더서칭을 통한 자동초기화
