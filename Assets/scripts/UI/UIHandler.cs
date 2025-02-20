@@ -25,8 +25,17 @@ public class UIHandler : MonoBehaviour
     }
     public void fullScreen_Clicked(string a)
     {
-        Debug.Log("팝업생성 명령");
         UImanager.manager.showPanel_fullScreen("resume panel");
+    }
+    public void fullScreen_Clicked_delta(string a)
+    {
+        UImanager.manager.fullScreenPanel("totalstate panel");
+    }
+    public void fullScreen_swap (int i) 
+    {
+        Debug.Log("스왑 입력");
+        UImanager.manager.SwapPanel(i);
+        
     }
     public void fullScreenHide_Clicked()
     {

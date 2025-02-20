@@ -156,7 +156,7 @@ public class mainmenu_play : MonoBehaviour
                     Next_darkScreen.SetActive(false);
                 }).SetUpdate(true));
 
-                fadeOutSequence.Play(); // 이게맞나 ㅅㅂ
+                fadeOutSequence.Play(); // 이게맞나 
                 
                 
 

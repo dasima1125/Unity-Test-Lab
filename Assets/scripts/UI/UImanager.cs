@@ -62,21 +62,28 @@ public class UImanager : MonoBehaviour
 
     #region 풀스크린 UI 관련
     public Dictionary<string, GameObject> fullScreenUIDictionary = new();
+    public Dictionary<int, GameObject> SwapcreenUIs = new();
     public GameObject currentfullScreenUI = null;
+    public int pageNum = 1;
     public void showPanel_fullScreen(string uiName)
     {
-        if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null )
-        {
-            //Debug.LogError("조건에 가로막힘");
-            return; 
-        }
-        Debug.Log(currentfullScreenUI);
-
+        if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
         UImanager_fullScreen.fullScreen.showScreen(uiName);
     }
     public void hidePanel_fullScreen()
     {
         UImanager_fullScreen.fullScreen.hideScreen();
+    }
+    public void fullScreenPanel(string uiName) 
+    {
+        if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
+        UImanager_fullScreen.fullScreen.showScreen_Delta(uiName);
+    }
+    public void SwapPanel(int i)
+    {
+        if(currentfullScreenUI == null || SwapcreenUIs.Count < 2) return;
+        UImanager_fullScreen.fullScreen.SwapScreen(i);
+
     }
     #endregion
     
