@@ -72,12 +72,14 @@ public class UImanager : MonoBehaviour
     }
     public void hidePanel_fullScreen()
     {
-        UImanager_fullScreen.fullScreen.hideScreen();
+        UIComposer.Call.Execute(() => UImanager_fullScreen.fullScreen.fade(),() => UImanager_fullScreen.fullScreen.hideScreen());
     }
     public void fullScreenPanel(string uiName) 
     {
         if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
-        UImanager_fullScreen.fullScreen.showScreen_Delta(uiName);
+        //UImanager_fullScreen.fullScreen.showScreen_Delta(uiName);
+        UIComposer.Call.Execute(() => UImanager_fullScreen.fullScreen.animation_blank(),() =>UImanager_fullScreen.fullScreen.showScreen_Delta(uiName));
+       
     }
     public void SwapPanel(int i)
     {
@@ -85,6 +87,7 @@ public class UImanager : MonoBehaviour
         UImanager_fullScreen.fullScreen.SwapScreen(i);
 
     }
+    
     #endregion
     
 }
