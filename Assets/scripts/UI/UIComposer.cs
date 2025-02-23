@@ -22,14 +22,13 @@ public class UIComposer : MonoBehaviour
     /// <param name="action2">대기작업, 첫번째작업도중 호출할 컨트롤 가능</param>
     public void Execute(Action ? action1 = null , Action ? action2 = null)
     {
- 
+        NextEvent = null;
         if (action1 is Action) NextEvent += () => action2?.Invoke();
         action1?.Invoke();
 
     }
     public void Next()
     {
- 
         NextEvent?.Invoke();
         NextEvent = null;
     }

@@ -25,10 +25,8 @@ public class mainmenu_play : MonoBehaviour
             SceneManager.LoadSceneAsync("testzoon").completed += (AsyncOperation asyncOperation) =>
             {
         
-    
                 if(Next_darkScreen == null)
                 {
-                    //Debug.Log(GameObject.Find("Canvas"));
                     
                     GameObject canvasObject = GameObject.Find("UI_veiwer");
                     Transform childTransform = canvasObject.transform.Find("nextsceen");

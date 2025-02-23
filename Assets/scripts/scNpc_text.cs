@@ -185,7 +185,7 @@ public class scNpc_text : MonoBehaviour
         {
             Sequence sequence = DOTween.Sequence();        
             sequence.AppendCallback(() => coroutinplayer.infoWrite(infotitleText,infocontentText, text,type));   
-            sequence.AppendInterval(4f).Append(panelImage.DOFade(0, 1f).SetUpdate(true));
+            sequence.AppendInterval(4f).Append(panelImage.DOFade(0, 1f).SetUpdate(true));//지연
             sequence.Play();
 
         });

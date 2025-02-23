@@ -23,12 +23,18 @@ public class UImanager : MonoBehaviour
             UIUpdater.Updater.Panels();
             UIUpdater.Updater.RegisterPopupUI();
             UIUpdater.Updater.RegisterfullScreenUI();
+
+            action =  UImanager_fullScreen.fullScreen;
+            anim =    UIAnimator.anim;
+            
         }
     }
     #region 자원 저장 관련
     [HideInInspector] public Canvas canvas;
     [HideInInspector] public GameObject blackoutPanel;
     public Dictionary<string, GameObject> exUIDictionary = new();
+    private UImanager_fullScreen action;
+    private UIAnimator anim;
 
     public void SceenUpdate()
     {
@@ -43,19 +49,23 @@ public class UImanager : MonoBehaviour
     {
         if (!popupUIDictionary.ContainsKey(uiName)) 
         {
-            //Debug.LogError("해당팝업이 존재하지 않습니다.");
             return;
         }
-        UImanager_PopupUI.PopupUI.showPopUp(uiName);
+        //UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName));
+        UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName),() =>anim.popup_ConvergeFadeIn());
+    }
+    public void testalpha()
+    {
+        flush_AllPanel();
+        //UIComposer.Call.Execute(() => anim.popup_Expand());
     }
     public void HidePanel_popup_info()
     {
         if (currentPopupUI.Count < 1) 
         {
-            //Debug.LogError("팝업UI가 씬에 존재하지 않습니다.");
             return;
         }
-        UImanager_PopupUI.PopupUI.hidePopUp();
+        UIComposer.Call.Execute(() => anim.popup_fadeOut(),()=> UImanager_PopupUI.PopupUI.hide());
     }
     #endregion
 
@@ -68,26 +78,39 @@ public class UImanager : MonoBehaviour
     public void showPanel_fullScreen(string uiName)
     {
         if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
-        UImanager_fullScreen.fullScreen.showScreen(uiName);
+        UIComposer.Call.Execute(() => action.showScreen_Alpha(uiName));
     }
     public void hidePanel_fullScreen()
     {
-        UIComposer.Call.Execute(() => UImanager_fullScreen.fullScreen.fade(),() => UImanager_fullScreen.fullScreen.hideScreen());
+        UIComposer.Call.Execute(() => anim.fullscreen_fadeOut(),() => action.hideScreen());
     }
     public void fullScreenPanel(string uiName) 
     {
         if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
-        //UImanager_fullScreen.fullScreen.showScreen_Delta(uiName);
-        UIComposer.Call.Execute(() => UImanager_fullScreen.fullScreen.animation_blank(),() =>UImanager_fullScreen.fullScreen.showScreen_Delta(uiName));
+        UIComposer.Call.Execute(() => anim.fullscreen_animation_blank(),() => action.showScreen_Delta(uiName));
        
     }
     public void SwapPanel(int i)
     {
         if(currentfullScreenUI == null || SwapcreenUIs.Count < 2) return;
-        UImanager_fullScreen.fullScreen.SwapScreen(i);
+        UIComposer.Call.Execute(() => anim.fullscreen_animation_blank(),() => action.SwapScreen(i));
 
     }
     
     #endregion
+
+    #region 강제적 통제 구획
+    private void flush_AllPanel()
+    {
+        Debug.LogWarning("⚠️ 경고 : 모든 패널값이 초기화되었습니다");
+        if(currentfullScreenUI != null)Destroy(currentfullScreenUI);
+        currentfullScreenUI = null;
+        foreach(var ui in currentPopupUI)Destroy(ui);
+        currentPopupUI.Clear();
+        Debug.LogError("삭제 완료 : 현재 저장상태" +  (currentfullScreenUI == null ? "null" : currentfullScreenUI.name)  + " | " +currentPopupUI.Count);
+    }
+
+    #endregion
+
     
 }
