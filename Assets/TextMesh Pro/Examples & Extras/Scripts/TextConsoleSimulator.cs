@@ -68,12 +68,13 @@ namespace TMPro.Examples
                     visibleCount = 0;
                 }
 
-                textComponent.maxVisibleCharacters = visibleCount; // How many characters should TextMeshPro display?
+                textComponent.maxVisibleCharacters = visibleCount; // How many characters should TextMeshPro display? > 랜더에만 지장있고 인스펙터는 아님
 
                 visibleCount += 1;
 
                 yield return null;
             }
+            
         }
 
 

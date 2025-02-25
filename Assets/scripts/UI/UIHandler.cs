@@ -7,10 +7,6 @@ public class UIHandler : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] string call_popupID; 
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     public void OnShowButtonClicked(string a)

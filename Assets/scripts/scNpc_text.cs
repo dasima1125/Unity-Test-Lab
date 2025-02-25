@@ -135,7 +135,7 @@ public class scNpc_text : MonoBehaviour
         return null;
 
     }
-    List<(string,string[])> jsonReadertest2()//가변형
+    List<(string,string[])> jsonReadertest2()//가변형 //개선좀하자 굳이 튜플로
     {
         TextAsset jsonData = Resources.Load<TextAsset>("npcText"); //경로 중요함 하위면 루트 지정해줘야함
         if (jsonData != null)
@@ -244,7 +244,6 @@ public class scNpc_text : MonoBehaviour
         GameObject.Find("UI_veiwer")
             .transform.Find("ChatBox")
             .gameObject.SetActive(false);
-
        
     }
     IEnumerator talkertest2(TextMeshProUGUI insert)
@@ -306,6 +305,8 @@ public class scNpc_text : MonoBehaviour
         List<(string, string[])> end_dialogs   = output.Where(item => item.Item1 == "end").ToList();
         
         List<string> infosender = output.Where(item => item.Item1 == "Quest").SelectMany(item => item.Item2).ToList();
+
+        //Debug.Log(String.Join(" ",start_dialogs.Select(item => item.Item1)));
         
         string[] sentences = {"데이터 불러오기 실패."};
         /////////////////////// 분기점 설정 ///////////////////

@@ -15,6 +15,20 @@ public class UIUpdater : MonoBehaviour
             return instance; 
         }
     }
+    public void ChatBoxUI() 
+    {
+        var manager = UImanager.manager;
+        GameObject[] ChatBoxUIs = Resources.LoadAll<GameObject>("ChatBoxUIs");
+      
+        foreach(GameObject ChatBox in ChatBoxUIs)
+        {
+            if(!manager.chatBoxUIs.ContainsKey(ChatBox.name)) 
+            {
+                manager.chatBoxUIs.Add(ChatBox.name,ChatBox);   
+            }
+        }
+        
+    }
     public void Panels() 
     {
         var manager = UImanager.manager;

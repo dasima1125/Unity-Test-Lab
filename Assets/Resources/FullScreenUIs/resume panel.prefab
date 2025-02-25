@@ -798,9 +798,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4629277893538103194}
-        m_TargetAssemblyTypeName: mainmenu_play, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 6757299223577349188}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
+        m_MethodName: test_Clicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

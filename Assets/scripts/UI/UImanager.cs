@@ -23,6 +23,7 @@ public class UImanager : MonoBehaviour
             UIUpdater.Updater.Panels();
             UIUpdater.Updater.RegisterPopupUI();
             UIUpdater.Updater.RegisterfullScreenUI();
+            UIUpdater.Updater.ChatBoxUI();
 
             action =  UImanager_fullScreen.fullScreen;
             anim =    UIAnimator.anim;
@@ -42,6 +43,24 @@ public class UImanager : MonoBehaviour
     }
     #endregion
 
+    #region ChatBox UI 관련
+
+    public Dictionary<string, GameObject> chatBoxUIs = new();
+    public GameObject chatBoxUI = null;
+
+    public void testalpha()
+    {
+        if(!chatBoxUIs.ContainsKey("ChatBox") || chatBoxUI != null )
+        {
+            Debug.Log("찾을수없는 ui");
+            return; 
+        } 
+        UIComposer.Call.Execute(() => StartCoroutine(UImanager_ChatBox.Chat.PrintDialog()));
+   
+    }
+
+    #endregion
+
     #region 팝업 UI 관련
     public Dictionary<string, GameObject> popupUIDictionary = new();
     public Stack<GameObject> currentPopupUI = new Stack<GameObject>(); 
@@ -51,13 +70,7 @@ public class UImanager : MonoBehaviour
         {
             return;
         }
-        //UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName));
-        UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName),() =>anim.popup_ConvergeFadeIn());
-    }
-    public void testalpha()
-    {
-        flush_AllPanel();
-        //UIComposer.Call.Execute(() => anim.popup_Expand());
+        UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName));
     }
     public void HidePanel_popup_info()
     {
@@ -78,7 +91,7 @@ public class UImanager : MonoBehaviour
     public void showPanel_fullScreen(string uiName)
     {
         if(!fullScreenUIDictionary.ContainsKey(uiName) || currentfullScreenUI != null ) return; 
-        UIComposer.Call.Execute(() => action.showScreen_Alpha(uiName));
+        UIComposer.Call.Execute(() => anim.fullscreen_animation_blank(),() => action.showScreen_Alpha(uiName));
     }
     public void hidePanel_fullScreen()
     {

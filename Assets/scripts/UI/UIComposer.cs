@@ -18,8 +18,8 @@ public class UIComposer : MonoBehaviour
     /// <summary>
     /// 컨트롤, 또는 애니메이션 ,컨트롤 방식으로 호출 가능, 람다식으로 선언요구
     /// </summary>
-    /// <param name="action1">컨트롤, 또는 애니메이션,컨트롤러 방식 가능</param>
-    /// <param name="action2">대기작업, 첫번째작업도중 호출할 컨트롤 가능</param>
+    /// <param name="action1">첫번째 작업</param>
+    /// <param name="action2">두번째 작업</param>
     public void Execute(Action ? action1 = null , Action ? action2 = null)
     {
         NextEvent = null;
@@ -32,11 +32,4 @@ public class UIComposer : MonoBehaviour
         NextEvent?.Invoke();
         NextEvent = null;
     }
-    public void hi () 
-    {
-        Debug.Log("안녕");
-    }
-    
-
-    
 }

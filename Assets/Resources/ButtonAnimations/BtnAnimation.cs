@@ -33,7 +33,6 @@ public class BtnAnimation : MonoBehaviour , IPointerEnterHandler, IPointerExitHa
     public void OnPointerEnter(PointerEventData eventData)
     {
         //초기화
-        Debug.Log("진입");
         target.DOKill();
         buttonText.DOKill();
         if (Effect_Obj_Adress != null)
