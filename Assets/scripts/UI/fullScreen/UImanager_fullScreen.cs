@@ -32,7 +32,7 @@ public class UImanager_fullScreen : MonoBehaviour
 
         GameObject panelInstance = Instantiate(manager.fullScreenUIDictionary[uiName]);//주 패널 생성
         panelInstance.transform.SetParent(manager.canvas.transform, false);
-        panelInstance.transform.SetSiblingIndex(manager.canvas.transform.childCount - 2);
+        if(GameObject.Find("BlackoutPanel(Clone)"))panelInstance.transform.SetSiblingIndex(manager.canvas.transform.childCount - 2);
         
         manager.currentfullScreenUI = panelInstance;
 

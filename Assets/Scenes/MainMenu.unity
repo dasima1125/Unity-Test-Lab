@@ -556,6 +556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 509369438}
   - component: {fileID: 509369437}
+  - component: {fileID: 509369439}
   m_Layer: 0
   m_Name: SingletonTestUnit
   m_TagString: Untagged
@@ -577,6 +578,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvas: {fileID: 0}
   blackoutPanel: {fileID: 0}
+  sender:
+  - alpha
+  - beta
+  chatBoxUI: {fileID: 0}
+  talking: 0
+  skip: 0
   currentfullScreenUI: {fileID: 0}
   pageNum: 1
 --- !u!4 &509369438
@@ -595,6 +602,84 @@ Transform:
   - {fileID: 1811329174}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &509369439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509369436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 93ae726fde610b247a8444191eb8267e, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8e70971e-5f29-4fff-b66f-da5857f659a0
+    m_ActionName: UI/Navigate[/Razer Razer Huntsman V2 Analog/stick/up,/Razer Razer
+      Goliathus Extended Chroma/stick/up,/Razer Razer Huntsman V2 Analog/stick/down,/Razer
+      Razer Goliathus Extended Chroma/stick/down,/Razer Razer Huntsman V2 Analog/stick/left,/Razer
+      Razer Goliathus Extended Chroma/stick/left,/Razer Razer Huntsman V2 Analog/stick/right,/Razer
+      Razer Goliathus Extended Chroma/stick/right,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7d6c7e15-271f-45f9-8ced-7420a42feac7
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 01002e7f-1839-429e-8587-6254fe4d4e4a
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ec8a00d4-0a70-4720-ab21-7bbbac87c63b
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 254cba26-e007-45d2-8378-c28514d80c92
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 49a8ce18-fddf-480f-8eb5-287d7f34165c
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7332f211-dda1-4065-9039-2158b7e0866b
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cde4c232-ca62-4e37-9067-fec37861826f
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 84ecfa67-6158-4200-8f4b-2572e0353789
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1c751626-91de-4ddf-9baa-02a86f59e468
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7ff05640-4486-4fd3-8eac-43f35f16618d
+    m_ActionName: "UI/\uBC18\uC751[/Keyboard/e]"
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: test
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &610752891
 GameObject:
   m_ObjectHideFlags: 0
@@ -6536,6 +6621,7 @@ GameObject:
   - component: {fileID: 1811329179}
   - component: {fileID: 1811329181}
   - component: {fileID: 1811329180}
+  - component: {fileID: 1811329182}
   m_Layer: 0
   m_Name: UI_set
   m_TagString: Untagged
@@ -6640,6 +6726,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08059a044f8fed74794b78590f730709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1811329182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811329173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b559e5247d88f0344a943e5d59cbaa02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1920883662

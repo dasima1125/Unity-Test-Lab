@@ -15,7 +15,22 @@ public class UIUpdater : MonoBehaviour
             return instance; 
         }
     }
-    public void ChatBoxUI() 
+    public void DynamicUIs() 
+    {
+        var manager = UImanager.manager;
+        GameObject[] dynamicUIs = Resources.LoadAll<GameObject>("DynamicUIs");
+        
+      
+        foreach(GameObject dynamicUI in dynamicUIs)
+        {
+            if(!manager.DynamicUIs.ContainsKey(dynamicUI.name)) 
+            {
+                manager.DynamicUIs.Add(dynamicUI.name,dynamicUI);   
+            }
+        }
+        
+    }
+    public void ChatBoxUIs() 
     {
         var manager = UImanager.manager;
         GameObject[] ChatBoxUIs = Resources.LoadAll<GameObject>("ChatBoxUIs");
@@ -29,7 +44,7 @@ public class UIUpdater : MonoBehaviour
         }
         
     }
-    public void Panels() 
+    public void PanelUIs() 
     {
         var manager = UImanager.manager;
         GameObject[] exUIs = Resources.LoadAll<GameObject>("exUIs");
@@ -41,7 +56,7 @@ public class UIUpdater : MonoBehaviour
             }
         }
     }
-    public void RegisterPopupUI() 
+    public void PopupUIs() 
     {
         var manager = UImanager.manager;
         GameObject[] popupUIs = Resources.LoadAll<GameObject>("PopupUIs");
@@ -53,7 +68,7 @@ public class UIUpdater : MonoBehaviour
                 }
             }
     }
-    public void RegisterfullScreenUI()
+    public void fullScreenUIs()
     {
         var manager = UImanager.manager;
         GameObject[] fullScreenUIs = Resources.LoadAll<GameObject>("FullScreenUIs");

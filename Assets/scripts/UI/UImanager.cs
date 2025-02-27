@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 public class UImanager : MonoBehaviour
 {
     private static UImanager instance;
     public static UImanager manager
+    
     { 
         get => instance ?? (instance = FindObjectOfType<UImanager>());
     }
@@ -20,10 +23,11 @@ public class UImanager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            UIUpdater.Updater.Panels();
-            UIUpdater.Updater.RegisterPopupUI();
-            UIUpdater.Updater.RegisterfullScreenUI();
-            UIUpdater.Updater.ChatBoxUI();
+            UIUpdater.Updater.DynamicUIs();
+            UIUpdater.Updater.PanelUIs();
+            UIUpdater.Updater.PopupUIs();
+            UIUpdater.Updater.fullScreenUIs();
+            UIUpdater.Updater.ChatBoxUIs();
 
             action =  UImanager_fullScreen.fullScreen;
             anim =    UIAnimator.anim;
@@ -42,11 +46,22 @@ public class UImanager : MonoBehaviour
         UIUpdater.Updater.NewSceenUpdate();
     }
     #endregion
+    
+    #region Dynamic UI 관련
+    public Dictionary<string, GameObject> DynamicUIs = new();
+    public Queue<GameObject> panelQueue = new();
+    public string [] sender = {"alpha" , "beta"};
+
+    
+
+    #endregion
 
     #region ChatBox UI 관련
-
+    //public PlayerInput playerInput;
     public Dictionary<string, GameObject> chatBoxUIs = new();
     public GameObject chatBoxUI = null;
+    public bool talking = false;//대화중 상태 통제
+    public bool skip = false;//스킵명령 하달
 
     public void testalpha()
     {
@@ -57,6 +72,15 @@ public class UImanager : MonoBehaviour
         } 
         UIComposer.Call.Execute(() => StartCoroutine(UImanager_ChatBox.Chat.PrintDialog()));
    
+    }    
+    void OnTest()
+    {
+        var control = GetComponent<PlayerInput>().actions["test"].activeControl.displayName;
+        if(control == "T")
+        UIComposer.Call.Execute(() => StartCoroutine(UImanager_Dynamic.Dynamic.MakeInfo()));
+
+        if (control == "E" &&chatBoxUI != null && talking && !skip)
+        skip = true;
     }
 
     #endregion

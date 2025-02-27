@@ -10,7 +10,6 @@ using UnityEngine;
 public class UImanager_ChatBox : MonoBehaviour
 {
     private static UImanager_ChatBox instance;
-
     public static UImanager_ChatBox Chat
     {
         get => instance ?? (instance = FindObjectOfType<UImanager_ChatBox>());
@@ -29,11 +28,9 @@ public class UImanager_ChatBox : MonoBehaviour
 
         panelInstance.transform.SetParent(manager.canvas.transform, false);
         manager.chatBoxUI = panelInstance;
-
         
-
         string testID    = "test";
-        string testState = "normal";
+        string testState = "end";
         bool   testbool  = false;
         DialogData dialogDTO = new DialogData();
         var dialogArray = dialogDTO.ExtractDialog(testID).pickDialog(testState,testbool);
@@ -42,18 +39,30 @@ public class UImanager_ChatBox : MonoBehaviour
         while (dialogArray.Length > index)
         {
             insert.text = "";
+            manager.talking = true;
             foreach (var dialog in dialogArray[index])
             {
                 insert.text += dialog; 
+                if(manager.skip)
+                {
+                    manager.skip = false;
+                    insert.text = dialogArray[index];
+                    break;
+                }
                 yield return new WaitForSeconds(0.05f); 
 
             }
-            yield return new WaitForSeconds(0.5f);
+            manager.skip = false;
+            manager.talking = false;
+            //yield return new WaitForSeconds(0.5f);
+            
+            while (!Input.GetKeyDown(KeyCode.E))// 다음 문장 출력 대기
+            {
+                yield return null; 
+            }
             index++;
-
         }
         
-        yield return new WaitForSeconds(3);
         Destroy(manager.chatBoxUI);
     }
     

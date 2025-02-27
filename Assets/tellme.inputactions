@@ -1,0 +1,45 @@
+{
+    "name": "tellme",
+    "maps": [
+        {
+            "name": "test",
+            "id": "a0575603-614c-4197-9cfa-2c08c4d741ab",
+            "actions": [
+                {
+                    "name": "test",
+                    "type": "Button",
+                    "id": "d070619f-cd30-4fba-9fa9-48fd95c71eba",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e4931205-7735-4736-8d86-c62ea521f306",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "test",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d36e132c-2753-4531-a9f8-fdc3854e72ca",
+                    "path": "<Keyboard>/t",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "test",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
