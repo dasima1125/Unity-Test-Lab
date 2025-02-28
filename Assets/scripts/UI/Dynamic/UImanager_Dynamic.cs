@@ -13,33 +13,30 @@ public class UImanager_Dynamic : MonoBehaviour
     }
 
     #nullable enable
-    public IEnumerator MakeInfo(string []? texts = null ,bool ? clear = null)
+    public void MakeGetItem(string [] texts)
     {
         var manager = UImanager.manager;
-        
-        Transform[] children = manager.canvas.GetComponentsInChildren<Transform>(true);
         foreach (Transform child in manager.canvas.GetComponentsInChildren<Transform>(true))
         {
-            if (child.name == "info") // 이름이 "info"인지 확인
+            if (child.name == "info") 
             {
-                child.transform.DOMoveY(child.transform.position.y + 45f, 0.1f);
-                //child.transform.position += new Vector3(0, 45f, 0);
+                StartCoroutine(MoveY(child, 45f, 0.2f));
+                //child.transform.DOMoveY(child.transform.position.y + 45f, 1f); 닷트윈 맹신 금지
             }
         }
 
-        if (manager.panelQueue.Count >= 5)//5개인상태에서 생성 시도하면
+        if (manager.ItemPanelQueue.Count >= 4)//개인상태에서 생성 시도하면
         {
-            GameObject oldPanel = manager.panelQueue.Dequeue();
-        
-            //DOTween.Kill(oldPanel); 일단 안써도 버그는 안생김
-            oldPanel.GetComponent<CanvasGroup>().DOFade(0, 1f).OnComplete(() => Destroy(oldPanel));
+            GameObject oldPanel = manager.ItemPanelQueue.Dequeue();
+            //DOTween.Kill(oldPanel); 
+            oldPanel.GetComponent<CanvasGroup>().DOFade(0, 0.5f).OnComplete(() => Destroy(oldPanel));
         }
        
         GameObject panelInstance = Instantiate(manager.DynamicUIs["infoAlarm"]);//infoAlarm(Clone)
         panelInstance.name = "info";
         panelInstance.transform.SetParent(manager.canvas.transform, false);
 
-        manager.panelQueue.Enqueue(panelInstance);
+        manager.ItemPanelQueue.Enqueue(panelInstance);
 
         TextMeshProUGUI [] infotitleText = panelInstance.GetComponentsInChildren<TextMeshProUGUI>();
         
@@ -47,13 +44,11 @@ public class UImanager_Dynamic : MonoBehaviour
         if(infotitleText.Length  == 2)
         foreach (var info in infotitleText)
         {
-            info.text = manager.sender[index++];
+            info.text = texts[index++];
         }
 
         var canvas = panelInstance.GetComponent<CanvasGroup>();
-        
         canvas.alpha = 0f;
-        
         canvas.DOFade(1, 1f).OnComplete(() =>  //또는 시퀸스로 지연 구현하는법도있는데 시퀸스는 오브젝트가아니라 참조 주소가 필요함
         {                                      // 즉 큐 구조가 개판이됨
             canvas.DOFade(1, 5f).OnComplete(() =>
@@ -61,24 +56,69 @@ public class UImanager_Dynamic : MonoBehaviour
                 StartCoroutine(Clear());
             });
         });
-
-        //추가방싱 >> 엘든링식
-        //밑에추가 
-        //만약 큐에있는 애면 기존에있던에 트랜스폼 자기높이만큼 +10정도 위로
-        //지금 추가할애가 거기 추가
-  
-        yield return null;
        
     }
+
+    public void MakeInfo(string [] texts)
+    {
+        var manager = UImanager.manager;
+        GameObject panelInstance = Instantiate(manager.DynamicUIs["infoAlarm"]);//주 패널 생성
+        panelInstance.transform.SetParent(manager.canvas.transform, false);
+        manager.InfoUI = panelInstance;
+        panelInstance.transform.position = new Vector3(panelInstance.transform.position.x, panelInstance.transform.position.y + 480f, panelInstance.transform.position.z);
+
+        TextMeshProUGUI [] infotitleText = panelInstance.GetComponentsInChildren<TextMeshProUGUI>();
+        
+        var canvas = panelInstance.GetComponent<CanvasGroup>();
+        canvas.alpha = 0f;
+
+        Sequence sequence = DOTween.Sequence(); 
+        sequence.Append(canvas.DOFade(1,1f));
+        sequence.AppendCallback(() => StartCoroutine(infoString(infotitleText,texts)));
+        sequence.AppendInterval(5f);
+        sequence.Append(canvas.DOFade(0,1f));
+        sequence.AppendCallback(() => Destroy(panelInstance));
+    }
+    IEnumerator MoveY(Transform child, float n,float i)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < i)
+        {
+            float distanceToMove = (n / i) * Time.deltaTime;
+            if(child == null) yield break;
+            child.position = new Vector2(child.position.x, child.position.y + distanceToMove); 
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+    IEnumerator infoString(TextMeshProUGUI [] infotitleText,string [] text)
+    {
+        
+        foreach (char letter in text[0])
+        {
+            infotitleText[0].text += letter; 
+            yield return new WaitForSeconds(0.05f); 
+        }
+        yield return new WaitForSeconds(0.2f); 
+        
+        foreach (char letter in text[1])
+        {
+            infotitleText[1].text += letter; 
+            yield return new WaitForSeconds(0.05f); 
+        }
+        yield return new WaitForSeconds(3);
+    }
+
     IEnumerator Clear()
     {
         var manager = UImanager.manager;
         
-        GameObject target = manager.panelQueue.Dequeue();
-        if(manager.panelQueue == null) yield break;
+        GameObject target = manager.ItemPanelQueue.Dequeue();
+        if(manager.ItemPanelQueue == null) yield break;
 
         Sequence sequence = DOTween.Sequence();  
-        sequence.Append(target.GetComponent<CanvasGroup>().DOFade(0, 1f));
+        sequence.Append(target.GetComponent<CanvasGroup>().DOFade(0, 0.5f));
         yield return sequence.WaitForCompletion();
         
         Destroy(target);

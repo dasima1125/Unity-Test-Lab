@@ -49,8 +49,14 @@ public class UImanager : MonoBehaviour
     
     #region Dynamic UI 관련
     public Dictionary<string, GameObject> DynamicUIs = new();
-    public Queue<GameObject> panelQueue = new();
-    public string [] sender = {"alpha" , "beta"};
+    public Queue<GameObject> ItemPanelQueue = new();
+    public GameObject InfoUI = null;
+
+    public void ShowItemInfo(string [] insert)
+    {
+        UIComposer.Call.Execute(() => UImanager_Dynamic.Dynamic.MakeGetItem(insert));
+    }
+    
 
     
 
@@ -77,10 +83,23 @@ public class UImanager : MonoBehaviour
     {
         var control = GetComponent<PlayerInput>().actions["test"].activeControl.displayName;
         if(control == "T")
-        UIComposer.Call.Execute(() => StartCoroutine(UImanager_Dynamic.Dynamic.MakeInfo()));
+        {
+            string [] testinsert = {"테스트 아이템","정보"};
+            UIComposer.Call.Execute(() => UImanager_Dynamic.Dynamic.MakeGetItem(testinsert));
+        }
+        
 
-        if (control == "E" &&chatBoxUI != null && talking && !skip)
-        skip = true;
+        if(control == "E")
+        {
+            if(chatBoxUI != null && talking && !skip) skip = true;
+            else
+            {
+                string [] testinsert = {"--테스트 인포--","테스트 정보 출력부분"};
+                if(InfoUI == null)
+                UIComposer.Call.Execute(() => UImanager_Dynamic.Dynamic.MakeInfo(testinsert));
+            }
+            
+        }
     }
 
     #endregion

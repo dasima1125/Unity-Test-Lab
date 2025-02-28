@@ -233,11 +233,15 @@ public class scThing : MonoBehaviour
                 //되도록 이부분은 함수내에서 처리해야할거같아
                 scManager insert0= playerManager.GetComponent<scManager>();
 
-                insert0.player_NowHealth += 15;
+                insert0.player_NowHealth += 25;
                 insert0.hp.fillAmount = insert0.player_NowHealth / insert0.player_Health;
         
                 if(insert0.player_NowHealth > insert0.player_Health)
                 insert0.player_NowHealth = insert0.player_Health;
+
+                string [] set1 ={"체력" , "+ 25"};
+
+                UImanager.manager.ShowItemInfo(set1);
         
                 Destroy(gameObject);
             break;
@@ -251,6 +255,10 @@ public class scThing : MonoBehaviour
         
                 if(insert1.player_Nowresource > insert1.resource)
                 insert1.player_Nowresource = insert1.resource;
+
+                string [] set2 ={"탄약" , "+ 15"};
+
+                UImanager.manager.ShowItemInfo(set2);
         
                 Destroy(gameObject);
             break;
@@ -258,6 +266,7 @@ public class scThing : MonoBehaviour
             case 2:
                 Debug.Log("키");
                 scManager insert2= playerManager.GetComponent<scManager>();
+                
 
                 insert2.key_count += 1;
                 Debug.Log(insert2.key_count);
