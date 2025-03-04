@@ -38,6 +38,12 @@ public class UIHandler : MonoBehaviour
         //Debug.Log("팝업생성 명령");
         UImanager.manager.hidePanel_fullScreen();
     }
+    public void Inventory()
+    {
+        string insert = "Inventory";
+        UImanager.manager.ShowPanel_popup_Inventory(insert);
+
+    }
     public void test_Clicked()
     {
         //Debug.Log("팝업생성 명령");

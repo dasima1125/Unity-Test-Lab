@@ -222,8 +222,15 @@ public class scThing : MonoBehaviour
 
     }
 
+    [SerializeField] private string itemName;
+    [SerializeField] private int itemQuantity;
+    [SerializeField] private Sprite sprite;   
+
+    [TextArea]
+    [SerializeField] private string itemDescription;
+
     
-    public void CanTake_Items () 
+    public void CanTake_Items() 
     {
         
         switch(item) 
@@ -242,6 +249,7 @@ public class scThing : MonoBehaviour
                 string [] set1 ={"체력" , "+ 25"};
 
                 UImanager.manager.ShowItemInfo(set1);
+                InventoryManager.Inventory.Add(itemName,itemQuantity,sprite,itemDescription);
         
                 Destroy(gameObject);
             break;
@@ -259,7 +267,6 @@ public class scThing : MonoBehaviour
                 string [] set2 ={"탄약" , "+ 15"};
 
                 UImanager.manager.ShowItemInfo(set2);
-        
                 Destroy(gameObject);
             break;
             //키 아이템

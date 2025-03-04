@@ -37,6 +37,17 @@
                     "action": "test",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5fc05d7e-872b-4a17-8bb7-32a03b4a9ebd",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "test",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

@@ -58,8 +58,6 @@ public class UImanager : MonoBehaviour
     }
     
 
-    
-
     #endregion
 
     #region ChatBox UI 관련
@@ -71,12 +69,15 @@ public class UImanager : MonoBehaviour
 
     public void testalpha()
     {
+        /**
         if(!chatBoxUIs.ContainsKey("ChatBox") || chatBoxUI != null )
         {
             Debug.Log("찾을수없는 ui");
             return; 
         } 
         UIComposer.Call.Execute(() => StartCoroutine(UImanager_ChatBox.Chat.PrintDialog()));
+        */
+        UIComposer.Call.Execute(() => action.showScreen_Alpha("Overlay"));
    
     }    
     void OnTest()
@@ -100,6 +101,11 @@ public class UImanager : MonoBehaviour
             }
             
         }
+        if (control == "Tab")
+        {
+            if(currentfullScreenUI == null)
+            UIComposer.Call.Execute(() => action.showScreen_Alpha("Overlay"));
+        }
     }
 
     #endregion
@@ -114,6 +120,14 @@ public class UImanager : MonoBehaviour
             return;
         }
         UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.show(uiName));
+    }
+    public void ShowPanel_popup_Inventory(string uiName)
+    {
+        if (!popupUIDictionary.ContainsKey(uiName)) 
+        {
+            return;
+        }
+        UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.ShowInventory(uiName));
     }
     public void HidePanel_popup_info()
     {

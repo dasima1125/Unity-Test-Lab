@@ -26,6 +26,19 @@ public class UImanager_PopupUI : MonoBehaviour
         UIComposer.Call.Next();
         
     }
+    public void ShowInventory(string uiName) 
+    {
+        var manager = UImanager.manager;
+
+        GameObject panelInstance = Instantiate(manager.popupUIDictionary[uiName]);
+        panelInstance.transform.SetParent(manager.canvas.transform, false);
+        if (uiName == "Inventory") InventoryManager.Inventory.posSlot = panelInstance.transform.Find("inventorySlot");
+        InventoryManager.Inventory.Updating();
+        
+        manager.currentPopupUI.Push(panelInstance);
+    
+        UIComposer.Call.Next();
+    }
     public void hide() 
     {
         var manager = UImanager.manager;
