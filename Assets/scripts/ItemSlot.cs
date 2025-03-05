@@ -13,9 +13,8 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
     public int slotQuantity;
     public Sprite slotSprite;
     public bool isFull =false;
-
     public string slotItemDescription;
-
+    [SerializeField] private int maxNumberItems = 9;
     //Item Slot//
     [SerializeField] private TMP_Text showQuantityText;
     [SerializeField] private Image showSlotImage;
@@ -27,21 +26,44 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
     public bool isItemSelect;
 
 
-    public void AddItem(string ItemName, int ItemQuantity, Sprite sprite,string itemDescription)
+    public int AddItem(string ItemName, int ItemQuantity, Sprite sprite,string itemDescription)
     {
         //Debug.Log(ItemName + " " + ItemQuantity + " " + sprite.name);
+        if(isFull)
+            return ItemQuantity;
+
+        SlotName = ItemName;
         
-        this.SlotName = ItemName;
-        this.slotQuantity = ItemQuantity;
-        this.slotSprite = sprite;
-        this.slotItemDescription = itemDescription;
-        isFull = true;
-       
-        //showQuantityText.text = "04";
-        //showQuantityText.enabled = true;
+        slotSprite = sprite;
+        showSlotImage.sprite = slotSprite;
+
+        slotItemDescription = itemDescription;
         
-        //showSlotImage.sprite = slotSprite;
+        slotQuantity += ItemQuantity;
+        if(slotQuantity >= maxNumberItems)
+        {
+            Debug.Log("초과");
+            //최대 수량으로 지정하고 가득 찬상태 갱신
+            showQuantityText.text = maxNumberItems.ToString();
+            showQuantityText.enabled = true;
+            isFull = true;
+
+            //남은수량 반환
+            int extraItems = slotQuantity - maxNumberItems;
+            slotQuantity = maxNumberItems;
+            Debug.Log("초과된 수량 : " + extraItems);
+            return extraItems;
+        }
         
+        showQuantityText.text = slotQuantity.ToString();
+        showQuantityText.enabled = true;
+
+        return 0;
+        
+    }
+    public void AddType(string ItemName)
+    {
+
     }
 
     public void OnPointerClick(PointerEventData eventData)

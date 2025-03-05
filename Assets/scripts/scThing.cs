@@ -236,7 +236,6 @@ public class scThing : MonoBehaviour
         switch(item) 
         {   //회복 아이템 
             case 0:
-                Debug.Log("회복");
                 //되도록 이부분은 함수내에서 처리해야할거같아
                 scManager insert0= playerManager.GetComponent<scManager>();
 
@@ -249,13 +248,24 @@ public class scThing : MonoBehaviour
                 string [] set1 ={"체력" , "+ 25"};
 
                 UImanager.manager.ShowItemInfo(set1);
-                InventoryManager.Inventory.Add(itemName,itemQuantity,sprite,itemDescription);
-        
-                Destroy(gameObject);
+                // 아이템 얻는 로직 //
+                int leftoverItme = InventoryManager.Inventory.Add(itemName,itemQuantity,sprite,itemDescription);
+                
+                if(leftoverItme <= 0)
+                {
+                    Destroy(gameObject);
+                } 
+                else
+                {
+                    itemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
+                    //Debug.Log("남은 수량 : "+leftoverItme);
+                }
+                    
+                
+                //
             break;
             //탄약 아이템
             case 1:
-                Debug.Log("탄약");
                 //되도록 이부분은 함수내에서 처리해야할거같아
                 scManager insert1= playerManager.GetComponent<scManager>();
                 insert1.player_Nowresource += 15;

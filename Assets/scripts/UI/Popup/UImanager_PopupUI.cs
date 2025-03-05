@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UImanager_PopupUI : MonoBehaviour
@@ -32,8 +33,13 @@ public class UImanager_PopupUI : MonoBehaviour
 
         GameObject panelInstance = Instantiate(manager.popupUIDictionary[uiName]);
         panelInstance.transform.SetParent(manager.canvas.transform, false);
-        if (uiName == "Inventory") InventoryManager.Inventory.posSlot = panelInstance.transform.Find("inventorySlot");
-        InventoryManager.Inventory.Updating();
+        
+        var send = InventoryManager.Inventory;
+        send.slotPostion = panelInstance.transform.Find("inventorySlot");
+        send.DescriptionName_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
+        send.DescriptionText_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionText/Text").GetComponent<TMP_Text>();
+        send.Updating();
+        
         
         manager.currentPopupUI.Push(panelInstance);
     

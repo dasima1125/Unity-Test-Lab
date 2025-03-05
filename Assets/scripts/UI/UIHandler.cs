@@ -42,7 +42,6 @@ public class UIHandler : MonoBehaviour
     {
         string insert = "Inventory";
         UImanager.manager.ShowPanel_popup_Inventory(insert);
-
     }
     public void test_Clicked()
     {
