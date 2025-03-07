@@ -13,6 +13,8 @@ public class InventoryManager : MonoBehaviour
     }
     public ItemSlot[] itemData;
     public ItemSlot[] itemSlots;
+    public ItemSO[] itemSOs;
+
     [SerializeField]
     private GameObject itemslot;
     
@@ -44,6 +46,21 @@ public class InventoryManager : MonoBehaviour
             
             itemSlots[i] = setSlot.GetComponent<ItemSlot>();
         }
+
+    }
+    public bool UseItem(string itemName)
+    {
+        if (itemName == "") return false;
+        for(int i = 0; i < itemSOs.Length; i++) 
+        {
+            if(itemSOs[i].itemName == itemName)
+            {
+                bool usAble = itemSOs[i].UseItem();
+                return usAble;
+            }
+            
+        }
+        return false;
 
     }
 

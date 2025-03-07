@@ -310,7 +310,7 @@ MonoBehaviour:
   object4: {fileID: 0}
   reward: {fileID: 0}
   needkey: 0
-  itemName: name
+  itemName: HealKit
   itemQuantity: 5
   sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
   itemDescription: test Desscription.... blah blah blah .................
@@ -2434,7 +2434,7 @@ MonoBehaviour:
   object4: {fileID: 0}
   reward: {fileID: 0}
   needkey: 0
-  itemName: name
+  itemName: HealKit
   itemQuantity: 2
   sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
   itemDescription: test Desscription.... blah blah blah .................
@@ -3853,7 +3853,7 @@ MonoBehaviour:
   object4: {fileID: 0}
   reward: {fileID: 0}
   needkey: 0
-  itemName: name
+  itemName: HealKit
   itemQuantity: 5
   sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
   itemDescription: test Desscription.... blah blah blah .................

@@ -6541,6 +6541,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: []
   itemSlots: []
+  itemSOs:
+  - {fileID: 11400000, guid: 1e0a8930f2b2b69448079eedaafd0bfb, type: 2}
   itemslot: {fileID: 866947409386731623, guid: 94fa2cca6aff9634184cf218bc7677c9, type: 3}
   slotPostion: {fileID: 0}
   slotIndex: 10
