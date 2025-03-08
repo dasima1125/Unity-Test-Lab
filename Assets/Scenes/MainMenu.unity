@@ -6539,8 +6539,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d66fd3ef208995746ab467d677281fc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemData: []
   itemSlots: []
+  ItemSlots: []
   itemSOs:
   - {fileID: 11400000, guid: 1e0a8930f2b2b69448079eedaafd0bfb, type: 2}
   itemslot: {fileID: 866947409386731623, guid: 94fa2cca6aff9634184cf218bc7677c9, type: 3}
@@ -6548,6 +6548,7 @@ MonoBehaviour:
   slotIndex: 10
   DescriptionName_TMP: {fileID: 0}
   DescriptionText_TMP: {fileID: 0}
+  NullItemSprite: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
 --- !u!1 &1511413212
 GameObject:
   m_ObjectHideFlags: 0

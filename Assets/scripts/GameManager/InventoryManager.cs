@@ -7,25 +7,37 @@ public class InventoryManager : MonoBehaviour
 {
     private static InventoryManager instance;
     public static InventoryManager Inventory
-    
     { 
-        get => instance ?? (instance = FindObjectOfType<InventoryManager>());
+        get => instance ?? (instance = FindObjectOfType<InventoryManager>()); 
     }
-    public ItemSlot[] itemData;
+    public ItemDTO[] itemDatas;
     public ItemSlot[] itemSlots;
+    public List<ItemSlot> ItemSlots = new();
     public ItemSO[] itemSOs;
 
     [SerializeField]
     private GameObject itemslot;
     
     public Transform slotPostion;
-    public int slotIndex = 10;
+    public int slotIndex = 3;
     //--Item Descript panel--//
     public TMP_Text DescriptionName_TMP;
     public TMP_Text DescriptionText_TMP;
 
+    public Sprite NullItemSprite;
+    void Start()
+    {
+        itemDatas = new ItemDTO[slotIndex];
+        for(int i = 0; i < itemDatas.Length; i++) 
+        {
+            itemDatas[i] = new ItemDTO(null, 0, null, null,NullItemSprite);
+        }
+    }
+
+
     public void Updating()
     {
+        
         if(slotPostion == null) 
         {
             Debug.Log("위치 전송 실패");
@@ -48,6 +60,35 @@ public class InventoryManager : MonoBehaviour
         }
 
     }
+    public void Updating2()
+    {
+        if(slotPostion == null) return;
+        foreach (Transform child in slotPostion.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        ItemSlots.Clear();
+        for(int i = 0; i < itemDatas.Length; i++) 
+        {
+            GameObject setSlot = Instantiate(itemslot);
+            setSlot.transform.SetParent(slotPostion.transform, false);
+
+            var target = setSlot.GetComponent<ItemSlot>();
+
+            target.showDescriptionName = DescriptionName_TMP;
+            target.showDescriptionText = DescriptionText_TMP;
+            target.slotIndex = i;
+
+            
+            if(itemDatas[i].ItemQuantity > 0)
+            {
+                Debug.Log("수량 : " + itemDatas[i].ItemQuantity);
+                target.SlotCreating(itemDatas[i].ItemQuantity,itemDatas[i].ItemSprite);
+            }
+
+            ItemSlots.Add(setSlot.GetComponent<ItemSlot>());
+        }
+    }
     public bool UseItem(string itemName)
     {
         if (itemName == "") return false;
@@ -55,15 +96,28 @@ public class InventoryManager : MonoBehaviour
         {
             if(itemSOs[i].itemName == itemName)
             {
+                Debug.Log("부울문 확인");
                 bool usAble = itemSOs[i].UseItem();
                 return usAble;
             }
-            
         }
         return false;
-
     }
-
+    public bool UseItem2(int index)
+    {
+        if (itemDatas[index].ItemName == "") return false;
+        for(int i = 0; i < itemSOs.Length; i++) 
+        {
+            if(itemSOs[i].itemName == itemDatas[index].ItemName)
+            {
+                Debug.Log("부울문 확인");
+                bool usAble = itemSOs[i].UseItem();
+                return usAble;
+            }
+        }
+        return false;
+    }
+    
     public int Add(string ItemName, int Quantity, Sprite sprite, string itemDescription)
     {
         for (int i = 0; i <itemSlots.Length;i++)
@@ -79,7 +133,24 @@ public class InventoryManager : MonoBehaviour
             }
         }
         return Quantity;
-        
+    }
+    public int Add_ver2(string ItemName, int Quantity, Sprite sprite, string itemDescription)
+    {
+        //Debug.Log("습득");
+        for(int i = 0; i < itemDatas.Length; i++) 
+        {
+            if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
+            {
+                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription);
+                if(leftoverItme > 0)
+                    leftoverItme = Add_ver2(ItemName,leftoverItme,sprite,itemDescription);
+
+                return leftoverItme;
+            }
+            
+        }
+        return Quantity;
+
     }
     public void deSelectAll()
     {
@@ -89,8 +160,14 @@ public class InventoryManager : MonoBehaviour
             itemSlots[i].selectedshader.SetActive(false);
             itemSlots[i].isItemSelect = false; 
         }
-        
-
+    }
+    public void DeSelectAll()
+    {
+        for (int i = 0; i < ItemSlots.Count;i++)
+        {
+            ItemSlots[i].selectedshader.SetActive(false);
+            ItemSlots[i].isItemSelect = false; 
+        }
     }
     
     

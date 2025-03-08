@@ -24,6 +24,12 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
 
     public GameObject selectedshader;
     public bool isItemSelect;
+    //type 2
+
+    [HideInInspector]
+    public int slotIndex;
+    public int Quantity;
+    public Sprite Sprite;
 
 
     public int AddItem(string ItemName, int ItemQuantity, Sprite sprite,string itemDescription)
@@ -61,15 +67,19 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
         return 0;
         
     }
-    public void AddType(string ItemName)
+    public void SlotCreating(int Quantity,Sprite Sprite)
     {
+        showSlotImage.sprite = Sprite;
+        showQuantityText.text = Quantity.ToString();
+        showQuantityText.enabled = true;
 
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if(eventData.button == PointerEventData.InputButton.Left) {
-            OnLeftclicked();
+            //OnLeftclicked();
+            OnLeftclicked2();
             
         }
         if(eventData.button == PointerEventData.InputButton.Right) {
@@ -81,17 +91,48 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
         if(isItemSelect) 
         {
             //일단 사용할수있을지 체크를 먼저 해야함
-            bool usAble = InventoryManager.Inventory.UseItem(SlotName);
+            Debug.Log("체크중");
+            bool usAble = InventoryManager.Inventory.UseItem2(slotIndex);
             if(usAble)
             {
+                Debug.Log("체크");
                 slotQuantity -= 1;
                 showQuantityText.text = slotQuantity.ToString();
                 if(slotQuantity <= 0) EmptySlot();
             }
         }
         else
-        {
+        {   
+            Debug.Log(slotIndex); 
             InventoryManager.Inventory.deSelectAll();
+            InventoryManager.Inventory.DeSelectAll();
+            selectedshader.SetActive(true);
+            isItemSelect = true;
+            showDescriptionName.text = SlotName;
+            showDescriptionText.text = slotItemDescription;
+        }
+    }
+    public void OnLeftclicked2()
+    {
+        if(isItemSelect) 
+        {
+            //일단 사용할수있을지 체크를 먼저 해야함
+            Debug.Log("체크중");
+       
+            bool usAble = InventoryManager.Inventory.UseItem2(slotIndex);
+            if(usAble)
+            {
+                Debug.Log("체크");
+                var data = InventoryManager.Inventory.itemDatas[slotIndex];
+                data.ItemQuantity -= 1;
+                showQuantityText.text = data.ItemQuantity.ToString();
+                if(data.ItemQuantity <= 0) EmptySlot();
+            }
+        }
+        else
+        {   
+           
+            InventoryManager.Inventory.DeSelectAll();
             selectedshader.SetActive(true);
             isItemSelect = true;
             showDescriptionName.text = SlotName;
@@ -101,11 +142,12 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
 
     private void EmptySlot()
     {
+        Debug.Log("비었음");
         showQuantityText.enabled = false;
         isFull = false;
         
         slotSprite = null;
-        showSlotImage.sprite = null;
+        showSlotImage.sprite = InventoryManager.Inventory.itemDatas[slotIndex].Empty;
 
         showDescriptionName.text = "";
         showDescriptionText.text = "";

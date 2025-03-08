@@ -249,6 +249,19 @@ public class scThing : MonoBehaviour
 
                 UImanager.manager.ShowItemInfo(set1);
                 // 아이템 얻는 로직 //
+                int leftoverItme = InventoryManager.Inventory.Add_ver2(itemName,itemQuantity,sprite,itemDescription);
+                if(leftoverItme <= 0)
+                {
+                    Destroy(gameObject);
+                } 
+                else
+                {
+                    itemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
+                    //Debug.Log("남은 수량 : "+leftoverItme);
+                }
+            
+
+                /**
                 int leftoverItme = InventoryManager.Inventory.Add(itemName,itemQuantity,sprite,itemDescription);
                 
                 if(leftoverItme <= 0)
@@ -260,6 +273,7 @@ public class scThing : MonoBehaviour
                     itemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
                     //Debug.Log("남은 수량 : "+leftoverItme);
                 }
+                */
                     
                 
                 //

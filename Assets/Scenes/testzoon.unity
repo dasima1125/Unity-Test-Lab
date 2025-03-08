@@ -5973,10 +5973,10 @@ MonoBehaviour:
   object4: {fileID: 0}
   reward: {fileID: 0}
   needkey: 0
-  itemName: 
-  itemQuantity: 0
+  itemName: 5
+  itemQuantity: 8
   sprite: {fileID: 0}
-  itemDescription: 
+  itemDescription: asd
 --- !u!50 &1056100145
 Rigidbody2D:
   serializedVersion: 4

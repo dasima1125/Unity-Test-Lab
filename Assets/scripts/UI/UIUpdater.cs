@@ -83,7 +83,20 @@ public class UIUpdater : MonoBehaviour
     }
     public void NewSceenUpdate()
     {
+        Debug.Log("씬 전환");
         UImanager.manager.canvas = FindObjectOfType<Canvas>();
+        
+        while (UImanager.manager.currentPopupUI.Count > 0)
+        {
+            GameObject popup = UImanager.manager.currentPopupUI.Pop(); // 스택에서 하나씩 꺼냄
+            if (popup != null) 
+            {
+                Destroy(popup); // 오브젝트 삭제
+            }
+        }
+        UImanager.manager.currentPopupUI.Clear();
+        UImanager.manager.ItemPanelQueue.Clear();
+        //Debug.Log(UImanager.manager.currentPopupUI.Count);
         
     }
 }

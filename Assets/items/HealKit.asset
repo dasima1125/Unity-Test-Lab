@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a8bd36e6ec13c84e8aa07f8a0c771d7, type: 3}
   m_Name: HealKit
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: HealKit
   statToChange: 1
   amountToChangeStat: 3
   attributesToChange: 0
