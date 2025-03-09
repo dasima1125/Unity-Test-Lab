@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 
-public class ItemSlot : MonoBehaviour , IPointerClickHandler
+public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler ,IDragHandler, IEndDragHandler
 {
     //Item Data//
     public string SlotName;
@@ -160,6 +160,26 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler
        
         
     }
+    public bool Swaped = false;
+    private Vector2 originalPostion;
+    private Transform originalLayer;
+     
 
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        originalPostion = transform.Find("ItemImage").gameObject.transform.position;
+        originalLayer = transform.Find("ItemImage");
+        transform.Find("ItemImage").SetParent(transform.parent);
+    }
 
+    public void OnDrag(PointerEventData eventData)
+    {
+        transform.Find("ItemImage").gameObject.transform.position = Input.mousePosition;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if(!Swaped)
+        transform.Find("ItemImage").gameObject.transform.position = originalPostion;
+    }
 }

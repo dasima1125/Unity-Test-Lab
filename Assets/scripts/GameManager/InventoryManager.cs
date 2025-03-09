@@ -141,6 +141,7 @@ public class InventoryManager : MonoBehaviour
         {
             if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
             {
+                Debug.Log(i + " 번째 배열 기입");
                 int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription);
                 if(leftoverItme > 0)
                     leftoverItme = Add_ver2(ItemName,leftoverItme,sprite,itemDescription);

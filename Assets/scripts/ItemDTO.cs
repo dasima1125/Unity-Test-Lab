@@ -54,30 +54,6 @@ public class ItemDTO
         return 0;
         
     }
-    /**
-    public int AddItem(string ItemName, int ItemQuantity, Sprite ItemSprite,string ItemDescription)
-    {
-        if (IsFull) return ItemQuantity;
-        
-        this.ItemName        =   ItemName;
-        this.ItemSprite      =   ItemSprite;
-        this.ItemDescription =   ItemDescription;
-
-        this.ItemQuantity    +=  ItemQuantity;
-        if (this.ItemQuantity > MaxNumberItems)
-        {
-            Debug.Log("초과");
-            int OverQuantity  = this.ItemQuantity - MaxNumberItems;
-            this.ItemQuantity = MaxNumberItems;
-
-            IsFull = true;
-            return OverQuantity;
-        }
-        return 0;
-    }
-    */
-
-    // 아이템이 다 쓰였을 때 초기화하는 메소드
     public void ResetSlot()
     {
         ItemName = string.Empty;

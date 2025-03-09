@@ -96,12 +96,16 @@ MonoBehaviour:
   slotSprite: {fileID: 0}
   isFull: 0
   slotItemDescription: 
+  maxNumberItems: 9
   showQuantityText: {fileID: 4384418713394300553}
   showSlotImage: {fileID: 5687958565103889059}
   showDescriptionName: {fileID: 0}
   showDescriptionText: {fileID: 0}
   selectedshader: {fileID: 9035641970847985495}
   isItemSelect: 0
+  slotIndex: 0
+  Quantity: 0
+  Sprite: {fileID: 0}
 --- !u!1 &2577370946332555293
 GameObject:
   m_ObjectHideFlags: 0
