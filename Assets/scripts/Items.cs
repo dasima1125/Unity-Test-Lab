@@ -5,12 +5,12 @@ using UnityEngine;
 public class Items : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private string itemName;
-    [SerializeField] private int itemQuantity;
-    [SerializeField] private Sprite sprite;   
+    [SerializeField] private string ItemName;
+    [SerializeField] private int ItemQuantity;
+    [SerializeField] private Sprite Sprite;   
 
     [TextArea]
-    [SerializeField] private string itemDescription;
+    [SerializeField] private string ItemDescription;
 
     public bool CanPick = true;
    
@@ -18,22 +18,29 @@ public class Items : MonoBehaviour
     {
         
     }
+    public void AddInfo(ItemDTO itemDTO)
+    {
+        ItemName = itemDTO.ItemName;
+        ItemQuantity = itemDTO.ItemQuantity;
+        Sprite = itemDTO.ItemSprite;
+        ItemDescription = itemDTO.ItemDescription;
+        StartCoroutine(Count());
+    }
 
     // Update is called once per frame
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "player" && CanPick)
         {
-            Debug.Log("접촉");
-            
-            int leftoverItme = InventoryManager.Inventory.Add_ver2(itemName,itemQuantity,sprite,itemDescription);
+            Debug.Log("접촉");  
+            int leftoverItme = InventoryManager.Inventory.Add_ver2(ItemName,ItemQuantity,Sprite,ItemDescription);
             if(leftoverItme <= 0)
             {
                 Destroy(gameObject);
             } 
             else
             {
-                itemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
+                ItemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
             }
           
         }
@@ -41,7 +48,7 @@ public class Items : MonoBehaviour
     }
     public IEnumerator Count()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         CanPick = true;
     }
 }

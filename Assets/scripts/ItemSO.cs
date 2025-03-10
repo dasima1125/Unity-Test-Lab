@@ -19,7 +19,6 @@ public class ItemSO : ScriptableObject
     {
         if (statToChange == StatToChange.Health)
         {
-            Debug.Log("SO진입");
             var target =GameObject.Find("game Manager").GetComponent<scManager>();
             if(target.player_NowHealth >= target.player_Health)
             {

@@ -11,7 +11,6 @@ public class InventoryManager : MonoBehaviour
         get => instance ?? (instance = FindObjectOfType<InventoryManager>()); 
     }
     public ItemDTO[] itemDatas;
-    public ItemSlot[] itemSlots;
     public List<ItemSlot> ItemSlots = new();
     public ItemSO[] itemSOs;
 
@@ -25,6 +24,7 @@ public class InventoryManager : MonoBehaviour
     public TMP_Text DescriptionText_TMP;
 
     public Sprite NullItemSprite;
+    public GameObject testItemPrefab;
     void Start()
     {
         itemDatas = new ItemDTO[slotIndex];
@@ -34,32 +34,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-
-    public void Updating()
-    {
-        
-        if(slotPostion == null) 
-        {
-            Debug.Log("위치 전송 실패");
-            return;
-        }
-        foreach (Transform child in slotPostion.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        itemSlots = new ItemSlot[slotIndex];
-        for(int i = 0; i < slotIndex; i++) 
-        {
-            GameObject setSlot = Instantiate(itemslot);
-            setSlot.transform.SetParent(slotPostion.transform, false);
-            //인수 재정립
-            setSlot.GetComponent<ItemSlot>().showDescriptionName = DescriptionName_TMP;
-            setSlot.GetComponent<ItemSlot>().showDescriptionText = DescriptionText_TMP;
-            
-            itemSlots[i] = setSlot.GetComponent<ItemSlot>();
-        }
-
-    }
     public void Updating2()
     {
         if(slotPostion == null) return;
@@ -82,27 +56,13 @@ public class InventoryManager : MonoBehaviour
             
             if(itemDatas[i].ItemQuantity > 0)
             {
-                Debug.Log("수량 : " + itemDatas[i].ItemQuantity);
                 target.SlotCreating(itemDatas[i].ItemQuantity,itemDatas[i].ItemSprite);
             }
 
             ItemSlots.Add(setSlot.GetComponent<ItemSlot>());
         }
     }
-    public bool UseItem(string itemName)
-    {
-        if (itemName == "") return false;
-        for(int i = 0; i < itemSOs.Length; i++) 
-        {
-            if(itemSOs[i].itemName == itemName)
-            {
-                Debug.Log("부울문 확인");
-                bool usAble = itemSOs[i].UseItem();
-                return usAble;
-            }
-        }
-        return false;
-    }
+   
     public bool UseItem2(int index)
     {
         if (itemDatas[index].ItemName == "") return false;
@@ -110,7 +70,6 @@ public class InventoryManager : MonoBehaviour
         {
             if(itemSOs[i].itemName == itemDatas[index].ItemName)
             {
-                Debug.Log("부울문 확인");
                 bool usAble = itemSOs[i].UseItem();
                 return usAble;
             }
@@ -118,22 +77,6 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
     
-    public int Add(string ItemName, int Quantity, Sprite sprite, string itemDescription)
-    {
-        for (int i = 0; i <itemSlots.Length;i++)
-        {
-            if (itemSlots[i].isFull == false && itemSlots[i].SlotName == ItemName || itemSlots[i].slotQuantity == 0)
-            {
-                int leftoverItme = itemSlots[i].AddItem(ItemName,Quantity,sprite,itemDescription);
-                // 0보다 크면 재귀
-                if(leftoverItme > 0)
-                    leftoverItme = Add(ItemName,leftoverItme,sprite,itemDescription);
-                
-                return leftoverItme;
-            }
-        }
-        return Quantity;
-    }
     public int Add_ver2(string ItemName, int Quantity, Sprite sprite, string itemDescription)
     {
         //Debug.Log("습득");
@@ -141,10 +84,17 @@ public class InventoryManager : MonoBehaviour
         {
             if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
             {
-                Debug.Log(i + " 번째 배열 기입");
+                //Debug.Log(i + " 번째 배열 기입");
                 int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription);
                 if(leftoverItme > 0)
                     leftoverItme = Add_ver2(ItemName,leftoverItme,sprite,itemDescription);
+                if(leftoverItme <= 0 && ItemSlots != null)
+                {
+                    Updating2();
+                    Debug.Log("아이템 획득");
+
+                }
+                
 
                 return leftoverItme;
             }
@@ -152,15 +102,6 @@ public class InventoryManager : MonoBehaviour
         }
         return Quantity;
 
-    }
-    public void deSelectAll()
-    {
-        for (int i = 0; i < itemSlots.Length;i++)
-        {
-            //Debug.Log("초기화중");
-            itemSlots[i].selectedshader.SetActive(false);
-            itemSlots[i].isItemSelect = false; 
-        }
     }
     public void DeSelectAll()
     {

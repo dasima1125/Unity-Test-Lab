@@ -41,10 +41,9 @@ public class ItemDTO
         this.ItemDescription =   ItemDescription;
 
         this.ItemQuantity    +=  ItemQuantity;
-        //Debug.Log("현재 수량 : " + this.ItemQuantity + " 최대수량 : " + MaxNumberItems);
         if (this.ItemQuantity >= MaxNumberItems)
         {
-            //Debug.Log("초과");
+        
             int OverQuantity  = this.ItemQuantity - MaxNumberItems;
             this.ItemQuantity = MaxNumberItems;
 
