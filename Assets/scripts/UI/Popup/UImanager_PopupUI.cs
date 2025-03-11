@@ -39,6 +39,7 @@ public class UImanager_PopupUI : MonoBehaviour
         send.DescriptionName_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
         send.DescriptionText_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionText/Text").GetComponent<TMP_Text>();
         //send.Updating();
+        //send.Updating();
         send.Updating2();
         
         

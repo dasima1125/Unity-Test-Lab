@@ -9,29 +9,23 @@ using System;
 public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler ,IDragHandler, IEndDragHandler 
 {
     //Item Data//
-    public string SlotName;
-    public int slotQuantity;
+    public int Quantity; //이건 임시용
     public Sprite slotSprite;
-    public bool isFull =false;
-    public string slotItemDescription;
+    
+    
     //Item Slot//
+    public int slotIndex;
+    public bool isFull =false;
     [SerializeField] private TMP_Text showQuantityText;
     [SerializeField] private Image showSlotImage;
+    public GameObject selectedshader;
+    public bool isItemSelect;
     //Item Description Slot//
     public TMP_Text showDescriptionName;
     public TMP_Text showDescriptionText;
 
-    public GameObject selectedshader;
-    public bool isItemSelect;
-    //type 2
-    [HideInInspector]
-    public int slotIndex;
-    public int Quantity;
-    public Sprite Sprite;
-
     
-
-
+   
     
     public void SlotCreating(int Quantity,Sprite Sprite)
     {
@@ -40,7 +34,6 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
         showQuantityText.enabled = true;
 
         this.Quantity = Quantity;
-
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -53,12 +46,11 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
             OnRightclicked();
         }
     }
-        public void OnLeftclicked()
+    public void OnLeftclicked()
     {
         if(isItemSelect) 
         {
-            //일단 사용할수있을지 체크를 먼저 해야함
-            bool usAble = InventoryManager.Inventory.UseItem2(slotIndex);
+            bool usAble = InventoryManager.Inventory.UseItem(slotIndex);
             if(usAble)
             {
                 var data = InventoryManager.Inventory.itemDatas[slotIndex];
@@ -96,13 +88,9 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
         {
             if(InventoryManager.Inventory.testItemPrefab == null) return;
             DropItem(slotIndex);
-            
         }
         
-       
-        
     }
-    public bool Swaped = false;
     private Vector2 originalPosition;
     private Vector2 originalSizeDelta;
     
@@ -135,24 +123,16 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
     {
         if(testtarget == null) return;
 
-        if(!Swaped)
         testtarget.position = originalPosition;
-
         testtarget.sizeDelta = originalSizeDelta;
         testtarget.SetParent(originalLayer);
 
-        if (eventData.pointerCurrentRaycast.gameObject != null)
-        {
+        
             var swapTarget = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemSlot>();
-            if (swapTarget != null)
-            {
-                if (swapTarget.slotIndex != slotIndex)
-                {
-                    swapItem(swapTarget.slotIndex);
-                }
+            if (swapTarget != null && swapTarget.slotIndex != slotIndex)
+            {  
+                swapItem(swapTarget.slotIndex);
             }
-           
-        }
         
     }
     public void swapItem(int targetIndex)
@@ -163,7 +143,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
         
         datas.itemDatas[targetIndex] = datas.itemDatas[slotIndex];
         datas.itemDatas[slotIndex] = temp;
-        datas.Updating2();
+        datas.Updating();
 
 
     }

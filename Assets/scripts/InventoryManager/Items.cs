@@ -14,10 +14,6 @@ public class Items : MonoBehaviour
 
     public bool CanPick = true;
    
-    void Start()
-    {
-        
-    }
     public void AddInfo(ItemDTO itemDTO)
     {
         ItemName = itemDTO.ItemName;
@@ -33,7 +29,7 @@ public class Items : MonoBehaviour
         if (collision.gameObject.tag == "player" && CanPick)
         {
             Debug.Log("접촉");  
-            int leftoverItme = InventoryManager.Inventory.Add_ver2(ItemName,ItemQuantity,Sprite,ItemDescription);
+            int leftoverItme = InventoryManager.Inventory.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription);
             if(leftoverItme <= 0)
             {
                 Destroy(gameObject);

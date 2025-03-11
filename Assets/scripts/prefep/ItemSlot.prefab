@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5448409085782548317}
   - component: {fileID: 1869241717745746409}
   - component: {fileID: 7473792687924149191}
-  - component: {fileID: 1028197040985585450}
+  - component: {fileID: 5281186948921175570}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -79,7 +79,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1028197040985585450
+--- !u!114 &5281186948921175570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -88,25 +88,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 866947409386731623}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eadc22d45dcb6e4aa12285698df3bea, type: 3}
+  m_Script: {fileID: 11500000, guid: 59faf1820967f0749933c8daeb38ced8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SlotName: 
-  slotQuantity: 0
-  slotSprite: {fileID: 0}
-  isFull: 0
-  slotItemDescription: 
-  maxNumberItems: 9
+  slotIndex: 0
   showQuantityText: {fileID: 4384418713394300553}
   showSlotImage: {fileID: 5687958565103889059}
-  showDescriptionName: {fileID: 0}
-  showDescriptionText: {fileID: 0}
   selectedshader: {fileID: 9035641970847985495}
   isItemSelect: 0
-  slotIndex: 0
-  Quantity: 0
-  Sprite: {fileID: 0}
-  Swaped: 0
+  showDescriptionNameZone: {fileID: 0}
+  showDescriptionTextZone: {fileID: 0}
 --- !u!1 &2577370946332555293
 GameObject:
   m_ObjectHideFlags: 0

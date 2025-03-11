@@ -12,13 +12,14 @@ public class InventoryManager : MonoBehaviour
     }
     public ItemDTO[] itemDatas;
     public List<ItemSlot> ItemSlots = new();
+    public List<ItemSlotHandler> ItemSlot = new();
     public ItemSO[] itemSOs;
 
     [SerializeField]
     private GameObject itemslot;
     
     public Transform slotPostion;
-    public int slotIndex = 3;
+    public int slotIndex;
     //--Item Descript panel--//
     public TMP_Text DescriptionName_TMP;
     public TMP_Text DescriptionText_TMP;
@@ -34,7 +35,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void Updating2()
+    public void Updating()
     {
         if(slotPostion == null) return;
         foreach (Transform child in slotPostion.transform)
@@ -61,9 +62,30 @@ public class InventoryManager : MonoBehaviour
 
             ItemSlots.Add(setSlot.GetComponent<ItemSlot>());
         }
+        
+    }
+    public void Updating2()
+    {
+        if(slotPostion == null) return;
+        foreach (Transform child in slotPostion.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        ItemSlot.Clear();
+        for(int i = 0; i < itemDatas.Length; i++) 
+        {
+            GameObject setSlot = Instantiate(itemslot);
+            setSlot.transform.SetParent(slotPostion.transform, false);
+
+            setSlot.GetComponent<ItemSlotHandler>().slotIndex = i;
+  
+            ItemSlot.Add(setSlot.GetComponent<ItemSlotHandler>());
+        }
+        Debug.Log("" + ItemSlot.Count);
+
     }
    
-    public bool UseItem2(int index)
+    public bool UseItem(int index)
     {
         if (itemDatas[index].ItemName == "") return false;
         for(int i = 0; i < itemSOs.Length; i++) 
@@ -77,9 +99,9 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
     
-    public int Add_ver2(string ItemName, int Quantity, Sprite sprite, string itemDescription)
+    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription)
     {
-        //Debug.Log("습득");
+   
         for(int i = 0; i < itemDatas.Length; i++) 
         {
             if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
@@ -87,15 +109,10 @@ public class InventoryManager : MonoBehaviour
                 //Debug.Log(i + " 번째 배열 기입");
                 int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription);
                 if(leftoverItme > 0)
-                    leftoverItme = Add_ver2(ItemName,leftoverItme,sprite,itemDescription);
+                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription);
                 if(leftoverItme <= 0 && ItemSlots != null)
-                {
-                    Updating2();
-                    Debug.Log("아이템 획득");
-
-                }
+                    Updating();
                 
-
                 return leftoverItme;
             }
             
@@ -105,12 +122,15 @@ public class InventoryManager : MonoBehaviour
     }
     public void DeSelectAll()
     {
-        for (int i = 0; i < ItemSlots.Count;i++)
+        //작동
+        Debug.Log("jhgkj");
+        for (int i = 0; i < ItemSlot.Count;i++)
         {
-            ItemSlots[i].selectedshader.SetActive(false);
-            ItemSlots[i].isItemSelect = false; 
+            ItemSlot[i].selectedshader.SetActive(false);
+            ItemSlot[i].isItemSelect = false; 
         }
     }
+    // new Zoon
     
     
 }
