@@ -81,8 +81,6 @@ public class InventoryManager : MonoBehaviour
   
             ItemSlot.Add(setSlot.GetComponent<ItemSlotHandler>());
         }
-        Debug.Log("" + ItemSlot.Count);
-
     }
    
     public bool UseItem(int index)
@@ -123,7 +121,6 @@ public class InventoryManager : MonoBehaviour
     public void DeSelectAll()
     {
         //작동
-        Debug.Log("jhgkj");
         for (int i = 0; i < ItemSlot.Count;i++)
         {
             ItemSlot[i].selectedshader.SetActive(false);

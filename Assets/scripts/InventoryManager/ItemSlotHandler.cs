@@ -43,6 +43,7 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         showSlotImage.sprite = ItemData.ItemSprite;
         showQuantityText.text = ItemData.ItemQuantity.ToString();
         showQuantityText.enabled = true;
+        
     }
 
     #region 드래그 구현구획
@@ -79,7 +80,25 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         MoveTarget.SetParent(originalLayer);
 
         //작동구조 위치
-        
+        var swapTarget = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemSlotHandler>();
+        if (swapTarget != null && swapTarget.slotIndex != slotIndex)
+        {
+            controller.SwapItem(slotIndex,swapTarget.slotIndex);
+            //이방식은 지양됨 뷰에서 뷰는 안되고 뷰에서 뷰모델에 명령을 보내고 뷰모델에서 명령을뿌려야함
+            inventory.ItemSlot[swapTarget.slotIndex].SlotUpdate(swapTarget.slotIndex);
+            SlotUpdate(slotIndex);
+            // 잠시끌고옴
+
+            //하이라이트 함수로 사용하는게맞는거같음
+            InventoryManager.Inventory.DeSelectAll();
+
+            inventory.ItemSlot[swapTarget.slotIndex].selectedshader.SetActive(true);
+            inventory.ItemSlot[swapTarget.slotIndex].isItemSelect = true;
+
+            var data = inventory.itemDatas[swapTarget.slotIndex];
+            showDescriptionNameZone.text = data.ItemName;
+            showDescriptionTextZone.text = data.ItemDescription;
+        }
     }
     #endregion
 
@@ -99,10 +118,9 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     {
         if(isItemSelect) 
         {
-            bool usAble = inventory.UseItem(slotIndex);
+            bool usAble = controller.UseItem(slotIndex);
             if(usAble)
             {
-                Debug.Log("사용");
                 SlotUpdate(slotIndex);
             }
         }
@@ -124,6 +142,7 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     {
         if(isItemSelect)
         {
+            Debug.Log("우클릭");
             bool usAble = controller.DropItem(slotIndex);
             if(usAble)
             {

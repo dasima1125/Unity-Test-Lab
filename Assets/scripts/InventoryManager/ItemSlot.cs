@@ -158,7 +158,6 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler ,IBeginDragHandler 
         var setting = testItem.GetComponent<Items>();
         setting.CanPick = false;
         
-        setting.AddInfo(target.itemDatas[index]);
         Debug.Log("아이템 드랍 체크");
 
     }

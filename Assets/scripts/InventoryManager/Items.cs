@@ -14,22 +14,24 @@ public class Items : MonoBehaviour
 
     public bool CanPick = true;
    
-    public void AddInfo(ItemDTO itemDTO)
+
+    public void DropItem(ItemDTO itemDTO,int i)
     {
         ItemName = itemDTO.ItemName;
-        ItemQuantity = itemDTO.ItemQuantity;
         Sprite = itemDTO.ItemSprite;
+        GetComponent<SpriteRenderer>().sprite = Sprite;
         ItemDescription = itemDTO.ItemDescription;
+        
+        ItemQuantity = i;
         StartCoroutine(Count());
     }
 
-    // Update is called once per frame
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "player" && CanPick)
         {
             Debug.Log("접촉");  
-            int leftoverItme = InventoryManager.Inventory.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription);
+            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription);
             if(leftoverItme <= 0)
             {
                 Destroy(gameObject);

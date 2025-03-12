@@ -15,7 +15,6 @@ public class ItemDTO
 
     //나중에 아이템의 종류에 따라 최대수량을 정할꺼임
     public int MaxNumberItems = 9;
-    public bool ItemFull =false;
     public bool IsFull = false;
 
     //강낭콩 (일단은 두는곳)
@@ -43,7 +42,6 @@ public class ItemDTO
         this.ItemQuantity    +=  ItemQuantity;
         if (this.ItemQuantity >= MaxNumberItems)
         {
-        
             int OverQuantity  = this.ItemQuantity - MaxNumberItems;
             this.ItemQuantity = MaxNumberItems;
 
@@ -52,6 +50,15 @@ public class ItemDTO
         }
         return 0;
         
+    }
+    public bool DecreaseItem(int i)
+    {
+        if(ItemQuantity <= 0 || ItemQuantity < i) return false;
+
+        ItemQuantity -= i;
+        IsFull = false;
+        
+        return true;
     }
     public void ResetSlot()
     {
