@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ItemSlotController : MonoBehaviour
@@ -81,10 +82,132 @@ public class ItemSlotController : MonoBehaviour
     }
     public void SwapItem(int slotIndex, int targetIndex)
     {
-        // 임시 변수 사용하여 두 아이템을 교환
-        var temp = Inventory.itemDatas[slotIndex];
-        Inventory.itemDatas[slotIndex] = Inventory.itemDatas[targetIndex];
-        Inventory.itemDatas[targetIndex] = temp;
+        ItemDTO slotData   = Inventory.itemDatas[slotIndex];
+        ItemDTO targetData = Inventory.itemDatas[targetIndex];
+        
+        if(slotData.ItemName == targetData.ItemName)
+        {
+            int leftoverItem = targetData.AddItem(slotData.ItemName,slotData.ItemQuantity,slotData.ItemSprite,slotData.ItemDescription);
+            
+            slotData.IsFull = false;
+            slotData.ItemQuantity = 0;
+            slotData.AddItem(slotData.ItemName,leftoverItem,slotData.ItemSprite,slotData.ItemDescription);
+            
+            if (slotData.ItemQuantity == 0)
+            {
+                Inventory.itemDatas[slotIndex].ResetSlot();  
+            } 
+            else
+            {
+                Inventory.itemDatas[slotIndex] = slotData; 
+            }  
+            Inventory.itemDatas[targetIndex] = targetData;
+        }
+        else
+        {
+            Inventory.itemDatas[slotIndex]   = targetData;
+            Inventory.itemDatas[targetIndex] = slotData;
+        }
+
+    }
+    public void SortItemSlot() //일단 빈칸정리
+    {   
+        /**
+        int type = 1;
+        // 이름순
+        // 수량순
+        ItemDTO[] SortDatas = new ItemDTO[Inventory.itemDatas.Length];
+        List<ItemDTO>SortDatasName = new();
+    
+        int index = 0;
+        foreach(ItemDTO item in Inventory.itemDatas)
+        {
+            if (item.ItemQuantity > 0)
+            {
+                //SortDatas[index] = item;
+                SortDatasName.Add(item);
+                index++;
+            }
+        }
+        Debug.Log("존재하는 인벤토리 아이템 칸 수: " +SortDatasName.Count);
+
+        
+        switch (type)
+        {
+            case 1:
+            
+            SortDatasName.Sort((a, b) =>
+            {
+                int nameCompare = a.ItemName.CompareTo(b.ItemName); // 이름 기준 정렬 (오름차순)
+                if (nameCompare == 0) 
+                    return b.ItemQuantity.CompareTo(a.ItemQuantity); // 같은 이름이면 수량 많은 순 (내림차순)
+                return nameCompare;
+            });
+            break;
+            case 2:
+
+            break;
+            case 3:
+
+            break;
+            
+        }
+        for (int i = 0; i < SortDatasName.Count; i++)
+        {
+            SortDatas[i] = SortDatasName[i];
+        }
+
+        for (int i = index; i < SortDatas.Length; i++)
+        {
+            SortDatas[i] = new ItemDTO(null, 0, null, null,Inventory.NullItemSprite);
+        }
+
+        Debug.Log("빈칸 제거");
+        Inventory.itemDatas = SortDatas;
+        */
+
+        ItemDTO[] targetDatas = Inventory.itemDatas.ToArray();
+        int type = 2;
+
+        switch (type)
+        {
+            case 1: //이름순
+            
+                List<ItemDTO> sortItems_1 = targetDatas.Where(item => item.ItemQuantity > 0)  
+                                                        .OrderBy(item => item.ItemName)       
+                                                        .ThenByDescending(item => item.ItemQuantity) 
+                                                        .ToList();
+        
+                List<ItemDTO> emptySlots_1 = targetDatas.Where(item => item.ItemQuantity == 0) 
+                                                        .ToList(); 
+            
+                sortItems_1.AddRange(emptySlots_1);
+                Inventory.itemDatas = sortItems_1.ToArray();
+            break;
+            
+            case 2: //수량순
+                List<IGrouping<string, ItemDTO>> sortGroupItems_2 = targetDatas.Where(item => item.ItemQuantity > 0)
+                                                    .GroupBy(item => item.ItemName)// 같은 아이템끼리 그룹화
+                                                    .OrderByDescending(group => group.Sum(item => item.ItemQuantity)) // 그룹 내 수량 합으로 내림차순 정렬
+                                                    .ThenBy(group => group.Key) // 만약 같은수량이면 뭐 이름순으로 하자
+                                                    .ToList();
+                
+                List<ItemDTO> emptySlots_2 = targetDatas.Where(item => item.ItemQuantity == 0)
+                                                                    .ToList();
+                
+                List<ItemDTO> sortItem_2 = new List<ItemDTO>();// 각 그룹 분해후 추가
+                foreach (var group in sortGroupItems_2) sortItem_2.AddRange(group.OrderByDescending(item => item.ItemQuantity));// 람다식으로 수량 많은 순으로
+                
+                sortItem_2.AddRange(emptySlots_2);
+                Inventory.itemDatas = sortItem_2.ToArray();
+            break;
+            case 3:
+
+            break;
+            
+        }
+    
+        
     }
 
 }

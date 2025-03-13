@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+public enum ItemType
+{
+    Consumable,    // 소모품 
+    Equipment,     // 장비 
+    Material,      // 재료 
+    QuestItem,     // 퀘스트
+    Null           // 시험용 빈칸 
+    
+}
 
 public class ItemDTO
 {
@@ -12,6 +21,7 @@ public class ItemDTO
     public int ItemQuantity;
     public Sprite ItemSprite;
     public string ItemDescription;
+    public ItemType ItemCategory;
 
     //나중에 아이템의 종류에 따라 최대수량을 정할꺼임
     public int MaxNumberItems = 9;

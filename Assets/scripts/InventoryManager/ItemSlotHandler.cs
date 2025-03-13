@@ -111,6 +111,9 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         if(eventData.button == PointerEventData.InputButton.Right) {
             OnRightclicked();
         }
+        if(eventData.button == PointerEventData.InputButton.Middle) {
+            TestClicked();
+        }
         
     }
 
@@ -126,7 +129,6 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         }
         else
         {
-            //Description show
             InventoryManager.Inventory.DeSelectAll();
 
             selectedshader.SetActive(true);
@@ -151,6 +153,14 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
             }
         }
 
+    }
+    public void TestClicked()
+    {
+        controller.SortItemSlot();
+        for(int i = 0; i < inventory.ItemSlot.Count; i++) 
+        {
+            inventory.ItemSlot[i].SlotUpdate(i);
+        }
     }
     //== 출력 부분 ==//
     public void EmptySlot()

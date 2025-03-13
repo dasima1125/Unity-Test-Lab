@@ -79,11 +79,10 @@ public class UIUpdater : MonoBehaviour
                 manager.fullScreenUIDictionary.Add(fullScreenUI.name, fullScreenUI);
             }
         }
-        //Debug.Log(manager.fullScreenUIDictionary.Count);
     }
     public void NewSceenUpdate()
     {
-        Debug.Log("씬 전환");
+        //Debug.Log("씬 전환");
         UImanager.manager.canvas = FindObjectOfType<Canvas>();
         
         while (UImanager.manager.currentPopupUI.Count > 0)

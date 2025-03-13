@@ -7,6 +7,7 @@ public class Items : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private string ItemName;
     [SerializeField] private int ItemQuantity;
+    [SerializeField] private ItemType ItemType;   
     [SerializeField] private Sprite Sprite;   
 
     [TextArea]
