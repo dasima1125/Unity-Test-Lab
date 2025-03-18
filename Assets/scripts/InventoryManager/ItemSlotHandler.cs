@@ -79,7 +79,6 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         MoveTarget.sizeDelta =     originalSize;
         MoveTarget.SetParent(originalLayer);
 
-        //작동구조 위치
         var swapTarget = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemSlotHandler>();
         if (swapTarget != null && swapTarget.slotIndex != slotIndex)
         {
@@ -102,6 +101,8 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     }
     #endregion
 
+    #region 클릭 구획
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if(eventData.button == PointerEventData.InputButton.Left) {
@@ -112,7 +113,7 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
             OnRightclicked();
         }
         if(eventData.button == PointerEventData.InputButton.Middle) {
-            TestClicked();
+            //TestClicked();
         }
         
     }
@@ -142,25 +143,22 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     }
     public void OnRightclicked()
     {
-        if(isItemSelect)
+        if(isItemSelect && inventory.itemDatas[slotIndex].ItemQuantity > 0)
         {
-            Debug.Log("우클릭");
-            bool usAble = controller.DropItem(slotIndex);
-            if(usAble)
-            {
-                Debug.Log("드랍");
-                SlotUpdate(slotIndex);
-            }
+            CreateContext();
         }
 
     }
     public void TestClicked()
     {
+        /**
         controller.SortItemSlot();
         for(int i = 0; i < inventory.ItemSlot.Count; i++) 
         {
             inventory.ItemSlot[i].SlotUpdate(i);
         }
+        */
+        CreateContext();
     }
     //== 출력 부분 ==//
     public void EmptySlot()
@@ -168,5 +166,27 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         showQuantityText.enabled = false;
         showSlotImage.sprite = InventoryManager.Inventory.itemDatas[slotIndex].Empty;
     }
+
+    #endregion
+
+    #region 컨텍스트 호출
+    public void CreateContext(string alpha = null)
+    {
+        string a ="ContextPanelUI";
+        if(!inventory.InventoryUIDictionary.ContainsKey(a)) return;
+         
+        GameObject contextPanel = Instantiate(inventory.InventoryUIDictionary[a]);
+        contextPanel.transform.SetParent(UImanager.manager.canvas.transform, false);
+        contextPanel.GetComponent<InventoryContextHandler>().slotIndex = slotIndex;
+        
+        RectTransform slotPos    = gameObject.GetComponent<RectTransform>();// 슬롯 위치
+        RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();//버튼위치 조정
+        
+        buttonRect.position = slotPos.position - new Vector3((buttonRect.rect.width / 2) -5,(buttonRect.rect.height / 2) - 13); //초기 설계를 잘못했나..  세부조정이 좀
+        //맘에 안들긴하는데 피벗 관련 나중에 해결 요망
+        inventory.InventoryUI.Push(contextPanel);
+        
+    }
+    #endregion
     
 }

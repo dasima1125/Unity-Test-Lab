@@ -250,7 +250,7 @@ public class scThing : MonoBehaviour
                 UImanager.manager.ShowItemInfo(set1);
                 // 아이템 얻는 로직 //
                 //int leftoverItme = InventoryManager.Inventory.Add_ver(itemName,itemQuantity,sprite,itemDescription);
-                int leftoverItme = ItemSlotController.controll.Add_ver(itemName,itemQuantity,sprite,itemDescription);
+                int leftoverItme = ItemSlotController.controll.Add_ver(itemName,itemQuantity,sprite,itemDescription,0);
                 if(leftoverItme <= 0)
                 {
                     Destroy(gameObject);

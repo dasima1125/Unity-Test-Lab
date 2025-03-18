@@ -33,38 +33,10 @@ public class InventoryManager : MonoBehaviour
         {
             itemDatas[i] = new ItemDTO(null, 0, null, null,NullItemSprite);
         }
+        //이건 나중에 옴길꺼임
+        TestUpdate();
     }
-
     public void Updating()
-    {
-        if(slotPostion == null) return;
-        foreach (Transform child in slotPostion.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        ItemSlots.Clear();
-        for(int i = 0; i < itemDatas.Length; i++) 
-        {
-            GameObject setSlot = Instantiate(itemslot);
-            setSlot.transform.SetParent(slotPostion.transform, false);
-
-            var target = setSlot.GetComponent<ItemSlot>();
-
-            target.showDescriptionName = DescriptionName_TMP;
-            target.showDescriptionText = DescriptionText_TMP;
-            target.slotIndex = i;
-
-            
-            if(itemDatas[i].ItemQuantity > 0)
-            {
-                target.SlotCreating(itemDatas[i].ItemQuantity,itemDatas[i].ItemSprite);
-            }
-
-            ItemSlots.Add(setSlot.GetComponent<ItemSlot>());
-        }
-        
-    }
-    public void Updating2()
     {
         if(slotPostion == null) return;
         foreach (Transform child in slotPostion.transform)
@@ -97,17 +69,16 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
     
-    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription)
+    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType)
     {
    
         for(int i = 0; i < itemDatas.Length; i++) 
         {
             if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
             {
-                //Debug.Log(i + " 번째 배열 기입");
-                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription);
+                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType);
                 if(leftoverItme > 0)
-                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription);
+                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType);
                 if(leftoverItme <= 0 && ItemSlots != null)
                     Updating();
                 
@@ -128,6 +99,24 @@ public class InventoryManager : MonoBehaviour
         }
     }
     // new Zoon
+    // Context Zoon
+
+    public Dictionary<string, GameObject> InventoryUIDictionary = new();
+    public Stack<GameObject> InventoryUI = new(); 
+    
+    public void TestUpdate() 
+    {
+        GameObject[] InventoryUIs = Resources.LoadAll<GameObject>("InventorySystem/ContextMenuUIs");
+        //Debug.Log(InventoryUIs.Length);
+        foreach(GameObject InventoryUI in InventoryUIs)
+        {
+            if(!InventoryUIDictionary.ContainsKey(InventoryUI.name))
+            {
+                InventoryUIDictionary.Add(InventoryUI.name, InventoryUI);
+            }
+        }
+        
+    }
     
     
 }

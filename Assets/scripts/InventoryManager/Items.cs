@@ -20,6 +20,7 @@ public class Items : MonoBehaviour
     {
         ItemName = itemDTO.ItemName;
         Sprite = itemDTO.ItemSprite;
+        ItemType = itemDTO.ItemCategory;
         GetComponent<SpriteRenderer>().sprite = Sprite;
         ItemDescription = itemDTO.ItemDescription;
         
@@ -32,7 +33,7 @@ public class Items : MonoBehaviour
         if (collision.gameObject.tag == "player" && CanPick)
         {
             Debug.Log("접촉");  
-            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription);
+            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType);
             if(leftoverItme <= 0)
             {
                 Destroy(gameObject);

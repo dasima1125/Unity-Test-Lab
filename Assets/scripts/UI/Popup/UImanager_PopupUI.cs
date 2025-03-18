@@ -38,9 +38,7 @@ public class UImanager_PopupUI : MonoBehaviour
         send.slotPostion = panelInstance.transform.Find("inventorySlot");
         send.DescriptionName_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
         send.DescriptionText_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionText/Text").GetComponent<TMP_Text>();
-        //send.Updating();
-        //send.Updating();
-        send.Updating2();
+        send.Updating();
         
         
         manager.currentPopupUI.Push(panelInstance);

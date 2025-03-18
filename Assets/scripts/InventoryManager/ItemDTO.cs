@@ -5,12 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 public enum ItemType
 {
+    Null,          // 시험용 빈칸 
     Consumable,    // 소모품 
     Equipment,     // 장비 
     Material,      // 재료 
-    QuestItem,     // 퀘스트
-    Null           // 시험용 빈칸 
-    
+    QuestItem      // 퀘스트
 }
 
 public class ItemDTO
@@ -30,8 +29,7 @@ public class ItemDTO
     //강낭콩 (일단은 두는곳)
     public Sprite Empty;
 
-
-    public ItemDTO(string ItemName, int ItemQuantity, Sprite ItemSprite, string ItemDescription,Sprite bin)
+    public ItemDTO(string ItemName, int ItemQuantity, Sprite ItemSprite, string ItemDescription,Sprite bin ,ItemType itemType = 0)
     {
         this.ItemName         = ItemName;
         this.ItemQuantity     = ItemQuantity;
@@ -39,15 +37,35 @@ public class ItemDTO
         this.ItemDescription  = ItemDescription;
         Empty = bin;
     }
+    private ItemDTO(ItemDTO itemDTO)
+    {
+        ItemName = itemDTO.ItemName;
+        ItemQuantity = itemDTO.ItemQuantity;
+        ItemSprite = itemDTO.ItemSprite;  
+        ItemDescription = itemDTO.ItemDescription;
+        ItemCategory = itemDTO.ItemCategory;
+        Empty         = itemDTO.Empty;
+        //여긴 나중에쓸때있으면 저장
+        
+        MaxNumberItems = itemDTO.MaxNumberItems;
+        IsFull = itemDTO.IsFull;
+       
+    }
+    public ItemDTO CopyItemDTO()
+    {
+        return new ItemDTO(this);
+    }
+
 
     // 아이템 추가 메소드
-    public int AddItem(string ItemName, int ItemQuantity, Sprite ItemSprite,string ItemDescription)
+    public int AddItem(string ItemName, int ItemQuantity, Sprite ItemSprite,string ItemDescription,ItemType ItemCategory)
     {
         if (IsFull) return ItemQuantity;
         
         this.ItemName        =   ItemName;
         this.ItemSprite      =   ItemSprite;
         this.ItemDescription =   ItemDescription;
+        this.ItemCategory    =   ItemCategory;
 
         this.ItemQuantity    +=  ItemQuantity;
         if (this.ItemQuantity >= MaxNumberItems)

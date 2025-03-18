@@ -26,7 +26,7 @@ public class ItemSlotController : MonoBehaviour
     //    - `IsFull == false`와 `ItemQuantity == 0`이 동시에 만족되는 경우에도 `AddItem`이 호출됨.
     //    - `AddItem`에서 `IsFull` 상태를 true로 변경하고 리턴하지만, `ItemQuantity == 0`인 상태에서 재귀가 다시 호출되면서 
     //      무한 루프가 발생함.
-    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription)
+    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType)
     {
         var data = Inventory.itemDatas;
 
@@ -34,8 +34,8 @@ public class ItemSlotController : MonoBehaviour
         {
             if((data[i].IsFull == false && data[i].ItemName == ItemName) || data[i].ItemQuantity == 0)
             {
-                int leftoverItme = data[i].AddItem(ItemName, Quantity, sprite,itemDescription);
-                if(leftoverItme > 0) leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription);
+                int leftoverItme = data[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType);
+                if(leftoverItme > 0) leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType);
                 
                 if(leftoverItme <= 0 && Inventory.ItemSlot != null)
                 {
@@ -60,13 +60,14 @@ public class ItemSlotController : MonoBehaviour
         }
         return false;
     }
-    public bool DropItem(int index)
+    public bool DropItem(int index , int itemAmount = 0 )
     {
+
         if(Inventory.itemDatas[index].ItemQuantity < 0 || Inventory.testItemPrefab == null) return false;
         GameObject dropItem = Instantiate(Inventory.testItemPrefab);
         dropItem.transform.position = GameObject.Find("player").transform.position;
 
-        int dropCount = 1;
+        int dropCount = (itemAmount != 0) ? itemAmount : 1;
 
         if(!Inventory.itemDatas[index].DecreaseItem(dropCount))
         {
@@ -87,11 +88,11 @@ public class ItemSlotController : MonoBehaviour
         
         if(slotData.ItemName == targetData.ItemName)
         {
-            int leftoverItem = targetData.AddItem(slotData.ItemName,slotData.ItemQuantity,slotData.ItemSprite,slotData.ItemDescription);
+            int leftoverItem = targetData.AddItem(slotData.ItemName,slotData.ItemQuantity,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory);
             
             slotData.IsFull = false;
             slotData.ItemQuantity = 0;
-            slotData.AddItem(slotData.ItemName,leftoverItem,slotData.ItemSprite,slotData.ItemDescription);
+            slotData.AddItem(slotData.ItemName,leftoverItem,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory);
             
             if (slotData.ItemQuantity == 0)
             {
@@ -110,104 +111,104 @@ public class ItemSlotController : MonoBehaviour
         }
 
     }
-    public void SortItemSlot() //일단 빈칸정리
-    {   
-        /**
-        int type = 1;
-        // 이름순
-        // 수량순
-        ItemDTO[] SortDatas = new ItemDTO[Inventory.itemDatas.Length];
-        List<ItemDTO>SortDatasName = new();
-    
-        int index = 0;
-        foreach(ItemDTO item in Inventory.itemDatas)
+    public bool SplitItem(int index , int itemAmount = 0)
+    {
+        int ? TargetIndex = null;
+        for (int i = 0; i < Inventory.itemDatas.Length; i++)
         {
-            if (item.ItemQuantity > 0)
+            var item = Inventory.itemDatas[i];  
+            if (item.ItemQuantity == 0)
             {
-                //SortDatas[index] = item;
-                SortDatasName.Add(item);
-                index++;
+                TargetIndex = i;
+                Debug.Log("스플릿 타겟 확인");  
+                break;  
             }
         }
-        Debug.Log("존재하는 인벤토리 아이템 칸 수: " +SortDatasName.Count);
 
+
+        if(Inventory.itemDatas[index].ItemQuantity < 0 || TargetIndex == null) return false;
+        Debug.Log("스플릿 시작, 타겟 : " + TargetIndex);  
+        Inventory.itemDatas[index].DecreaseItem(itemAmount);
+        Inventory.itemDatas[TargetIndex.Value] = Inventory.itemDatas[index].CopyItemDTO();
+        Inventory.itemDatas[TargetIndex.Value].ItemQuantity = itemAmount;
         
-        switch (type)
-        {
-            case 1:
-            
-            SortDatasName.Sort((a, b) =>
-            {
-                int nameCompare = a.ItemName.CompareTo(b.ItemName); // 이름 기준 정렬 (오름차순)
-                if (nameCompare == 0) 
-                    return b.ItemQuantity.CompareTo(a.ItemQuantity); // 같은 이름이면 수량 많은 순 (내림차순)
-                return nameCompare;
-            });
-            break;
-            case 2:
-
-            break;
-            case 3:
-
-            break;
-            
-        }
-        for (int i = 0; i < SortDatasName.Count; i++)
-        {
-            SortDatas[i] = SortDatasName[i];
-        }
-
-        for (int i = index; i < SortDatas.Length; i++)
-        {
-            SortDatas[i] = new ItemDTO(null, 0, null, null,Inventory.NullItemSprite);
-        }
-
-        Debug.Log("빈칸 제거");
-        Inventory.itemDatas = SortDatas;
-        */
-
+        return true;
+    }
+    public void SortItemSlot() //일단 빈칸정리
+    {   
+        int type = 3;
         ItemDTO[] targetDatas = Inventory.itemDatas.ToArray();
-        int type = 2;
+        List<ItemDTO> emptySlots = targetDatas.Where(item => item.ItemQuantity == 0).ToList();
 
+        List<ItemDTO> sortedItems = new List<ItemDTO>(); 
         switch (type)
         {
             case 1: //이름순
+                List<ItemDTO> sortItems_1 = targetDatas
+                                                .Where(item => item.ItemQuantity > 0)  
+                                                .OrderBy(item => item.ItemName)       
+                                                .ThenByDescending(item => item.ItemQuantity) 
+                                                .ToList();
             
-                List<ItemDTO> sortItems_1 = targetDatas.Where(item => item.ItemQuantity > 0)  
-                                                        .OrderBy(item => item.ItemName)       
-                                                        .ThenByDescending(item => item.ItemQuantity) 
-                                                        .ToList();
-        
-                List<ItemDTO> emptySlots_1 = targetDatas.Where(item => item.ItemQuantity == 0) 
-                                                        .ToList(); 
-            
-                sortItems_1.AddRange(emptySlots_1);
-                Inventory.itemDatas = sortItems_1.ToArray();
+                sortedItems.AddRange(sortItems_1.ToArray()); 
             break;
             
-            case 2: //수량순
-                List<IGrouping<string, ItemDTO>> sortGroupItems_2 = targetDatas.Where(item => item.ItemQuantity > 0)
-                                                    .GroupBy(item => item.ItemName)// 같은 아이템끼리 그룹화
-                                                    .OrderByDescending(group => group.Sum(item => item.ItemQuantity)) // 그룹 내 수량 합으로 내림차순 정렬
-                                                    .ThenBy(group => group.Key) // 만약 같은수량이면 뭐 이름순으로 하자
-                                                    .ToList();
+            case 2: 
+                //수량순
+                //
+                // 같은 아이템끼리 그룹화
+                // 그룹 내 수량 합으로 내림차순 정렬
+                // 이름순 정렬
+                //
+                //  List<IGrouping<string, ItemDTO>> 타입 //
+                var sortGroupItems_2 = targetDatas
+                                            .Where(item => item.ItemQuantity > 0)
+                                            .GroupBy(item => item.ItemName)                                   
+                                            .OrderByDescending(group => group.Sum(item => item.ItemQuantity)) 
+                                            .ThenBy(group => group.Key)                                      
+                                            .ToList();
                 
-                List<ItemDTO> emptySlots_2 = targetDatas.Where(item => item.ItemQuantity == 0)
-                                                                    .ToList();
+                List<ItemDTO> sortItem_2 = new();
                 
-                List<ItemDTO> sortItem_2 = new List<ItemDTO>();// 각 그룹 분해후 추가
-                foreach (var group in sortGroupItems_2) sortItem_2.AddRange(group.OrderByDescending(item => item.ItemQuantity));// 람다식으로 수량 많은 순으로
+                foreach (var group in sortGroupItems_2) 
+                    sortItem_2.AddRange(group.OrderByDescending(item => item.ItemQuantity));
                 
-                sortItem_2.AddRange(emptySlots_2);
-                Inventory.itemDatas = sortItem_2.ToArray();
+                sortedItems.AddRange(sortItem_2.ToArray()); 
             break;
-            case 3:
 
-            break;
-            
-        }
+            case 3:
+                //타입순
+                //
+                // 같은 아이템끼리 그룹화
+                // num 순서대로 정렬
+                // 그룹 내 수량 합으로 내림차순 정렬
+                // 이름순 정렬
+                //
+                //  List<IGrouping<string, ItemDTO>> 타입 //
+                int arrayType = 2;
+                var sortGroupItems_3 = targetDatas
+                                            .Where(item => item.ItemQuantity > 0)
+                                            .GroupBy(item => item.ItemCategory)                 
+                                            .OrderBy(g => (int)g.Key)
+                                            .ThenByDescending(g => g.Sum(item => item.ItemQuantity))
+                                            .ThenBy(g => g.Key)                                
+                                            .ToList();
+                //arrayType을 0 으로하고 나머지를 1로설정해서 해당인자만 맨앞으로
+                Debug.Log(string.Join(",", sortGroupItems_3.Select(group => group.Key).ToArray()));
+                var phase_2 = sortGroupItems_3.OrderBy(g => g.Key == (ItemType)arrayType ? 0 : 1) 
+                                    .ToList();
+                
+                List<ItemDTO> sortItem_3 = new();// 각 그룹 분해후 추가
     
+                foreach (var group in phase_2) 
+                    sortItem_3.AddRange(group);
+                
+                sortedItems.AddRange(sortItem_3.ToArray()); 
+            break;
+        }
         
+        sortedItems.AddRange(emptySlots);
+        Inventory.itemDatas = sortedItems.ToArray();
     }
 
 }
