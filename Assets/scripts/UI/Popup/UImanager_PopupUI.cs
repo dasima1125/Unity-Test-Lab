@@ -45,6 +45,17 @@ public class UImanager_PopupUI : MonoBehaviour
     
         UIComposer.Call.Next();
     }
+    public void ShowEquipment(string uiName) 
+    {
+        var manager = UImanager.manager;
+
+        GameObject panelInstance = Instantiate(manager.popupUIDictionary[uiName]);
+        panelInstance.transform.SetParent(manager.canvas.transform, false);
+        
+        manager.currentPopupUI.Push(panelInstance);
+    
+        UIComposer.Call.Next();
+    }
     public void hide() 
     {
         var manager = UImanager.manager;
@@ -52,6 +63,7 @@ public class UImanager_PopupUI : MonoBehaviour
         Destroy(panelInstance);
         
     }
+     
    
 }
 

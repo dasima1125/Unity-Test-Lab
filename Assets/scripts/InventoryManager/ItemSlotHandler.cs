@@ -34,6 +34,7 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
 
     public void SlotUpdate(int index)
     {
+        if(inventory.itemDatas == null) return;
         var ItemData = inventory.itemDatas[index];
         if (ItemData.ItemQuantity <= 0)
         {
@@ -145,20 +146,15 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     {
         if(isItemSelect && inventory.itemDatas[slotIndex].ItemQuantity > 0)
         {
+             
             CreateContext();
+            
         }
 
     }
     public void TestClicked()
     {
-        /**
         controller.SortItemSlot();
-        for(int i = 0; i < inventory.ItemSlot.Count; i++) 
-        {
-            inventory.ItemSlot[i].SlotUpdate(i);
-        }
-        */
-        CreateContext();
     }
     //== 출력 부분 ==//
     public void EmptySlot()
@@ -176,13 +172,25 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
         if(!inventory.InventoryUIDictionary.ContainsKey(a)) return;
          
         GameObject contextPanel = Instantiate(inventory.InventoryUIDictionary[a]);
+
+        contextPanel.SetActive(false);
+
         contextPanel.transform.SetParent(UImanager.manager.canvas.transform, false);
         contextPanel.GetComponent<InventoryContextHandler>().slotIndex = slotIndex;
+        //초기에 사용가능한 버튼만 활성시키는 기능 필요할듯..
+
+        if(inventory.itemDatas[slotIndex].ItemCategory != ItemType.Consumable)//잠길시 깜빡임이 보여짐 뭐지? 처리방식의 차이가있나?
+        {
+            contextPanel.transform.Find("ButtonPanel/Use").GetComponent<Button>().interactable = false;
+        }
+        
         
         RectTransform slotPos    = gameObject.GetComponent<RectTransform>();// 슬롯 위치
         RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();//버튼위치 조정
         
         buttonRect.position = slotPos.position - new Vector3((buttonRect.rect.width / 2) -5,(buttonRect.rect.height / 2) - 13); //초기 설계를 잘못했나..  세부조정이 좀
+        
+        contextPanel.SetActive(true);
         //맘에 안들긴하는데 피벗 관련 나중에 해결 요망
         inventory.InventoryUI.Push(contextPanel);
         

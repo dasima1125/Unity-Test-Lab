@@ -26,7 +26,7 @@ public class ItemSlotController : MonoBehaviour
     //    - `IsFull == false`와 `ItemQuantity == 0`이 동시에 만족되는 경우에도 `AddItem`이 호출됨.
     //    - `AddItem`에서 `IsFull` 상태를 true로 변경하고 리턴하지만, `ItemQuantity == 0`인 상태에서 재귀가 다시 호출되면서 
     //      무한 루프가 발생함.
-    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType)
+    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType ,EquipmentType EquipmentType)
     {
         var data = Inventory.itemDatas;
 
@@ -34,8 +34,8 @@ public class ItemSlotController : MonoBehaviour
         {
             if((data[i].IsFull == false && data[i].ItemName == ItemName) || data[i].ItemQuantity == 0)
             {
-                int leftoverItme = data[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType);
-                if(leftoverItme > 0) leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType);
+                int leftoverItme = data[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType,EquipmentType);
+                if(leftoverItme > 0) leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType,EquipmentType);
                 
                 if(leftoverItme <= 0 && Inventory.ItemSlot != null)
                 {
@@ -88,11 +88,11 @@ public class ItemSlotController : MonoBehaviour
         
         if(slotData.ItemName == targetData.ItemName)
         {
-            int leftoverItem = targetData.AddItem(slotData.ItemName,slotData.ItemQuantity,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory);
+            int leftoverItem = targetData.AddItem(slotData.ItemName,slotData.ItemQuantity,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory,slotData.EquipmentCategory);
             
             slotData.IsFull = false;
             slotData.ItemQuantity = 0;
-            slotData.AddItem(slotData.ItemName,leftoverItem,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory);
+            slotData.AddItem(slotData.ItemName,leftoverItem,slotData.ItemSprite,slotData.ItemDescription,slotData.ItemCategory,slotData.EquipmentCategory);
             
             if (slotData.ItemQuantity == 0)
             {
@@ -111,7 +111,7 @@ public class ItemSlotController : MonoBehaviour
         }
 
     }
-    public bool SplitItem(int index , int itemAmount = 0)
+    public int? SplitItem(int index , int itemAmount = 0)
     {
         int ? TargetIndex = null;
         for (int i = 0; i < Inventory.itemDatas.Length; i++)
@@ -120,19 +120,16 @@ public class ItemSlotController : MonoBehaviour
             if (item.ItemQuantity == 0)
             {
                 TargetIndex = i;
-                Debug.Log("스플릿 타겟 확인");  
                 break;  
             }
         }
-
-
-        if(Inventory.itemDatas[index].ItemQuantity < 0 || TargetIndex == null) return false;
-        Debug.Log("스플릿 시작, 타겟 : " + TargetIndex);  
+        if(Inventory.itemDatas[index].ItemQuantity < 0 || TargetIndex == null) return null;
+       
         Inventory.itemDatas[index].DecreaseItem(itemAmount);
         Inventory.itemDatas[TargetIndex.Value] = Inventory.itemDatas[index].CopyItemDTO();
         Inventory.itemDatas[TargetIndex.Value].ItemQuantity = itemAmount;
         
-        return true;
+        return TargetIndex;
     }
     public void SortItemSlot() //일단 빈칸정리
     {   

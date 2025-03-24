@@ -43,6 +43,12 @@ public class UIHandler : MonoBehaviour
         string insert = "Inventory";
         UImanager.manager.ShowPanel_popup_Inventory(insert);
     }
+    public void Equipment()
+    {
+        string insert = "Equipment";
+        UImanager.manager.ShowPanel_popup_Equipment(insert);
+    }
+
     public void test_Clicked()
     {
         //Debug.Log("팝업생성 명령");

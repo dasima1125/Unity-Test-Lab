@@ -69,16 +69,16 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
     
-    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType)
+    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType,EquipmentType EquipmentType)
     {
    
         for(int i = 0; i < itemDatas.Length; i++) 
         {
             if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
             {
-                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType);
+                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType,EquipmentType);
                 if(leftoverItme > 0)
-                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType);
+                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType,EquipmentType);
                 if(leftoverItme <= 0 && ItemSlots != null)
                     Updating();
                 

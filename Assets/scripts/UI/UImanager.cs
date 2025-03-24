@@ -88,8 +88,6 @@ public class UImanager : MonoBehaviour
             string [] testinsert = {"테스트 아이템","정보"};
             UIComposer.Call.Execute(() => UImanager_Dynamic.Dynamic.MakeGetItem(testinsert));
         }
-        
-
         if(control == "E")
         {
             if(chatBoxUI != null && talking && !skip) skip = true;
@@ -128,6 +126,14 @@ public class UImanager : MonoBehaviour
             return;
         }
         UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.ShowInventory(uiName));
+    }
+    public void ShowPanel_popup_Equipment(string uiName)
+    {
+        if (!popupUIDictionary.ContainsKey(uiName)) 
+        {
+            return;
+        }
+        UIComposer.Call.Execute(() => UImanager_PopupUI.PopupUI.ShowEquipment(uiName));
     }
     public void HidePanel_popup_info()
     {

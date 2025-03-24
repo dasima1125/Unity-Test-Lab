@@ -7,7 +7,8 @@ public class Items : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private string ItemName;
     [SerializeField] private int ItemQuantity;
-    [SerializeField] private ItemType ItemType;   
+    [HideInInspector] public ItemType ItemType;
+    [HideInInspector] public EquipmentType EquipmentType;      
     [SerializeField] private Sprite Sprite;   
 
     [TextArea]
@@ -32,8 +33,7 @@ public class Items : MonoBehaviour
     {
         if (collision.gameObject.tag == "player" && CanPick)
         {
-            Debug.Log("접촉");  
-            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType);
+            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType,EquipmentType);
             if(leftoverItme <= 0)
             {
                 Destroy(gameObject);

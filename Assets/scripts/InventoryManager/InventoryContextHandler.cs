@@ -112,9 +112,15 @@ public class InventoryContextHandler : MonoBehaviour
     public void SplitPanel_Accept()
     {
         int ? target = controller.SplitItem(slotIndex,SelectQuantity);
-        if(target == null) return;
+        if(target == null) 
+        {
+            //뭐 버튼을 흔들어서 불가능을 표현할까?...
+            
+            return;
+        }
+        
+        inventory.ItemSlot[slotIndex].SlotUpdate(slotIndex);
         inventory.ItemSlot[target.Value].SlotUpdate(target.Value);
-
         Clicked_Back();
     }
     #endregion

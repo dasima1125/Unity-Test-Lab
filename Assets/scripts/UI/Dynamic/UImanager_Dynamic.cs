@@ -21,21 +21,19 @@ public class UImanager_Dynamic : MonoBehaviour
             if (child.name == "info") 
             {
                 StartCoroutine(MoveY(child, 45f, 0.2f));
-                //child.transform.DOMoveY(child.transform.position.y + 45f, 1f); 닷트윈 맹신 금지
             }
         }
 
-        if (manager.ItemPanelQueue.Count >= 4)//개인상태에서 생성 시도하면
+        if (manager.ItemPanelQueue.Count >= 4)
         {
             GameObject oldPanel = manager.ItemPanelQueue.Dequeue();
-            //DOTween.Kill(oldPanel); 
+            DOTween.Kill(oldPanel.GetComponent<CanvasGroup>());//타겟을 세밀히 제거해줘야함
             oldPanel.GetComponent<CanvasGroup>().DOFade(0, 0.5f).OnComplete(() => Destroy(oldPanel));
         }
        
         GameObject panelInstance = Instantiate(manager.DynamicUIs["infoAlarm"]);//infoAlarm(Clone)
         panelInstance.name = "info";
         panelInstance.transform.SetParent(manager.canvas.transform, false);
-
         manager.ItemPanelQueue.Enqueue(panelInstance);
 
         TextMeshProUGUI [] infotitleText = panelInstance.GetComponentsInChildren<TextMeshProUGUI>();
@@ -49,14 +47,13 @@ public class UImanager_Dynamic : MonoBehaviour
 
         var canvas = panelInstance.GetComponent<CanvasGroup>();
         canvas.alpha = 0f;
-        canvas.DOFade(1, 1f).OnComplete(() =>  //또는 시퀸스로 지연 구현하는법도있는데 시퀸스는 오브젝트가아니라 참조 주소가 필요함
-        {                                      // 즉 큐 구조가 개판이됨
+        canvas.DOFade(1, 1f).OnComplete(() =>  
+        {                                      
             canvas.DOFade(1, 5f).OnComplete(() =>
             {
                 StartCoroutine(Clear());
             });
         });
-       
     }
 
     public void MakeInfo(string [] texts)

@@ -259,8 +259,8 @@ GameObject:
   - component: {fileID: 42341595}
   - component: {fileID: 42341594}
   - component: {fileID: 42341593}
-  - component: {fileID: 42341592}
-  m_Layer: 13
+  - component: {fileID: 42341596}
+  m_Layer: 0
   m_Name: TestBox2 (5)
   m_TagString: items
   m_Icon: {fileID: 0}
@@ -275,45 +275,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42341590}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.011461442, w: 0.9999344}
   m_LocalPosition: {x: 8.07, y: 2.65, z: -0.014822139}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 532669915}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &42341592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42341590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ad3a2e500e6978478552f328c1ae28c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerManager: {fileID: 986057718}
-  catchable: 1
-  canDrag: 1
-  item: 0
-  sizeX: 0
-  sizeY: 0
-  hp: 10
-  currentHp: 5
-  invinclbleTime: 0
-  iminner: 0
-  object1: {fileID: 0}
-  object2: {fileID: 0}
-  object3: {fileID: 0}
-  object4: {fileID: 0}
-  reward: {fileID: 0}
-  needkey: 0
-  itemName: HealKit
-  itemQuantity: 5
-  sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
-  itemDescription: test Desscription.... blah blah blah .................
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 1.313}
 --- !u!50 &42341593
 Rigidbody2D:
   serializedVersion: 4
@@ -370,7 +338,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -438,6 +406,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &42341596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42341590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b45cf40809205640a1114381a26936c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemName: HealKit
+  ItemQuantity: 3
+  ItemType: 1
+  EquipmentType: 0
+  Sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
+  ItemDescription: 'healing?
+
+'
+  CanPick: 1
 --- !u!1 &60526594
 GameObject:
   m_ObjectHideFlags: 0
@@ -2460,8 +2449,8 @@ GameObject:
   - component: {fileID: 422255671}
   - component: {fileID: 422255670}
   - component: {fileID: 422255669}
-  - component: {fileID: 422255668}
-  m_Layer: 13
+  - component: {fileID: 422255673}
+  m_Layer: 0
   m_Name: TestBox2
   m_TagString: items
   m_Icon: {fileID: 0}
@@ -2476,45 +2465,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 422255666}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.66, y: 1.76, z: -0.014822139}
+  m_LocalRotation: {x: -0, y: -0, z: -0.010961696, w: 0.9999399}
+  m_LocalPosition: {x: 6.66, y: 1.7599999, z: -0.014822139}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 532669915}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &422255668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 422255666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ad3a2e500e6978478552f328c1ae28c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerManager: {fileID: 986057718}
-  catchable: 1
-  canDrag: 1
-  item: 0
-  sizeX: 0
-  sizeY: 0
-  hp: 10
-  currentHp: 5
-  invinclbleTime: 0
-  iminner: 0
-  object1: {fileID: 0}
-  object2: {fileID: 0}
-  object3: {fileID: 0}
-  object4: {fileID: 0}
-  reward: {fileID: 0}
-  needkey: 0
-  itemName: HealKit
-  itemQuantity: 2
-  sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
-  itemDescription: test Desscription.... blah blah blah .................
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.256}
 --- !u!50 &422255669
 Rigidbody2D:
   serializedVersion: 4
@@ -2571,7 +2528,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2639,6 +2596,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &422255673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422255666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b45cf40809205640a1114381a26936c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemName: HealKit
+  ItemQuantity: 2
+  ItemType: 1
+  EquipmentType: 0
+  Sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
+  ItemDescription: 'healing?
+
+'
+  CanPick: 1
 --- !u!1 &425241660
 GameObject:
   m_ObjectHideFlags: 0
@@ -3877,10 +3855,10 @@ GameObject:
   m_Component:
   - component: {fileID: 539291811}
   - component: {fileID: 539291815}
-  - component: {fileID: 539291814}
   - component: {fileID: 539291813}
-  - component: {fileID: 539291812}
-  m_Layer: 13
+  - component: {fileID: 539291814}
+  - component: {fileID: 539291816}
+  m_Layer: 0
   m_Name: TestBox2 (4)
   m_TagString: items
   m_Icon: {fileID: 0}
@@ -3902,38 +3880,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 532669915}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &539291812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 539291810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ad3a2e500e6978478552f328c1ae28c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerManager: {fileID: 986057718}
-  catchable: 1
-  canDrag: 1
-  item: 0
-  sizeX: 0
-  sizeY: 0
-  hp: 10
-  currentHp: 5
-  invinclbleTime: 0
-  iminner: 0
-  object1: {fileID: 0}
-  object2: {fileID: 0}
-  object3: {fileID: 0}
-  object4: {fileID: 0}
-  reward: {fileID: 0}
-  needkey: 0
-  itemName: HealKit
-  itemQuantity: 5
-  sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
-  itemDescription: test Desscription.... blah blah blah .................
 --- !u!50 &539291813
 Rigidbody2D:
   serializedVersion: 4
@@ -3990,7 +3936,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -4058,6 +4004,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &539291816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539291810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b45cf40809205640a1114381a26936c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemName: HealKit
+  ItemQuantity: 6
+  ItemType: 2
+  EquipmentType: 0
+  Sprite: {fileID: 21300000, guid: 9a4b6ff787d58b74da9bcbf871275316, type: 3}
+  ItemDescription: 'healing?
+
+'
+  CanPick: 1
 --- !u!1 &539576601
 GameObject:
   m_ObjectHideFlags: 0
