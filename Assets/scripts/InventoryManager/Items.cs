@@ -22,6 +22,7 @@ public class Items : MonoBehaviour
         ItemName = itemDTO.ItemName;
         Sprite = itemDTO.ItemSprite;
         ItemType = itemDTO.ItemCategory;
+        EquipmentType = itemDTO.EquipmentCategory;
         GetComponent<SpriteRenderer>().sprite = Sprite;
         ItemDescription = itemDTO.ItemDescription;
         

@@ -73,11 +73,8 @@ public class ItemDTO
         if(this.ItemCategory == ItemType.Equipment)
         {
             this.EquipmentCategory = EquipmentCategory;
-            Debug.Log("장비슥듭, 타입 : " + this.EquipmentCategory);
         }
             
-        
-
         this.ItemQuantity    +=  ItemQuantity;
         if (this.ItemQuantity >= MaxNumberItems)
         {

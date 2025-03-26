@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,63 +9,81 @@ using UnityEngine.UI;
 public class EquipmentManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    private static EquipmentManager instance;
-    public static EquipmentManager Equipmen
-    { 
-        get => instance ?? (instance = FindObjectOfType<EquipmentManager>());
+    public static EquipmentManager Equipment
+    {
+        get => FindObjectOfType<EquipmentManager>(); // 항상 현재 활성화된 EquipmentManager를 찾아 반환
     }
     [SerializeField] private GameObject slots;
     [SerializeField] private Transform UpdateRight;
     [SerializeField] private Transform UpdateLeft;
     
 
-    Dictionary<EquipmentType,EquipmentSlot> EquipmentSlots = new();
+    [SerializeField] private bool Activated = false;
+    public Dictionary<EquipmentType,EquipmentSlot> EquipmentSlots = new();
     List<Image> SlotRayCastList = new();
     void Start()
     {
-        EquipmentUpdate();
-        Transform parentTransform = transform.GetChild(1).GetChild(0);
+        if(InventoryManager.Inventory == null) return;
 
-        foreach (EquipmentType equipmentType in Enum.GetValues(typeof(EquipmentType)))
-        {
-            EquipmentSlots[equipmentType] = new EquipmentSlot();
-        }
+        Transform parentTransform = transform.GetChild(1).GetChild(0);
+       
+        EquipmentUpdate();
+        /////// 장비칸 
+        ///
+        
         foreach (Transform child in parentTransform)
         {
             var target = child.GetComponent<EquipmentSlot>();
-            
             if (target != null && !EquipmentSlots.ContainsKey(target.EquipedSlotType))
-            EquipmentSlots.Add(target.EquipedSlotType,target);
-            
-            Image imageComponent = child.GetComponent<Image>();
-            if (imageComponent != null)
             {
-                SlotRayCastList.Add(imageComponent);
+                EquipmentSlots.Add(target.EquipedSlotType,target); 
             }
-        } 
+            
+            target.EquipedSlot = true;
+            Image imageComponent = child.GetComponent<Image>();
+            if (imageComponent != null) SlotRayCastList.Add(imageComponent);
+            
+        }
     }
     public void EquipmentUpdate()
     {
-        int [] testSlots = {4,5,3,2,1};
-        string [] testSlotsName = {"헬맷","상의","하의","신발","도구"};
+        string [] testSlotsName = {"헬맷","상의","하의","신발"};
         
-        int testint = testSlots.Length;
+        
+        //int testint = testSlots.Length;
         if(UpdateLeft == null || slots == null || UpdateLeft.childCount == 0) return; 
         GameObject LeftInventoryPanel = UpdateLeft.GetChild(0).gameObject;
-       
-        for(int i = 0; i < testint; i++) 
+        Dictionary<EquipmentType, List<ItemDTO>> equipmentDictionary = InventoryDataGrap();
+
+
+        //외부 슬롯
+        foreach (var equipmentType in equipmentDictionary)
         {
             GameObject panel = Instantiate(LeftInventoryPanel,UpdateLeft);
-            panel.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>().text = testSlotsName[i];
-            for(int j = 0; j < testSlots[i] + 5; j++) 
+            panel.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>().text = equipmentType.Key.ToString();
+            int minSlot = 15;
+            int nowSlotCount = 0;
+            foreach (var item in equipmentType.Value)
             {
                 GameObject slot = Instantiate(slots);
                 slot.transform.SetParent(panel.transform.GetChild(1), false);
-                
                 SlotRayCastList.Add(slot.GetComponent<Image>());// 슬롯 선택 상태 기입
                 //정보 기입
+                var send = slot.GetComponent<EquipmentSlot>();
+                send.Setinfo(equipmentType.Key,item);
+                send.slotIndex = nowSlotCount;
+     
+                nowSlotCount++;
             }
-            
+            if(nowSlotCount < minSlot)
+            for(int i = 0; i < minSlot - nowSlotCount; i++) 
+            {
+                GameObject slot = Instantiate(slots);
+                slot.transform.SetParent(panel.transform.GetChild(1), false);
+                SlotRayCastList.Add(slot.GetComponent<Image>());
+
+                slot.GetComponent<EquipmentSlot>().Setinfo(equipmentType.Key,null);
+            }    
         }
         Destroy(UpdateLeft.GetChild(0).gameObject);
     }
@@ -75,12 +94,26 @@ public class EquipmentManager : MonoBehaviour
         {
             image.raycastTarget = type;
         }
-        
     }
-    public void EquipedSlot()
+    public Dictionary<EquipmentType, List<ItemDTO>> InventoryDataGrap()
     {
+        var alpha = InventoryManager.Inventory.itemDatas
+            .Where(item => item.ItemCategory == ItemType.Equipment);
         
+        Dictionary<EquipmentType, List<ItemDTO>> equipmentDictionary = new();
+        foreach (var item in alpha)
+        {
+            if(item.ItemQuantity <= 0) continue;
+
+            if (!equipmentDictionary.ContainsKey(item.EquipmentCategory))//없는거 넣기 
+                equipmentDictionary[item.EquipmentCategory] = new List<ItemDTO>();
+            
+            equipmentDictionary[item.EquipmentCategory].Add(item);
+            
+        }
+        equipmentDictionary = equipmentDictionary
+                                .OrderBy(kvp => (int)kvp.Key)
+                                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        return equipmentDictionary;
     }
-
-
 }

@@ -165,8 +165,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661dcc0d9cc22f94880aa45e0bf88af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EquipedSlotType: 0
+  EquipedSlotType: 6
   isFull: 0
+  EquipedSlot: 0
+  slotIndex: 0
+  SlotImage: {fileID: 3027614533635003674}
 --- !u!1 &8501625498567788629
 GameObject:
   m_ObjectHideFlags: 0

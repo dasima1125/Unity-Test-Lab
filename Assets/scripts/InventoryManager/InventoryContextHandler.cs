@@ -95,6 +95,7 @@ public class InventoryContextHandler : MonoBehaviour
     }
     public void DropPanel_Accept()
     {
+        if(SelectQuantity <= 0) return ;
         
         bool usAble = controller.DropItem(slotIndex , SelectQuantity);
         if(!usAble) 
@@ -102,6 +103,7 @@ public class InventoryContextHandler : MonoBehaviour
             Debug.LogError("오류 발생 : DropPanel_Accept()"); 
             return;
         }
+        Debug.Log("버리는 수량 : " + SelectQuantity);
         inventory.ItemSlot[slotIndex].SlotUpdate(slotIndex);
         Clicked_Back();
     }
@@ -114,8 +116,7 @@ public class InventoryContextHandler : MonoBehaviour
         int ? target = controller.SplitItem(slotIndex,SelectQuantity);
         if(target == null) 
         {
-            //뭐 버튼을 흔들어서 불가능을 표현할까?...
-            
+            //뭐 버튼을 흔들어서 불가능을 표현할까?... 
             return;
         }
         

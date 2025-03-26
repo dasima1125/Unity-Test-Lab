@@ -93,6 +93,9 @@ MonoBehaviour:
   EquipedSlotType: 2
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &173465413252898132
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,6 +189,9 @@ MonoBehaviour:
   EquipedSlotType: 5
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &822978447215510181
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,7 +204,7 @@ GameObject:
   - component: {fileID: 1680188464553738916}
   - component: {fileID: 227967832241205746}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,6 +259,81 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &945020343470240075
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4925571169247126533}
+  - component: {fileID: 6056754591517871126}
+  - component: {fileID: 7116465040235577902}
+  m_Layer: 5
+  m_Name: BulkPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4925571169247126533
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945020343470240075}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1964678971273810057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 689, y: 68.3906}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6056754591517871126
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945020343470240075}
+  m_CullTransparentMesh: 1
+--- !u!114 &7116465040235577902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945020343470240075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -938,7 +1019,7 @@ GameObject:
   - component: {fileID: 6422438914090147738}
   - component: {fileID: 4936681568093799910}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1163,7 +1244,7 @@ GameObject:
   - component: {fileID: 5563585527587309206}
   - component: {fileID: 8719721548764883985}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1606,7 +1687,7 @@ GameObject:
   - component: {fileID: 6384811797113221949}
   - component: {fileID: 5620538626158906639}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1865,6 +1946,7 @@ MonoBehaviour:
   slots: {fileID: 8112100945190013432, guid: 3a11aa4ae7db5c447bfc95d941280760, type: 3}
   UpdateRight: {fileID: 0}
   UpdateLeft: {fileID: 79842643407620807}
+  Activated: 0
 --- !u!1 &4459931162629885510
 GameObject:
   m_ObjectHideFlags: 0
@@ -1877,7 +1959,7 @@ GameObject:
   - component: {fileID: 6057850959606670944}
   - component: {fileID: 1042453617542699447}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2027,7 +2109,7 @@ GameObject:
   - component: {fileID: 7648865703987746976}
   - component: {fileID: 1629001897085890725}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2270,6 +2352,9 @@ MonoBehaviour:
   EquipedSlotType: 8
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &5643203583360623228
 GameObject:
   m_ObjectHideFlags: 0
@@ -2572,6 +2657,9 @@ MonoBehaviour:
   EquipedSlotType: 3
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &6012550570270898798
 GameObject:
   m_ObjectHideFlags: 0
@@ -2699,7 +2787,7 @@ GameObject:
   - component: {fileID: 1318394901984754559}
   - component: {fileID: 5309546586007612223}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2871,6 +2959,7 @@ RectTransform:
   m_Children:
   - {fileID: 5854141712515010487}
   - {fileID: 8221823039903795640}
+  - {fileID: 4925571169247126533}
   m_Father: {fileID: 79842643407620807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3049,6 +3138,9 @@ MonoBehaviour:
   EquipedSlotType: 6
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &7860633086889824191
 GameObject:
   m_ObjectHideFlags: 0
@@ -3142,6 +3234,9 @@ MonoBehaviour:
   EquipedSlotType: 4
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &7918859187940548953
 GameObject:
   m_ObjectHideFlags: 0
@@ -3505,6 +3600,9 @@ MonoBehaviour:
   EquipedSlotType: 1
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &8315785764129400156
 GameObject:
   m_ObjectHideFlags: 0
@@ -3598,6 +3696,9 @@ MonoBehaviour:
   EquipedSlotType: 7
   isFull: 0
   EquipedSlot: 0
+  selectedshader: {fileID: 0}
+  slotIndex: 0
+  SlotImage: {fileID: 0}
 --- !u!1 &8321767507563891780
 GameObject:
   m_ObjectHideFlags: 0
@@ -3610,7 +3711,7 @@ GameObject:
   - component: {fileID: 5447514782146058510}
   - component: {fileID: 8081868328929357685}
   m_Layer: 5
-  m_Name: BG
+  m_Name: ItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
