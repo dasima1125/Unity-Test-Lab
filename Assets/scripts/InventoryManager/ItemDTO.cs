@@ -104,5 +104,9 @@ public class ItemDTO
         ItemSprite = null;
         IsFull = false;
         ItemDescription = string.Empty;
+
+        ItemCategory = 0;
+        EquipmentCategory = 0;
+
     }
 }

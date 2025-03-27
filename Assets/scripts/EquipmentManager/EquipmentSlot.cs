@@ -12,18 +12,20 @@ public class EquipmentSlot : MonoBehaviour ,IPointerEnterHandler ,IPointerExitHa
     [SerializeField]public bool EquipedSlot;
 
     public GameObject selectedshader;
-    private EquipmentType InvetoryslotType;
     public int slotIndex;
     //Slot Show//
     public Image SlotImage;
 
     //Slot Data//
+    public int itemIndex;
     
-    
+    void Awake()
+    {
+        if(SlotImage == null) SlotImage = transform.Find("ItemImage").GetComponent<Image>();
+    }
     void Start() 
     {
         selectedshader = transform.transform.GetChild(0).gameObject;
-        if(SlotImage == null) SlotImage = transform.Find("ItemImage").GetComponent<Image>();
         SlotUpdate(slotIndex);
     }
 
@@ -114,31 +116,61 @@ public class EquipmentSlot : MonoBehaviour ,IPointerEnterHandler ,IPointerExitHa
         MoveTarget.sizeDelta =     originalSize;
         MoveTarget.SetParent(originalLayer);
        
-        var swapTarget = eventData.pointerCurrentRaycast;
-        if (swapTarget.gameObject == null) return;
-
-        if(!EquipedSlot && swapTarget.gameObject.name == "LoadOutZoon")
+        var SelectTarget = eventData.pointerCurrentRaycast;
+        if (SelectTarget.gameObject == null) return;
+        //장착 로직
+        if(!EquipedSlot && SelectTarget.gameObject.name == "LoadOutZoon")
         { 
-            EquipmentManager.Equipment.EquipmentSlots[EquipedSlotType].selectedshader.SetActive(false);
+            //교체로직 
+            var SwapTarget = EquipmentManager.Equipment.EquipmentSlots[EquipedSlotType];
+            SwapTarget.selectedshader.SetActive(false);
 
-            if(EquipmentManager.Equipment.EquipmentSlots[EquipedSlotType].isFull)
-            Debug.Log("아이템 교체");
-            else
+            if(SwapTarget.isFull)
             {
-                Debug.Log("아이템 장착");
-                if(EquipmentManager.Equipment.EquipmentSlots[EquipedSlotType].SlotImage == null)
-                {
-                    Debug.Log("이미지 설정 실패");
-                    return;
-                }
-                EquipmentManager.Equipment.EquipmentSlots[EquipedSlotType].SlotImage.sprite = SlotImage.sprite;
-
+                Debug.Log("아이템 교체");
+                var data1 = InventoryManager.Inventory.itemDatas[itemIndex].CopyItemDTO();
+                var data2 = InventoryManager.Inventory.EquipedItemDatas[EquipedSlotType].CopyItemDTO();
+                InventoryManager.Inventory.itemDatas[itemIndex] = data2;
+                InventoryManager.Inventory.EquipedItemDatas[EquipedSlotType] = data1;
             }
             
+            else
+            {   
+                Debug.Log("아이템 장착");
+                //대상정보 복사
+                var data = InventoryManager.Inventory.itemDatas[itemIndex];
+                InventoryManager.Inventory.EquipedItemDatas[EquipedSlotType] = data.CopyItemDTO();
+                data.ResetSlot();
 
+                //SwapTarget.isFull = true;
+            }
+            EquipmentManager.Equipment.EquipmentUpdate();
         }
-        else if(EquipedSlot && swapTarget.gameObject.name != "LoadOutZoon")
-        Debug.Log("아이템 해제");
+        //해체 로직
+        else if(EquipedSlot && SelectTarget.gameObject.name != "LoadOutZoon")
+        {
+            var target = InventoryManager.Inventory.EquipedItemDatas[EquipedSlotType];
+            var data = InventoryManager.Inventory.itemDatas;
+            //아이템 추가로직 요구
+            if(target.ItemName == string.Empty)
+            {
+                Debug.Log("빈슬롯");
+                return;
+            } 
+            for(int i = 0; i < data.Length; i++) 
+            {
+                if(data[i].IsFull == false && data[i].ItemName == target.ItemName || data[i].ItemQuantity == 0)
+                {
+                    data[i] = target.CopyItemDTO();
+                    target.ResetSlot();
+
+                    break;
+                }
+            }
+            Debug.Log("해체");
+            EquipmentManager.Equipment.EquipmentUpdate();
+        }
+        
         
     }
     

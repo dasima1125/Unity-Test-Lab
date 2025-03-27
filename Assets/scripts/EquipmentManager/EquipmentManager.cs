@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,22 +15,25 @@ public class EquipmentManager : MonoBehaviour
         get => FindObjectOfType<EquipmentManager>(); // 항상 현재 활성화된 EquipmentManager를 찾아 반환
     }
     [SerializeField] private GameObject slots;
+    [SerializeField] private GameObject panels;
     [SerializeField] private Transform UpdateRight;
     [SerializeField] private Transform UpdateLeft;
     
-
-    [SerializeField] private bool Activated = false;
     public Dictionary<EquipmentType,EquipmentSlot> EquipmentSlots = new();
     List<Image> SlotRayCastList = new();
+    
     void Start()
     {
+        
+
+        EquipmentUpdate();
+    }
+    public void EquipmentUpdate()
+    {
         if(InventoryManager.Inventory == null) return;
+        SlotRayCastList.Clear();
 
         Transform parentTransform = transform.GetChild(1).GetChild(0);
-       
-        EquipmentUpdate();
-        /////// 장비칸 
-        ///
         
         foreach (Transform child in parentTransform)
         {
@@ -44,34 +48,49 @@ public class EquipmentManager : MonoBehaviour
             if (imageComponent != null) SlotRayCastList.Add(imageComponent);
             
         }
-    }
-    public void EquipmentUpdate()
-    {
-        string [] testSlotsName = {"헬맷","상의","하의","신발"};
+ 
+        if(panels == null || slots == null) return; 
         
-        
-        //int testint = testSlots.Length;
-        if(UpdateLeft == null || slots == null || UpdateLeft.childCount == 0) return; 
-        GameObject LeftInventoryPanel = UpdateLeft.GetChild(0).gameObject;
-        Dictionary<EquipmentType, List<ItemDTO>> equipmentDictionary = InventoryDataGrap();
-
-
-        //외부 슬롯
-        foreach (var equipmentType in equipmentDictionary)
+        Dictionary<EquipmentType, List<(int, ItemDTO)>> equipmentDictionary2 =InventoryDataGrap2();
+        //장착칸 슬롯
+        foreach (var type in EquipmentSlots)
         {
-            GameObject panel = Instantiate(LeftInventoryPanel,UpdateLeft);
+            var test = InventoryManager.Inventory.EquipedItemDatas[type.Key];
+            var alpha = type.Value;
+
+            if (test.ItemSprite == null)
+            {
+                alpha.SlotImage.sprite = test.Empty;
+                alpha.isFull = false;
+                continue;
+            } 
+            alpha.isFull = true;
+            alpha.SlotImage.sprite = test.ItemSprite;
+        }
+
+        //인벤칸 슬롯
+        foreach (Transform child in UpdateLeft)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (var equipmentType in equipmentDictionary2)
+        {
+            GameObject panel = Instantiate(panels,UpdateLeft);
             panel.transform.GetChild(0).GetChild(1).GetComponent<TMP_Text>().text = equipmentType.Key.ToString();
             int minSlot = 15;
             int nowSlotCount = 0;
+
             foreach (var item in equipmentType.Value)
-            {
+            {      
                 GameObject slot = Instantiate(slots);
                 slot.transform.SetParent(panel.transform.GetChild(1), false);
                 SlotRayCastList.Add(slot.GetComponent<Image>());// 슬롯 선택 상태 기입
                 //정보 기입
                 var send = slot.GetComponent<EquipmentSlot>();
-                send.Setinfo(equipmentType.Key,item);
+                send.itemIndex = item.Item1;
+                send.Setinfo(equipmentType.Key,item.Item2);
                 send.slotIndex = nowSlotCount;
+                send.isFull = true;
      
                 nowSlotCount++;
             }
@@ -85,22 +104,28 @@ public class EquipmentManager : MonoBehaviour
                 slot.GetComponent<EquipmentSlot>().Setinfo(equipmentType.Key,null);
             }    
         }
-        Destroy(UpdateLeft.GetChild(0).gameObject);
     }
+    
     
     public void DeRaycastOther(bool type)
     {
         foreach (var image in SlotRayCastList)
         {
+            if(image == null) 
+            {
+                Debug.Log("이미지 컴포넌트 저장 오류:");
+                continue;
+            }
             image.raycastTarget = type;
         }
     }
+    //장비 데이터 그룹화
     public Dictionary<EquipmentType, List<ItemDTO>> InventoryDataGrap()
     {
+        Dictionary<EquipmentType, List<ItemDTO>> equipmentDictionary = new();
         var alpha = InventoryManager.Inventory.itemDatas
             .Where(item => item.ItemCategory == ItemType.Equipment);
         
-        Dictionary<EquipmentType, List<ItemDTO>> equipmentDictionary = new();
         foreach (var item in alpha)
         {
             if(item.ItemQuantity <= 0) continue;
@@ -109,11 +134,46 @@ public class EquipmentManager : MonoBehaviour
                 equipmentDictionary[item.EquipmentCategory] = new List<ItemDTO>();
             
             equipmentDictionary[item.EquipmentCategory].Add(item);
-            
         }
         equipmentDictionary = equipmentDictionary
                                 .OrderBy(kvp => (int)kvp.Key)
                                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         return equipmentDictionary;
+    }
+
+    public  Dictionary<EquipmentType, List<(int, ItemDTO)>> InventoryDataGrap2()
+    {
+        
+        Dictionary<EquipmentType, List<(int, ItemDTO)>> equipmentDictionary = new();
+
+        var beta = InventoryManager.Inventory.itemDatas
+            .Select((item, index) => new { item, index }) // 파라미터 순서상 인덱스는 값 뒤에옴
+            .Where(x => x.item.ItemCategory == ItemType.Equipment);
+
+        foreach (var x in beta)
+        {
+            if (!equipmentDictionary.ContainsKey(x.item.EquipmentCategory))
+            {
+                equipmentDictionary[x.item.EquipmentCategory] = new List<(int, ItemDTO)>();
+            }
+            equipmentDictionary[x.item.EquipmentCategory].Add((x.index, x.item));
+        }
+        equipmentDictionary = equipmentDictionary
+                                .OrderBy(kvp => (int)kvp.Key)
+                                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        // 디버깅: 각 장비 유형별 아이템 및 인덱스 확인
+        /**
+        foreach (var kvp in equipmentDictionary)
+        {
+            Debug.Log($"장비 타입: {kvp.Key}");
+            foreach (var (index, item) in kvp.Value)
+            {
+                Debug.Log($"  - 인덱스: {index}, 아이템: {item.ItemName}");
+            }
+        }
+        */
+        return equipmentDictionary;
+        
     }
 }

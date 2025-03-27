@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,7 +12,9 @@ public class InventoryManager : MonoBehaviour
         get => instance ?? (instance = FindObjectOfType<InventoryManager>()); 
     }
     public ItemDTO[] itemDatas;
-    public List<ItemSlot> ItemSlots = new();
+    public Dictionary<EquipmentType,ItemDTO> EquipedItemDatas = new();
+    
+    //public List<ItemSlot> ItemSlots = new();//잠시 잠굼 어짜피 쓸일 없을거같은데
     public List<ItemSlotHandler> ItemSlot = new();
     public ItemSO[] itemSOs;
 
@@ -33,6 +36,12 @@ public class InventoryManager : MonoBehaviour
         {
             itemDatas[i] = new ItemDTO(null, 0, null, null,NullItemSprite);
         }
+        foreach (EquipmentType type  in  Enum.GetValues(typeof(EquipmentType)))
+        {
+            if(type != EquipmentType.Null)
+                EquipedItemDatas.Add(type,new ItemDTO(null, 0, null, null,NullItemSprite));
+        }
+        Debug.Log(String.Join(", ", EquipedItemDatas.Keys));
         //이건 나중에 옴길꺼임
         TestUpdate();
     }
@@ -79,7 +88,7 @@ public class InventoryManager : MonoBehaviour
                 int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType,EquipmentType);
                 if(leftoverItme > 0)
                     leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType,EquipmentType);
-                if(leftoverItme <= 0 && ItemSlots != null)
+                if(leftoverItme <= 0)
                     Updating();
                 
                 return leftoverItme;
