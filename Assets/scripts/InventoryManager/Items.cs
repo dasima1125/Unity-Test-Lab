@@ -15,6 +15,10 @@ public class Items : MonoBehaviour
     [SerializeField] private string ItemDescription;
 
     public bool CanPick = true;
+
+
+    [SerializeField] private int NewItemSystem_ID; 
+    [SerializeField] private int NewItemSystem_Quantity;
    
 
     public void DropItem(ItemDTO itemDTO,int i)
@@ -32,8 +36,22 @@ public class Items : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "player" && CanPick)
+        if (collision.gameObject.CompareTag("player") && CanPick)
         {
+            if(NewItemSystem_ID != 0)
+            {
+                var data = DataManager.data.ItemData[NewItemSystem_ID];
+                if(data != null)
+                {
+                    var insert = DataManager.data.InventoryList;
+                    insert.Add((data.ItemID,NewItemSystem_Quantity));
+                }
+                else
+                {
+                    Debug.Log("존재하지 않는 아이템ID 입니다");
+                }
+                
+            }
             int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType,EquipmentType);
             if(leftoverItme <= 0)
             {
@@ -43,7 +61,7 @@ public class Items : MonoBehaviour
             {
                 ItemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
             }
-          
+            
         }
         
     }

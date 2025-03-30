@@ -133,7 +133,6 @@ public class EquipmentSlot : MonoBehaviour ,IPointerEnterHandler ,IPointerExitHa
                 InventoryManager.Inventory.itemDatas[itemIndex] = data2;
                 InventoryManager.Inventory.EquipedItemDatas[EquipedSlotType] = data1;
             }
-            
             else
             {   
                 Debug.Log("아이템 장착");

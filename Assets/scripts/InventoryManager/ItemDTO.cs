@@ -90,7 +90,6 @@ public class ItemDTO
     public bool DecreaseItem(int i)
     {
         if(ItemQuantity <= 0 || ItemQuantity < i) return false;
-
         ItemQuantity -= i;
         IsFull = false;
         

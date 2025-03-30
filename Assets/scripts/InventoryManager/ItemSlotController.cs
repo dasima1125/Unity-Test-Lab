@@ -28,6 +28,7 @@ public class ItemSlotController : MonoBehaviour
     //      무한 루프가 발생함.
     public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType ,EquipmentType EquipmentType)
     {
+        Debug.Log("컨트롤러");
         var data = Inventory.itemDatas;
 
         for(int i = 0; i < data.Length; i++) 

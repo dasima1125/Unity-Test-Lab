@@ -24,8 +24,6 @@ public class EquipmentManager : MonoBehaviour
     
     void Start()
     {
-        
-
         EquipmentUpdate();
     }
     public void EquipmentUpdate()
@@ -162,17 +160,6 @@ public class EquipmentManager : MonoBehaviour
                                 .OrderBy(kvp => (int)kvp.Key)
                                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        // 디버깅: 각 장비 유형별 아이템 및 인덱스 확인
-        /**
-        foreach (var kvp in equipmentDictionary)
-        {
-            Debug.Log($"장비 타입: {kvp.Key}");
-            foreach (var (index, item) in kvp.Value)
-            {
-                Debug.Log($"  - 인덱스: {index}, 아이템: {item.ItemName}");
-            }
-        }
-        */
         return equipmentDictionary;
         
     }

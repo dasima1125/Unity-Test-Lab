@@ -11,10 +11,11 @@ public class InventoryManager : MonoBehaviour
     { 
         get => instance ?? (instance = FindObjectOfType<InventoryManager>()); 
     }
+    //인벤토리 저장기능 만드는중
     public ItemDTO[] itemDatas;
     public Dictionary<EquipmentType,ItemDTO> EquipedItemDatas = new();
     
-    //public List<ItemSlot> ItemSlots = new();//잠시 잠굼 어짜피 쓸일 없을거같은데
+
     public List<ItemSlotHandler> ItemSlot = new();
     public ItemSO[] itemSOs;
 
@@ -41,7 +42,7 @@ public class InventoryManager : MonoBehaviour
             if(type != EquipmentType.Null)
                 EquipedItemDatas.Add(type,new ItemDTO(null, 0, null, null,NullItemSprite));
         }
-        Debug.Log(String.Join(", ", EquipedItemDatas.Keys));
+        
         //이건 나중에 옴길꺼임
         TestUpdate();
     }
@@ -77,26 +78,45 @@ public class InventoryManager : MonoBehaviour
         }
         return false;
     }
-    
-    public int Add_ver(string ItemName, int Quantity, Sprite sprite, string itemDescription, ItemType itemType,EquipmentType EquipmentType)
+ 
+    public int New_Add_ver(int ID,int Quantity)
     {
-   
-        for(int i = 0; i < itemDatas.Length; i++) 
-        {
-            if(itemDatas[i].IsFull == false && itemDatas[i].ItemName == ItemName || itemDatas[i].ItemQuantity == 0)
+        var data = DataManager.data.InventoryList;
+        var itemdata = DataManager.data.ItemData;
+        for(int i = 0; i < data.Count; i++) 
+        {   //아이디가 같고 , 수량이 가득 찻을경우 , 또는 아이템 수량이 0인 상태일경우
+            if((data[i].Item1 == ID && data[i].Item2 < itemdata[ID].MaxNumberItems)|| data[i].Item2 == 0)
             {
-                int leftoverItme = itemDatas[i].AddItem(ItemName, Quantity, sprite,itemDescription,itemType,EquipmentType);
+                int leftoverItme = New_AddItem(i, ID, Quantity);
                 if(leftoverItme > 0)
-                    leftoverItme = Add_ver(ItemName,leftoverItme,sprite,itemDescription,itemType,EquipmentType);
+                    leftoverItme = New_Add_ver(ID, leftoverItme);
                 if(leftoverItme <= 0)
-                    Updating();
                 
                 return leftoverItme;
             }
             
         }
         return Quantity;
+    }
 
+    
+    public  int New_AddItem(int index, int ID, int Quantity)
+    {
+        var data = DataManager.data.InventoryList[index];
+        var itemdata = DataManager.data.ItemData;
+
+        if(data.Item2 >= itemdata[ID].MaxNumberItems) return Quantity; 
+             
+        data.Item2 += Quantity;
+        if(data.Item2 > itemdata[ID].MaxNumberItems)
+        {
+            int OverQuantity = data.Item2;
+            data.Item2 = itemdata[ID].MaxNumberItems;
+
+            return OverQuantity - itemdata[ID].MaxNumberItems;
+        }
+
+        return 0;
     }
     public void DeSelectAll()
     {

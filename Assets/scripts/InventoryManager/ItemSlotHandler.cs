@@ -146,9 +146,7 @@ public class ItemSlotHandler : MonoBehaviour, IPointerClickHandler ,IBeginDragHa
     {
         if(isItemSelect && inventory.itemDatas[slotIndex].ItemQuantity > 0)
         {
-             
-            CreateContext();
-            
+            CreateContext();   
         }
 
     }
