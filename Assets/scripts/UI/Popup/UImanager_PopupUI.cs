@@ -38,7 +38,9 @@ public class UImanager_PopupUI : MonoBehaviour
         send.slotPostion = panelInstance.transform.Find("inventorySlot");
         send.DescriptionName_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
         send.DescriptionText_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionText/Text").GetComponent<TMP_Text>();
-        send.Updating();
+        //send.Updating();
+        Inventory_ViewModel.Inventory.InventoryOpen(panelInstance);
+       
         
         
         manager.currentPopupUI.Push(panelInstance);
@@ -58,6 +60,7 @@ public class UImanager_PopupUI : MonoBehaviour
     }
     public void hide() 
     {
+      
         var manager = UImanager.manager;
         GameObject panelInstance = manager.currentPopupUI.Pop();
         Destroy(panelInstance);

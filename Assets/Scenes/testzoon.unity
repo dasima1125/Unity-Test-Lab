@@ -427,6 +427,8 @@ MonoBehaviour:
 
 '
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!1 &60526594
 GameObject:
   m_ObjectHideFlags: 0
@@ -2540,6 +2542,8 @@ MonoBehaviour:
 
 '
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!1 &425241660
 GameObject:
   m_ObjectHideFlags: 0
@@ -3948,6 +3952,8 @@ MonoBehaviour:
 
 '
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!1 &539576601
 GameObject:
   m_ObjectHideFlags: 0
@@ -4735,6 +4741,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 001c81eb6d09f504caf4dd08d34de95d, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 2
+  NewItemSystem_Quantity: 4
 --- !u!61 &685271557
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7650,6 +7658,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 2f1eaeeaad36ee5469eff7ff158f37ba, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!61 &1539687137
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9577,6 +9587,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: e420c5bc93cb2604695a893500c897e3, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!61 &1922018983
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12529,6 +12541,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 3122a9fb77166294887b94a7bb9616ef, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!114 &3142776559243235245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12548,6 +12562,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 3122a9fb77166294887b94a7bb9616ef, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!114 &3142776560007753794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12567,6 +12583,8 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: fd6e4fc32c78509458fc45ea4a478ba8, type: 3}
   ItemDescription: 
   CanPick: 1
+  NewItemSystem_ID: 0
+  NewItemSystem_Quantity: 0
 --- !u!50 &3171901220558880685
 Rigidbody2D:
   serializedVersion: 4

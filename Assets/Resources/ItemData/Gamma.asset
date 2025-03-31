@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Gamma
   m_EditorClassIdentifier: 
   itemID: 4
-  itemName: "\uAC10\uB9C8"
-  sprite: {fileID: 0}
-  maxNumberItems: 2
-  itemDescription: 
-  itemType: 0
+  itemName: Postion
+  sprite: {fileID: 21300000, guid: e52ea25af699fd445b7046374f81a5b9, type: 3}
+  maxNumberItems: 5
+  itemDescription: Only for drinking... please check, it's for drinking purposes.
+  itemType: 1
   equipmentType: 0

@@ -20,11 +20,15 @@ public class DataManager : MonoBehaviour
                 Debug.LogWarning("중복된 아이디 발견, 대상 :  " + item.ItemName  + " / " +ItemData[item.ItemID].ItemName);
             }
         }
+        //InventoryList.Add(new InventoryItem(0, 0));
+        //InventoryList.Add(new InventoryItem(0, 0));
+        //InventoryList.Add(new InventoryItem(0, 0));
     }
     public Dictionary<int,ItemData_SO> ItemData = new();
     /// <summary>
     /// ID , 수량 순
     /// </summary>
-    public List<(int ,int)> InventoryList = new();
+    public List<InventoryItem> InventoryList = new();
+    
 
 }

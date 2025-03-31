@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using UnityEngine;
 
 public class Items : MonoBehaviour
@@ -38,20 +40,30 @@ public class Items : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("player") && CanPick)
         {
+            
             if(NewItemSystem_ID != 0)
             {
                 var data = DataManager.data.ItemData[NewItemSystem_ID];
-                if(data != null)
+                if(data != null && Inventory_ViewModel.Inventory != null)
                 {
-                    var insert = DataManager.data.InventoryList;
-                    insert.Add((data.ItemID,NewItemSystem_Quantity));
+                    int count = Inventory_ViewModel.Inventory.ItemAdd(NewItemSystem_ID,NewItemSystem_Quantity);
+                    
+                    if(count <= 0) Destroy(gameObject);
+                    else NewItemSystem_Quantity = count;
+
+                    Debug.Log("인벤토리 상태 :"+string.Join(", ", DataManager.data.InventoryList.Select(item => item.ID)));
                 }
                 else
                 {
-                    Debug.Log("존재하지 않는 아이템ID 입니다");
+                    Debug.Log("모듈이 존재하지 않습니다. " 
+                        + " 데이터 모듈 : " + (data != null ? "True" : "Null") 
+                        + " 인벤토리 시스템 모듈 : " + (Inventory_ViewModel.Inventory != null ? "True" : "Null"));
+
                 }
                 
             }
+           
+            /**
             int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType,EquipmentType);
             if(leftoverItme <= 0)
             {
@@ -61,7 +73,7 @@ public class Items : MonoBehaviour
             {
                 ItemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
             }
-            
+            */
         }
         
     }

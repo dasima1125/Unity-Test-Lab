@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: alpha
   m_EditorClassIdentifier: 
   itemID: 1
-  itemName: "\uC54C\uD30C"
-  sprite: {fileID: 0}
+  itemName: helmet
+  sprite: {fileID: 21300000, guid: fd6e4fc32c78509458fc45ea4a478ba8, type: 3}
   maxNumberItems: 1
-  itemDescription: 
-  itemType: 0
-  equipmentType: 3
+  itemDescription: Use Only head
+  itemType: 2
+  equipmentType: 5

@@ -46,8 +46,9 @@ public class InventoryManager : MonoBehaviour
         //이건 나중에 옴길꺼임
         TestUpdate();
     }
+   
     public void Updating()
-    {
+    { 
         if(slotPostion == null) return;
         foreach (Transform child in slotPostion.transform)
         {
@@ -64,6 +65,7 @@ public class InventoryManager : MonoBehaviour
             ItemSlot.Add(setSlot.GetComponent<ItemSlotHandler>());
         }
     }
+    
    
     public bool UseItem(int index)
     {
@@ -78,46 +80,7 @@ public class InventoryManager : MonoBehaviour
         }
         return false;
     }
- 
-    public int New_Add_ver(int ID,int Quantity)
-    {
-        var data = DataManager.data.InventoryList;
-        var itemdata = DataManager.data.ItemData;
-        for(int i = 0; i < data.Count; i++) 
-        {   //아이디가 같고 , 수량이 가득 찻을경우 , 또는 아이템 수량이 0인 상태일경우
-            if((data[i].Item1 == ID && data[i].Item2 < itemdata[ID].MaxNumberItems)|| data[i].Item2 == 0)
-            {
-                int leftoverItme = New_AddItem(i, ID, Quantity);
-                if(leftoverItme > 0)
-                    leftoverItme = New_Add_ver(ID, leftoverItme);
-                if(leftoverItme <= 0)
-                
-                return leftoverItme;
-            }
-            
-        }
-        return Quantity;
-    }
-
     
-    public  int New_AddItem(int index, int ID, int Quantity)
-    {
-        var data = DataManager.data.InventoryList[index];
-        var itemdata = DataManager.data.ItemData;
-
-        if(data.Item2 >= itemdata[ID].MaxNumberItems) return Quantity; 
-             
-        data.Item2 += Quantity;
-        if(data.Item2 > itemdata[ID].MaxNumberItems)
-        {
-            int OverQuantity = data.Item2;
-            data.Item2 = itemdata[ID].MaxNumberItems;
-
-            return OverQuantity - itemdata[ID].MaxNumberItems;
-        }
-
-        return 0;
-    }
     public void DeSelectAll()
     {
         //작동
