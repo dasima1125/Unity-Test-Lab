@@ -26,13 +26,14 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         EmptySlotImage = showSlotImage.sprite;// 이미지로 보내버리면 참조를 걸어서 문제가 생김
         showDescriptionNameZone = Inventory_ViewModel.Inventory.DescriptionName_TMP;
         showDescriptionTextZone = Inventory_ViewModel.Inventory.DescriptionText_TMP;
-        SlotUpdate(slotIndex);
+        SlotUpdate();
         
         
     }
-    public void SlotUpdate(int index)
+    // 슬롯 상태 서비스
+    public void SlotUpdate()
     {
-        var ItemData = DataManager.data.InventoryList[index];
+        var ItemData = DataManager.data.InventoryList[slotIndex];
         if (ItemData.Quantity <= 0)// 수량이 0일때
         {
             EmptySlot();
@@ -49,8 +50,6 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         showQuantityText.text    = ItemData.Quantity.ToString();
  
         showQuantityText.enabled = true;
-
-        
     }
     private void EmptySlot()
     {
@@ -86,7 +85,7 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
             
         }
         if(eventData.button == PointerEventData.InputButton.Right) {
-            //OnRightclicked();
+            OnRightclicked();
         }
         if(eventData.button == PointerEventData.InputButton.Middle) {
             //TestClicked();
@@ -112,6 +111,34 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
             showDescriptionTextZone.text = data.ItemDescription;
         }
 
+    }
+    public void OnRightclicked()
+    {
+        if(isItemSelect && DataManager.data.InventoryList[slotIndex].ID != 0)
+        CreateContext();
+    }
+    public void CreateContext() 
+    {
+        var Manager = Inventory_ViewModel.Inventory;
+        string target ="ContextPanelUI";
+
+        if(!Manager.ContextUIDictionary.ContainsKey(target)) return;
+        GameObject contextPanel = Instantiate(Manager.ContextUIDictionary[target]);
+        
+        contextPanel.transform.SetParent(UImanager.manager.canvas.transform, false);
+        Manager.ContextUI.Push(contextPanel);
+        contextPanel.SetActive(false);
+
+        //인덱스 부여
+        contextPanel.GetComponent<Inventory_View_Context>().slotIndex = slotIndex;  
+        
+        RectTransform slotPos    = gameObject.GetComponent<RectTransform>();// 슬롯 위치
+        RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();//버튼위치 조정
+        
+        buttonRect.position = slotPos.position - new Vector3((buttonRect.rect.width / 2) -5,buttonRect.rect.height + 35 ); //초기 설계를 잘못했나..  세부조정이 좀
+        contextPanel.SetActive(true);
+
+        
     }
 
     // 드래그 앤 드랍 서비스
@@ -144,6 +171,7 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         MoveTarget.sizeDelta =     originalSize;
         MoveTarget.SetParent(originalLayer);
         var swapTarget = eventData.pointerCurrentRaycast.gameObject.GetComponent<Inventory_View>();
+        
         if(swapTarget != null && swapTarget.slotIndex != slotIndex)
         {
             Inventory_ViewModel.Inventory.SwapItemData(slotIndex, swapTarget.slotIndex);

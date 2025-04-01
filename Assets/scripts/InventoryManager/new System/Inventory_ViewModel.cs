@@ -17,16 +17,16 @@ public class Inventory_ViewModel : MonoBehaviour
     public TMP_Text DescriptionName_TMP;
     public TMP_Text DescriptionText_TMP;
 
-    //인벤토리 내부요소
+    
     [SerializeField] 
     private GameObject Itemslot;
     public List<Inventory_View> ItemSlots = new();
     public Transform slotPostion;
-
+    //인벤토리 슬롯 통제요소
     public void InventoryOpen(GameObject gameObject)
     {
         if(InventoryPanel != null) return;
-        
+        if(ContextUIDictionary.Count == 0)ContextUpdate();
         InventoryPanel = gameObject;
         
         DescriptionName_TMP  = InventoryPanel.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
@@ -44,15 +44,24 @@ public class Inventory_ViewModel : MonoBehaviour
         {
             GameObject Slot = Instantiate(Itemslot);
             Slot.transform.SetParent(slotPostion.transform, false);
-
             Slot.GetComponent<Inventory_View>().slotIndex = i;
   
             ItemSlots.Add(Slot.GetComponent<Inventory_View>());
         } 
     }
+    public void UpdateSlot(int target)
+    {
+        ItemSlots[target].SlotUpdate();
+    }
     public ItemData_SO UpadateData(int ID)
     {
         ItemData_SO data = Inventory_Model.Inventory.ItemDataReader(ID);
+        return data;
+    }
+    public ItemData_SO GetItemDatabyID(int index)
+    {
+        ItemData_SO data = Inventory_Model.Inventory.GetItemSOByIndex(index);
+        if(data == null) {Debug.Log("생성실패, 인덱스의 id가 존재하지않는 id입니다");};
         return data;
     }
     public void DeSelectAll()
@@ -62,15 +71,44 @@ public class Inventory_ViewModel : MonoBehaviour
             item.DeSelect();
         }
     }
+    //인벤토리 데이터 서비스
     public int ItemAdd(int ID ,int Quantity)
     {
         int itemCount = Inventory_Model.Inventory.AddItem(ID,Quantity);
         return itemCount;
     }
+    public int ItemDecrease(int index, int Quantity)
+    {
+        if(!Inventory_Model.Inventory.DecreaseItem(index,Quantity)) return 0;
+        return Quantity;
+    }
+    public int SplitItem(int index,int itemAmount)
+    {
+        int targetIndex = Inventory_Model.Inventory.SplitItemData(index,itemAmount);
+        return targetIndex;
+    }
+
     public void SwapItemData(int target1 ,int target2)
     {
         Inventory_Model.Inventory.SwapItemData(target1,target2);
-        ItemSlots[target1].SlotUpdate(target1);
-        ItemSlots[target2].SlotUpdate(target2);
+        ItemSlots[target1].SlotUpdate();
+        ItemSlots[target2].SlotUpdate();
+    }
+    //컨텍스트 패널 서비스
+    public Dictionary<string, GameObject> ContextUIDictionary = new();
+    public Stack<GameObject> ContextUI = new(); 
+
+    public void ContextUpdate() 
+    {
+        GameObject[] InventoryUIs = Resources.LoadAll<GameObject>("InventorySystem/ContextMenuUIs_beta");
+        foreach(GameObject InventoryUI in InventoryUIs)
+        {
+            if(!ContextUIDictionary.ContainsKey(InventoryUI.name))
+            {
+                //Debug.Log("" + InventoryUI.name);
+                ContextUIDictionary.Add(InventoryUI.name, InventoryUI);
+            }
+        }
+        
     }
 }

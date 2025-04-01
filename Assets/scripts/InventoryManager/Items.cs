@@ -18,11 +18,17 @@ public class Items : MonoBehaviour
 
     public bool CanPick = true;
 
-
-    [SerializeField] private int NewItemSystem_ID; 
-    [SerializeField] private int NewItemSystem_Quantity;
-   
-
+    void Start()
+    {
+        //셀프 업데이트
+        if(NewItemSystem_ID != 0 && NewItemSystem_Quantity != 0)
+        {
+            var data = DataManager.data.ItemData[NewItemSystem_ID];
+            GetComponent<SpriteRenderer>().sprite = data.Sprite;
+        }
+        
+    }
+    
     public void DropItem(ItemDTO itemDTO,int i)
     {
         ItemName = itemDTO.ItemName;
@@ -33,6 +39,18 @@ public class Items : MonoBehaviour
         ItemDescription = itemDTO.ItemDescription;
         
         ItemQuantity = i;
+        StartCoroutine(Count());
+    }
+    // SO기반 시스템
+    [SerializeField] private int NewItemSystem_ID; 
+    [SerializeField] private int NewItemSystem_Quantity;
+    
+    public void Setup(int id,int quantity)
+    {
+        var data = DataManager.data.ItemData[id];
+        NewItemSystem_ID = data.ItemID;
+        NewItemSystem_Quantity = quantity;
+        GetComponent<SpriteRenderer>().sprite = data.Sprite;
         StartCoroutine(Count());
     }
 
@@ -51,7 +69,7 @@ public class Items : MonoBehaviour
                     if(count <= 0) Destroy(gameObject);
                     else NewItemSystem_Quantity = count;
 
-                    Debug.Log("인벤토리 상태 :"+string.Join(", ", DataManager.data.InventoryList.Select(item => item.ID)));
+                    //Debug.Log("인벤토리 상태 :"+string.Join(", ", DataManager.data.InventoryList.Select(item => item.ID)));
                 }
                 else
                 {
@@ -63,7 +81,7 @@ public class Items : MonoBehaviour
                 
             }
            
-            /**
+            else{
             int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType,EquipmentType);
             if(leftoverItme <= 0)
             {
@@ -73,7 +91,7 @@ public class Items : MonoBehaviour
             {
                 ItemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
             }
-            */
+            }
         }
         
     }

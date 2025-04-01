@@ -20,7 +20,7 @@ public class Inventory_Model : MonoBehaviour
     {
         var data = DataManager.data.InventoryList;
         var itemdata = DataManager.data.ItemData;
-        
+        //이부분은 나중에알아서 처리할예정
         if (data.Count < maximumSize)
         {
             while (data.Count < maximumSize)
@@ -38,20 +38,29 @@ public class Inventory_Model : MonoBehaviour
                 {
                     leftoverItem = AddItem(ID , leftoverItem);
                 }
-                //Debug.Log("연산 끝");
                 return leftoverItem;
             }
         }
         return Quantity;
     }
+    public bool DecreaseItem(int index,int Quantity)
+    {
+        var data = DataManager.data.InventoryList;
+        if(data[index].Quantity <= 0 || data[index].Quantity < Quantity) return false;
+        data[index].Quantity -= Quantity;
+
+        if(data[index].Quantity == 0)
+            data[index].ID = 0;
+
+        return true;
+    }
     
-    public  int InsertItem(int index, int ID, int Quantity)
+    public int InsertItem(int index, int ID, int Quantity)
     {
         var data = DataManager.data.InventoryList[index];
         var itemdata = DataManager.data.ItemData;
         if(data.Quantity >= itemdata[ID].MaxNumberItems)
         {
-            //Debug.Log("반환됨");
             return Quantity; 
         } 
         data.ID = ID;     
@@ -66,7 +75,15 @@ public class Inventory_Model : MonoBehaviour
         }
         return 0;
     }
-    #endregion 
+    #endregion
+    #region  아이템 정보 추출 서비스
+    public ItemData_SO GetItemSOByIndex(int index)
+    {
+        int data =DataManager.data.InventoryList[index].ID;
+       
+        if(data == 0) return null; 
+        return DataManager.data.ItemData[data];
+    } 
     public ItemData_SO ItemDataReader(int ID)
     {
         var data = DataManager.data.ItemData;
@@ -76,10 +93,11 @@ public class Inventory_Model : MonoBehaviour
             return null;
         }
         ItemData_SO itemdata = data[ID];
-        //Debug.Log("검색중 :" + itemdata.ItemName);
-        
         return itemdata;
     }
+    #endregion
+
+    #region 아이템 데이터배치 서비스
     public void SwapItemData(int target1 ,int target2)
     {
         var MainData = DataManager.data.InventoryList;
@@ -97,5 +115,28 @@ public class Inventory_Model : MonoBehaviour
             MainData[target2] =   slotData;
         }
     }
+    public int SplitItemData(int slotIndex,int DecreaseQuantity) 
+    {
+        int targetIndex = -1;
+        for(int i = 0;i < DataManager.data.InventoryList.Count;i++)
+        {
+            var item = DataManager.data.InventoryList[i];
+            if(item.ID == 0 && item.Quantity == 0)
+            {
+                targetIndex = i;
+                break;
+            }
+        }
+        if(targetIndex == -1) return targetIndex -1;
+
+        var data = DataManager.data.InventoryList;
+        data[slotIndex].Quantity -= DecreaseQuantity;
+        
+        data[targetIndex].ID = data[slotIndex].ID;
+        data[targetIndex].Quantity = DecreaseQuantity;
+        
+        return targetIndex;
+    }
+    #endregion
     
 }

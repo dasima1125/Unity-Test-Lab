@@ -41,8 +41,6 @@ public class UImanager_PopupUI : MonoBehaviour
         //send.Updating();
         Inventory_ViewModel.Inventory.InventoryOpen(panelInstance);
        
-        
-        
         manager.currentPopupUI.Push(panelInstance);
     
         UIComposer.Call.Next();

@@ -319,9 +319,9 @@ GameObject:
   - component: {fileID: 1269527552324573568}
   - component: {fileID: 6452736672729271032}
   - component: {fileID: 3815470707123414499}
-  - component: {fileID: 5470641912335748921}
+  - component: {fileID: 3482631866973887894}
   m_Layer: 5
-  m_Name: ContextDroplUI
+  m_Name: ContextSplitlUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -429,7 +429,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5470641912335748921}
+      - m_Target: {fileID: 3482631866973887894}
         m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
         m_MethodName: Context_back
         m_Mode: 1
@@ -441,7 +441,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5470641912335748921
+--- !u!114 &3482631866973887894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -710,7 +710,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5470641912335748921}
+      - m_Target: {fileID: 3482631866973887894}
         m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
         m_MethodName: AcceptContext
         m_Mode: 1
@@ -842,9 +842,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: InventoryContextHandler, Assembly-CSharp
-        m_MethodName: DropPanel_DecreaseQuantity
+      - m_Target: {fileID: 3482631866973887894}
+        m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
+        m_MethodName: DecreaseQuantity
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB0B4\uB824\uB193\uC744 \uC218\uB7C9\uC744 \uC120\uD0DD\uD574\uC8FC\uC2ED\uC2DC\uC694"
+  m_text: "\uB098\uB20C \uC218\uB7C9\uC744 \uC120\uD0DD\uD574\uC8FC\uC2ED\uC2DC\uC694"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2cd475d48856a844783142e535b1d68b, type: 2}
   m_sharedMaterial: {fileID: -457003395708552273, guid: 2cd475d48856a844783142e535b1d68b, type: 2}
@@ -1080,7 +1080,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.85
+  m_fontSize: 24.25
   m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1243,9 +1243,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: InventoryContextHandler, Assembly-CSharp
-        m_MethodName: Clicked_Back
+      - m_Target: {fileID: 3482631866973887894}
+        m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
+        m_MethodName: Context_back
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1375,9 +1375,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: InventoryContextHandler, Assembly-CSharp
-        m_MethodName: DropPanel_IncreaseQuantity
+      - m_Target: {fileID: 3482631866973887894}
+        m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
+        m_MethodName: IncreaseQuantity
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
