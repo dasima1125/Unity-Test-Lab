@@ -20,15 +20,20 @@ public class DataManager : MonoBehaviour
                 Debug.LogWarning("중복된 아이디 발견, 대상 :  " + item.ItemName  + " / " +ItemData[item.ItemID].ItemName);
             }
         }
-        //InventoryList.Add(new InventoryItem(0, 0));
-        //InventoryList.Add(new InventoryItem(0, 0));
-        //InventoryList.Add(new InventoryItem(0, 0));
     }
-    public Dictionary<int,ItemData_SO> ItemData = new();
     /// <summary>
     /// ID , 수량 순
     /// </summary>
+    /// 아이템 데이터
+    /// 나중에 이부분들음 .. 음 아마 모듈이있는지 확인하고 생성한다음 데이터를 끌어오는식? 이런식으로 개선해봐야할듯
+    public Dictionary<int,ItemData_SO> ItemData = new();
+    
+    // 인벤토리 데이터
     public List<InventoryItem> InventoryList = new();
+    
+    // 장비칸 데이터
+    public Dictionary<EquipmentTypeEnums,int> EquipedDatas = new();
+    
     
 
 }

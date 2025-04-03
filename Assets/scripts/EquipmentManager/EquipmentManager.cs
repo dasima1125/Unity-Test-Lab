@@ -16,7 +16,7 @@ public class EquipmentManager : MonoBehaviour
     }
     [SerializeField] private GameObject slots;
     [SerializeField] private GameObject panels;
-    [SerializeField] private Transform UpdateRight;
+    //[SerializeField] private Transform UpdateRight;
     [SerializeField] private Transform UpdateLeft;
     
     public Dictionary<EquipmentType,EquipmentSlot> EquipmentSlots = new();

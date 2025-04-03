@@ -132,13 +132,37 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         //인덱스 부여
         contextPanel.GetComponent<Inventory_View_Context>().slotIndex = slotIndex;  
         
-        RectTransform slotPos    = gameObject.GetComponent<RectTransform>();// 슬롯 위치
-        RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();//버튼위치 조정
+        RectTransform slotPos    = gameObject.GetComponent<RectTransform>();                            // 슬롯 위치
+        RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();    //버튼위치 조정
         
-        buttonRect.position = slotPos.position - new Vector3((buttonRect.rect.width / 2) -5,buttonRect.rect.height + 35 ); //초기 설계를 잘못했나..  세부조정이 좀
+        buttonRect.position = slotPos.position - new Vector3((buttonRect.rect.width / 2) -5,buttonRect.rect.height + 35); //초기 설계를 잘못했나..  세부조정이 좀
+        //각버튼 활성화 조건
+        Dictionary<string,GameObject> childrenPanel = new();
+        for (int i = 0; i < contextPanel.transform.GetChild(0).childCount; i++)
+        {
+            var ContextPanle = contextPanel.transform.GetChild(0).GetChild(i);
+            childrenPanel.Add(ContextPanle.name,ContextPanle.gameObject);
+        }
+
+        ItemData_SO SlotItemData = Inventory_ViewModel.Inventory.GetItemDatabyIndex(slotIndex);
+        
+        IfDisableButton(SlotItemData.ItemType != ItemTypeEnums.Equipment       ,"Equip_Panel"  ,childrenPanel);
+        IfDisableButton(SlotItemData.ItemType != ItemTypeEnums.Consumable      ,"Use_Panel"    ,childrenPanel);
+        IfDisableButton(DataManager.data.InventoryList[slotIndex].Quantity < 2 ,"Split_Panel"  ,childrenPanel);
+        
+                
         contextPanel.SetActive(true);
 
-        
+    }
+    private void IfDisableButton(bool condition, string panelName, Dictionary<string, GameObject> childrenPanel)
+    {
+        if (!condition) return; // 조건이 false면 그대로 둠
+        if (childrenPanel.TryGetValue(panelName, out var lockdownTarget))
+        {
+            lockdownTarget.GetComponent<Image>().color =Color.black;
+            lockdownTarget.GetComponent<Button>().interactable = false;
+            lockdownTarget.transform.GetChild(0).GetComponent<TMP_Text>().alpha = 0.2f;
+        }
     }
 
     // 드래그 앤 드랍 서비스

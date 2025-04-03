@@ -58,7 +58,7 @@ public class Inventory_ViewModel : MonoBehaviour
         ItemData_SO data = Inventory_Model.Inventory.ItemDataReader(ID);
         return data;
     }
-    public ItemData_SO GetItemDatabyID(int index)
+    public ItemData_SO GetItemDatabyIndex(int index)
     {
         ItemData_SO data = Inventory_Model.Inventory.GetItemSOByIndex(index);
         if(data == null) {Debug.Log("생성실패, 인덱스의 id가 존재하지않는 id입니다");};

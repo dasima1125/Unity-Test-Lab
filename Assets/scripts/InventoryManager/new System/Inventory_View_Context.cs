@@ -104,7 +104,7 @@ public class Inventory_View_Context : MonoBehaviour
                 GameObject dropItem = Instantiate(itemBulk);
                 dropItem.transform.position = GameObject.Find("player").transform.position;
                 
-                var OutputData = Manager.GetItemDatabyID(slotIndex);
+                var OutputData = Manager.GetItemDatabyIndex(slotIndex);
                 var OutputQuantity = Manager.ItemDecrease(slotIndex,SelectQuantity == 0 ? 1 : SelectQuantity);
                 
                 if(OutputData == null ||OutputQuantity == 0)

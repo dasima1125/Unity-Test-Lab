@@ -45,7 +45,7 @@ public class UIHandler : MonoBehaviour
     }
     public void Equipment()
     {
-        string insert = "Equipment";
+        string insert = "Equipment_delta";
         UImanager.manager.ShowPanel_popup_Equipment(insert);
     }
 
