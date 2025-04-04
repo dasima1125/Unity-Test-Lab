@@ -50,6 +50,7 @@ public class Equipment_ViewModel : MonoBehaviour
         if(panels == null || slotprefeb == null) return; 
         CreateEquippedItems();
         CreateInventoryItems();
+        Debug.Log(string.Join(",", DataManager.data.EquipedDatas.Keys));
         
     }
     public void CreateEquippedItems()
@@ -260,8 +261,7 @@ public class Equipment_ViewModel : MonoBehaviour
         }
         UpdateEquippedItems(Type);
         UpdateInventoryItems(Type);
-        //testAdder(Type);
-        //SetUp(); 
+ 
     }
 
     

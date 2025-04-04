@@ -87,6 +87,11 @@ public class Inventory_ViewModel : MonoBehaviour
         int targetIndex = Inventory_Model.Inventory.SplitItemData(index,itemAmount);
         return targetIndex;
     }
+    public void EquipedItem(int index)
+    {
+        Inventory_Model.Inventory.EquipInventoryItem(index);
+
+    }
 
     public void SwapItemData(int target1 ,int target2)
     {

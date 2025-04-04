@@ -791,7 +791,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5712584997231011098}
         m_TargetAssemblyTypeName: Inventory_View_Context, Assembly-CSharp
-        m_MethodName: Context_In
+        m_MethodName: ContextUse
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

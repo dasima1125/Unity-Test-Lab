@@ -20,6 +20,15 @@ public class DataManager : MonoBehaviour
                 Debug.LogWarning("중복된 아이디 발견, 대상 :  " + item.ItemName  + " / " +ItemData[item.ItemID].ItemName);
             }
         }
+        int maximumSize = 20;
+
+        if (InventoryList.Count < maximumSize)
+        {
+            while (InventoryList.Count < maximumSize)
+            {
+                InventoryList.Add(new InventoryItem(0, 0)); 
+            }
+        }
     }
     /// <summary>
     /// ID , 수량 순

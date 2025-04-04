@@ -20,15 +20,7 @@ public class Inventory_Model : MonoBehaviour
     {
         var data = DataManager.data.InventoryList;
         var itemdata = DataManager.data.ItemData;
-        //이부분은 나중에알아서 처리할예정
-        if (data.Count < maximumSize)
-        {
-            while (data.Count < maximumSize)
-            {
-                data.Add(new InventoryItem(0, 0)); 
-            }
-        }
-      
+        
         for(int i = 0; i < data.Count; i++) 
         {   
             if((data[i].ID == ID && data[i].Quantity < itemdata[ID].MaxNumberItems)|| (data[i].ID == 0 && data[i].Quantity == 0))
@@ -41,6 +33,7 @@ public class Inventory_Model : MonoBehaviour
                 return leftoverItem;
             }
         }
+        Debug.Log("남은수량 : " + Quantity);
         return Quantity;
     }
     public bool DecreaseItem(int index,int Quantity)
@@ -87,7 +80,7 @@ public class Inventory_Model : MonoBehaviour
     public ItemData_SO ItemDataReader(int ID)
     {
         var data = DataManager.data.ItemData;
-        if(data[ID] == null)
+        if (!data.ContainsKey(ID))
         {
             Debug.LogWarning("잘못된 ID가 저장된 상태입니다.");
             return null;
@@ -136,6 +129,26 @@ public class Inventory_Model : MonoBehaviour
         data[targetIndex].Quantity = DecreaseQuantity;
         
         return targetIndex;
+    }
+    public void EquipInventoryItem(int slotIndex)
+    {
+        Debug.Log("작업 시작");
+        var data = DataManager.data.InventoryList;
+        var targetdata = DataManager.data.EquipedDatas;
+
+        var item = GetItemSOByIndex(slotIndex);
+        if (targetdata.TryGetValue(item.EquipmentType, out var equippedItemID))
+        {
+            targetdata[item.EquipmentType] = item.ItemID;
+            data[slotIndex].ID       = ItemDataReader(equippedItemID).ItemID;
+            data[slotIndex].Quantity = 1;
+        }
+        else
+        {
+            targetdata[item.EquipmentType] = item.ItemID;
+            data[slotIndex].ID = 0;
+            data[slotIndex].Quantity = 0;
+        }
     }
     #endregion
     

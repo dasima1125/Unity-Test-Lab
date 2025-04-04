@@ -169,7 +169,7 @@ public class scNpc_text : MonoBehaviour
     {
         GameObject panel = GameObject.Find("UI_veiwer").transform.Find("infoAlarm").gameObject;//패널 접근
         mainmenu_play coroutinplayer = GameObject.Find("UI_veiwer").GetComponent<mainmenu_play>();
-
+        
         //TextMeshProUGUI infoText = panel.GetComponentInChildren<TextMeshProUGUI>();
         TextMeshProUGUI infotitleText    = panel.transform.Find("infoTitle").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI infocontentText  = panel.transform.Find("infoContent").GetComponent<TextMeshProUGUI>();

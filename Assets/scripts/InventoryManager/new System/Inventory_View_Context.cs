@@ -20,9 +20,7 @@ public class Inventory_View_Context : MonoBehaviour
         Destroy(removeTarget);
 
         if(Manager.ContextUI.Count > 0) Manager.ContextUI.Peek().SetActive(true); 
-
-
-            
+    
     }
     public void Context_In(string PanelName)
     {
@@ -34,8 +32,13 @@ public class Inventory_View_Context : MonoBehaviour
 
         newTarget.GetComponent<Inventory_View_Context>().orderType = PanelName;
         newTarget.GetComponent<Inventory_View_Context>().slotIndex = slotIndex;
-        newTarget.GetComponent<Inventory_View_Context>().SetupConutElmental(slotIndex);
-        
+        newTarget.GetComponent<Inventory_View_Context>().SetupConutElmental(slotIndex);   
+    }
+    public void ContextUse(string order) 
+    {
+        Debug.Log("명령 실행");
+        orderType = order;
+        AcceptContext();
     }
 
     private TMP_Text ScoreZoon;
@@ -53,7 +56,8 @@ public class Inventory_View_Context : MonoBehaviour
                     
         MaxQuantity = DataManager.data.InventoryList[TargetItemIndex].Quantity;
         if(MaxQuantity < 2)
-        {
+        {   
+            
             AcceptContext();
             return;
         }
@@ -77,13 +81,18 @@ public class Inventory_View_Context : MonoBehaviour
 
     public void AcceptContext()
     {
-       
-        
         switch (orderType)
         {
             case "Equip":
-                //if()
+                if(DataManager.data.EquipedDatas == null)
                 return;
+                Debug.Log("명령 진행");
+                //데이터 전송
+                Manager.EquipedItem(slotIndex);
+
+                //해당슬롯 업데이트
+                Manager.UpdateSlot(slotIndex);
+                Context_back();
             
             break;
             
