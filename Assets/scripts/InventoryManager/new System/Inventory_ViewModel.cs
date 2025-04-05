@@ -22,7 +22,12 @@ public class Inventory_ViewModel : MonoBehaviour
     private GameObject Itemslot;
     public List<Inventory_View> ItemSlots = new();
     public Transform slotPostion;
+    public DataCommandHandler Data;
     //인벤토리 슬롯 통제요소
+    void Awake()
+    {
+        Data = GameManager.Data.commandHandler;
+    }
     public void InventoryOpen(GameObject gameObject)
     {
         if(InventoryPanel != null) return;
@@ -34,11 +39,14 @@ public class Inventory_ViewModel : MonoBehaviour
         slotPostion          = InventoryPanel.transform.Find("inventorySlot");
 
         if(slotPostion == null) return;
+        /**
         foreach (Transform child in slotPostion.transform)
         {
             Destroy(child.gameObject);
         }
         ItemSlots.Clear();
+        
+
 
         for(int i = 0; i < DataManager.data.InventoryList.Count; i++) 
         {
@@ -47,7 +55,21 @@ public class Inventory_ViewModel : MonoBehaviour
             Slot.GetComponent<Inventory_View>().slotIndex = i;
   
             ItemSlots.Add(Slot.GetComponent<Inventory_View>());
+        }
+        */
+        
+        for(int i = 0; i < Data.InventoryCount(); i++) 
+        {
+            GameObject Slot = Instantiate(Itemslot);
+            Slot.transform.SetParent(slotPostion.transform, false);
+            Slot.GetComponent<Inventory_View>().slotIndex = i;
+            Debug.Log(i+"번째 신규 디자인패턴 시스템 제작 준비중");
+  
+            ItemSlots.Add(Slot.GetComponent<Inventory_View>());
         } 
+        
+    
+         
     }
     public void UpdateSlot(int target)
     {

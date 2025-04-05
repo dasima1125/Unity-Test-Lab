@@ -132,7 +132,6 @@ public class Equipment_ViewModel : MonoBehaviour
             Debug.LogWarning("슬롯접근 실패: " + type);
             return;
         }
-
         if (DataManager.data.EquipedDatas.TryGetValue(type, out var ID))
             EquipedSlots[type].GetComponent<Equipment_View>().SetUpEquipedSlot(true, ID);
         
@@ -210,9 +209,6 @@ public class Equipment_ViewModel : MonoBehaviour
         }
     }
     //너도가야지
-    /// <summary>
-    /// 인덱스 , 아이디
-    /// </summary>
     public Dictionary<EquipmentTypeEnums, List<(int,int)>> InventoryDataGrap_delta()
     {
         Dictionary<EquipmentTypeEnums, List<(int,int)>> output = new();

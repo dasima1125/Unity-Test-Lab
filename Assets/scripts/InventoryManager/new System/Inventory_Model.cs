@@ -11,11 +11,8 @@ public class Inventory_Model : MonoBehaviour
         get => instance ?? (instance = FindObjectOfType<Inventory_Model>()); 
     }
 
-
-    
+     
     #region 아이템 습득 시스템
-    int maximumSize = 10;
- 
     public int AddItem(int ID,int Quantity)
     {
         var data = DataManager.data.InventoryList;
@@ -151,5 +148,100 @@ public class Inventory_Model : MonoBehaviour
         }
     }
     #endregion
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///
+    /// 버전.2 의존성 주입 구현
+    /// 
+    ///
+     private DataSystem _data;
+    private DataCommandHandler data;
+    public void Init (DataSystem data)
+    {
+        Debug.Log("아마 적용됨?");
+        _data = data;
+        this.data = _data.commandHandler;
+    }   
+    
+    /**
+    private readonly DataSystem _data;
+    public Inventory_Model(DataSystem data)
+    {
+        _data = data;
+    }
+    */
+    # region 인벤토리 섹터
+    public int IncreaseItem_beta(int ID,int Quantity)
+    {
+        return data.Execute_IncreaseItem(ID, Quantity);
+    }
+    public int DecreaseItem_beta(int ID,int Quantity)
+    {
+        return data.Execute_DecreaseItem(ID, Quantity);
+    }
+    public void SwapItem_beta(int startIndex, int targetIndex)
+    {
+        var startData = data.Execute_InventoryIndexInfo_Solo(startIndex);
+        var targetData = data.Execute_InventoryIndexInfo_Solo(targetIndex);
+
+        data.Execute_ClearItem(startIndex);
+        data.Execute_ClearItem(targetIndex);
+        
+        if (startData.ID == targetData.ID)
+        {
+            int leftitem = data.Execute_InsertItem(targetIndex, startData.ID,startData.Quantity);
+            if(leftitem > 0) 
+                data.Execute_InsertItem(startIndex,startData.ID,leftitem);
+        }
+        else
+        {
+            data.Execute_InsertItem(targetIndex,targetData.ID,targetData.Quantity);
+            data.Execute_InsertItem(startIndex,startData.ID,startData.Quantity);
+        }
+    } 
+   
+    
+    #endregion
+    
+    #region 컨텍스트 섹터
+    public bool UseItem()
+    {
+        return true;
+    }
+    //반환값은 타겟 인덱스 ,-1이면 명령취소
+    public int SplitItem_beta(int slotIndex,int DecreaseQuantity) 
+    {
+        int targetIndex = data.Execute_InventoryEmptyslot();
+        if (targetIndex == -1)  return -1;
+        var ItemData = data.Execute_InventoryIndexInfo_Solo(slotIndex);
+        if(ItemData == null)  return -1;
+
+        data.Execute_TakeOutItem(slotIndex, DecreaseQuantity);
+        data.Execute_InsertItem(targetIndex,ItemData.ID,DecreaseQuantity); 
+        
+        return targetIndex;
+    }
+    public void EquipItem_beta(int slotIndex)
+    {
+        var ItemData = data.Execute_GetItemSOIndex(slotIndex);
+
+        int insideItem = data.Execute_EquipedItem(ItemData.EquipmentType,ItemData.ItemID);
+        data.Execute_ClearItem(slotIndex);
+        if(insideItem != 0) data.Execute_InsertItem(slotIndex ,insideItem ,1); 
+
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
     
 }

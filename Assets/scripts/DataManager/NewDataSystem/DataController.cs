@@ -64,45 +64,12 @@ public class DataController
         } 
         return 0;
     }
-    public void SwapItem(int startIndex ,int targetIndex)
+    
+    public void ClearItem(int index)
     {
-        var MainData = storage.InventoryList;
-        var slotData   = MainData[startIndex];
-        var targetData = MainData[targetIndex];
-        
-        if(slotData.ID == targetData.ID)
-        {
-            int leftitem = InsertItem(targetIndex,targetData.ID,slotData.Quantity);
-            slotData.Quantity = leftitem;
-            if (slotData.Quantity == 0) slotData.ID = 0;
-        }
-        else
-        {
-            MainData[startIndex]  = targetData;
-            MainData[targetIndex] = slotData;
-        }
-    }
-    public int SplitItem(int slotIndex,int DecreaseQuantity) 
-    {
-        int targetIndex = -1;
-        for(int i = 0;i < storage.InventoryList.Count;i++)
-        {
-            var item = storage.InventoryList[i];
-            if(item.ID == 0 && item.Quantity == 0)
-            {
-                targetIndex = i;
-                break;
-            }
-        }
-        if(targetIndex == -1) return targetIndex -1;
-
-        var data = storage.InventoryList;
-        data[slotIndex].Quantity -= DecreaseQuantity;
-        
-        data[targetIndex].ID = data[slotIndex].ID;
-        data[targetIndex].Quantity = DecreaseQuantity;
-        
-        return targetIndex;
+        var target =storage.InventoryList[index];
+        target.ID       = 0;
+        target.Quantity = 0;
     }
     public ItemData_SO GetItemSOIndex(int index)
     {
@@ -119,13 +86,16 @@ public class DataController
         }
         return storage.ItemData[data];
     }
-    
-    public void ClearItem(int index)
+    public InventoryItem InventoryIndexInfo_Solo(int index)
     {
-        var target =storage.InventoryList[index];
-        target.ID       = 0;
-        target.Quantity = 0;
+        if (index < 0 || index >= storage.InventoryList.Count) return null; 
+        var data = storage.InventoryList[index];
+        if (data.ID == 0 && data.Quantity == 0) return null;
+
+        return new InventoryItem(data.ID ,data.Quantity);
     }
+    
+    
 
     //
     // 순환 인덱스 제어 서비스
@@ -138,9 +108,21 @@ public class DataController
 
         return count;
     }
+    public int InventoryEmptyslot() 
+    {
+        int index = -1;
+        for(int i = 0; i < storage.InventoryList.Count; i++) 
+            if(storage.InventoryList[i].ID == 0 && storage.InventoryList[i].Quantity == 0) return i;
+        
+        return index;
+    }
+    public int InventoryCount() 
+    {
+        return storage.InventoryList.Count;
+    }
     public int IncreaseItem(int ID,int Quantity)
     {
-        var data     = storage.InventoryList;
+        var data = storage.InventoryList;
         
         for(int i = 0; i < data.Count; i++) 
         {   //아이디가 같고 최대수량 아닐경우 or 아이디가 0이고 수량도0일경우
@@ -158,7 +140,7 @@ public class DataController
     }
     public int DecreaseItem(int ID,int Quantity)
     {
-        var data     = storage.InventoryList;
+        var data = storage.InventoryList;
 
         for(int i = 0; i < data.Count; i++) 
         {
@@ -199,14 +181,6 @@ public class DataController
         storage.EquipedDatas[type] = 0;
         return data;
     }
-    /// <summary>
-    /// 인벤토리 내의 장비 아이템들을 장비 타입(EquipmentTypeEnums)별로 그룹화하여 반환합니다.
-    /// </summary>
-    /// <returns>
-    /// 각 장비 타입에 해당하는 인벤토리 아이템의 리스트를 담은 딕셔너리.
-    /// 리스트의 각 항목은 (슬롯 인덱스, 아이템 ID) 튜플로 구성되어 있으며, 
-    /// 인벤토리 내 해당 장비 타입 아이템의 위치와 ID를 나타냅니다.
-    /// </returns>
     public Dictionary<EquipmentTypeEnums, List<(int,int)>> GetEquipmentGropbyInventory()
     {
         Dictionary<EquipmentTypeEnums, List<(int,int)>> output = new();
@@ -221,7 +195,6 @@ public class DataController
             
             output[storage.ItemData[target.item.ID].EquipmentType].Add((target.index ,target.item.ID));
         }
-        // 장비 enum순으로 재배치
         return output;                       
     }
     
