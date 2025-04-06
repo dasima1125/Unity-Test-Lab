@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
@@ -39,52 +40,38 @@ public class Inventory_ViewModel : MonoBehaviour
         slotPostion          = InventoryPanel.transform.Find("inventorySlot");
 
         if(slotPostion == null) return;
-        /**
+        
         foreach (Transform child in slotPostion.transform)
         {
             Destroy(child.gameObject);
         }
         ItemSlots.Clear();
         
-
-
-        for(int i = 0; i < DataManager.data.InventoryList.Count; i++) 
-        {
-            GameObject Slot = Instantiate(Itemslot);
-            Slot.transform.SetParent(slotPostion.transform, false);
-            Slot.GetComponent<Inventory_View>().slotIndex = i;
-  
-            ItemSlots.Add(Slot.GetComponent<Inventory_View>());
-        }
-        */
         
         for(int i = 0; i < Data.InventoryCount(); i++) 
         {
             GameObject Slot = Instantiate(Itemslot);
             Slot.transform.SetParent(slotPostion.transform, false);
-            Slot.GetComponent<Inventory_View>().slotIndex = i;
-            Debug.Log(i+"번째 신규 디자인패턴 시스템 제작 준비중");
-  
+            Slot.GetComponent<Inventory_View>().Init(Inventory,i);
+
             ItemSlots.Add(Slot.GetComponent<Inventory_View>());
         } 
-        
-    
-         
     }
     public void UpdateSlot(int target)
     {
         ItemSlots[target].SlotUpdate();
     }
-    public ItemData_SO UpadateData(int ID)
+    public ItemData_SO GetItemDatabyID(int ID)
     {
-        ItemData_SO data = Inventory_Model.Inventory.ItemDataReader(ID);
-        return data;
+        return Inventory_Model.Inventory.ItemDataReader(ID);
     }
-    public ItemData_SO GetItemDatabyIndex(int index)
+    public InventoryItem GetSlotDatabyIndex(int index)
     {
-        ItemData_SO data = Inventory_Model.Inventory.GetItemSOByIndex(index);
-        if(data == null) {Debug.Log("생성실패, 인덱스의 id가 존재하지않는 id입니다");};
-        return data;
+        return Inventory_Model.Inventory.SlotInfoData(index);
+    }
+    public void Select(int targetIndex ,bool type)
+    {
+        ItemSlots[targetIndex].Select(type);
     }
     public void DeSelectAll()
     {
@@ -94,32 +81,35 @@ public class Inventory_ViewModel : MonoBehaviour
         }
     }
     //인벤토리 데이터 서비스
-    public int ItemAdd(int ID ,int Quantity)
+    public int ItemIncrease(int ID ,int Quantity)
     {
-        int itemCount = Inventory_Model.Inventory.AddItem(ID,Quantity);
-        return itemCount;
+        return Inventory_Model.Inventory.IncreaseItem_beta(ID,Quantity);
     }
     public int ItemDecrease(int index, int Quantity)
     {
-        if(!Inventory_Model.Inventory.DecreaseItem(index,Quantity)) return 0;
-        return Quantity;
+        return Inventory_Model.Inventory.DecreaseItem_beta(index,Quantity);
+    }
+    public void TakeOutItem(int index ,int quantity)
+    {
+        Inventory_Model.Inventory.TakeOutItem_beta(index,quantity);
     }
     public int SplitItem(int index,int itemAmount)
     {
-        int targetIndex = Inventory_Model.Inventory.SplitItemData(index,itemAmount);
-        return targetIndex;
+        return Inventory_Model.Inventory.SplitItem_beta(index,itemAmount);
     }
     public void EquipedItem(int index)
     {
-        Inventory_Model.Inventory.EquipInventoryItem(index);
-
+        Inventory_Model.Inventory.EquipItem_beta(index);
     }
 
-    public void SwapItemData(int target1 ,int target2)
+    public void SwapItemSlot(int target1 ,int target2)
     {
-        Inventory_Model.Inventory.SwapItemData(target1,target2);
-        ItemSlots[target1].SlotUpdate();
-        ItemSlots[target2].SlotUpdate();
+        Inventory_Model.Inventory.SwapItem_beta(target1,target2);
+        DeSelectAll();
+        Select(target2,true);
+      
+        UpdateSlot(target1);
+        UpdateSlot(target2);
     }
     //컨텍스트 패널 서비스
     public Dictionary<string, GameObject> ContextUIDictionary = new();
@@ -130,12 +120,9 @@ public class Inventory_ViewModel : MonoBehaviour
         GameObject[] InventoryUIs = Resources.LoadAll<GameObject>("InventorySystem/ContextMenuUIs_beta");
         foreach(GameObject InventoryUI in InventoryUIs)
         {
-            if(!ContextUIDictionary.ContainsKey(InventoryUI.name))
-            {
-                //Debug.Log("" + InventoryUI.name);
-                ContextUIDictionary.Add(InventoryUI.name, InventoryUI);
-            }
+            if(!ContextUIDictionary.ContainsKey(InventoryUI.name)) ContextUIDictionary.Add(InventoryUI.name, InventoryUI);
         }
-        
     }
+
+    /// 의존성 주입시스템 변환
 }

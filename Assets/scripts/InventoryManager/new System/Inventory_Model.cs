@@ -88,23 +88,7 @@ public class Inventory_Model : MonoBehaviour
     #endregion
 
     #region 아이템 데이터배치 서비스
-    public void SwapItemData(int target1 ,int target2)
-    {
-        var MainData = DataManager.data.InventoryList;
-        var slotData   = MainData[target1];
-        var targetData = MainData[target2];
-        if(slotData.ID == targetData.ID)
-        {
-            int leftitem = InsertItem(target2,targetData.ID,slotData.Quantity);
-            slotData.Quantity = leftitem;
-            if (slotData.Quantity <= 0) slotData.ID = 0;
-        }
-        else
-        {
-            MainData[target1] = targetData;
-            MainData[target2] =   slotData;
-        }
-    }
+    
     public int SplitItemData(int slotIndex,int DecreaseQuantity) 
     {
         int targetIndex = -1;
@@ -157,7 +141,7 @@ public class Inventory_Model : MonoBehaviour
     /// 버전.2 의존성 주입 구현
     /// 
     ///
-     private DataSystem _data;
+    private DataSystem _data;
     private DataCommandHandler data;
     public void Init (DataSystem data)
     {
@@ -173,7 +157,11 @@ public class Inventory_Model : MonoBehaviour
         _data = data;
     }
     */
-    # region 인벤토리 섹터
+    #region 인벤토리 서비스
+    public InventoryItem SlotInfoData(int SlotIndex)
+    {
+        return data.Execute_InventoryIndexInfo_Solo(SlotIndex);
+    }
     public int IncreaseItem_beta(int ID,int Quantity)
     {
         return data.Execute_IncreaseItem(ID, Quantity);
@@ -182,29 +170,82 @@ public class Inventory_Model : MonoBehaviour
     {
         return data.Execute_DecreaseItem(ID, Quantity);
     }
+    public void TakeOutItem_beta(int Index ,int Quantity) 
+    {
+        data.Execute_TakeOutItem(Index,Quantity);
+    }
+    public void SwapItemData(int target1 ,int target2)
+    {
+        var MainData = DataManager.data.InventoryList;
+        var slotData   = MainData[target1];
+        var targetData = MainData[target2];
+        if(slotData.ID == targetData.ID)
+        {
+            int leftitem = InsertItem(target2,targetData.ID,slotData.Quantity);
+            slotData.Quantity = leftitem;
+            if (slotData.Quantity <= 0) slotData.ID = 0;
+        }
+        else
+        {
+            MainData[target1] = targetData;
+            MainData[target2] =   slotData;
+        }
+    }
     public void SwapItem_beta(int startIndex, int targetIndex)
     {
+     
         var startData = data.Execute_InventoryIndexInfo_Solo(startIndex);
         var targetData = data.Execute_InventoryIndexInfo_Solo(targetIndex);
 
         data.Execute_ClearItem(startIndex);
-        data.Execute_ClearItem(targetIndex);
-        
+
         if (startData.ID == targetData.ID)
         {
             int leftitem = data.Execute_InsertItem(targetIndex, startData.ID,startData.Quantity);
-            if(leftitem > 0) 
+            if(leftitem > 0)
+            {
                 data.Execute_InsertItem(startIndex,startData.ID,leftitem);
+            } 
+                
         }
         else
         {
-            data.Execute_InsertItem(targetIndex,targetData.ID,targetData.Quantity);
-            data.Execute_InsertItem(startIndex,startData.ID,startData.Quantity);
+            Debug.Log("교체");
+            data.Execute_ClearItem(targetIndex);
+            data.Execute_InsertItem(targetIndex,startData.ID,startData.Quantity);
+            data.Execute_InsertItem(startIndex,targetData.ID,targetData.Quantity);
         }
-    } 
+    }
+    #endregion
+
+    #region  아이템 정보 추출 서비스
+    public ItemData_SO GetItemSOByIndex_beta(int index)
+    {
+        ItemData_SO info = data.Execute_GetItemSOIndex(index);
+       
+        if(info == null) return null; 
+        return info;
+    }
+    public bool GetItemSOByIndex_beta_new(int index, out ItemData_SO result)
+    {
+        result = data.Execute_GetItemSOIndex(index);
+        return result != null;
+    }
+ 
+    public ItemData_SO GetItemSOByID_bet(int ID)
+    {
+        var data = DataManager.data.ItemData;
+        if (!data.ContainsKey(ID))
+        {
+            Debug.LogWarning("잘못된 ID가 저장된 상태입니다.");
+            return null;
+        }
+        ItemData_SO itemdata = data[ID];
+        return itemdata;
+    }
+    #endregion 
    
     
-    #endregion
     
     #region 컨텍스트 섹터
     public bool UseItem()
@@ -235,13 +276,6 @@ public class Inventory_Model : MonoBehaviour
     }
 
     #endregion
-
-
-
-
-
-
-
 
     
 }

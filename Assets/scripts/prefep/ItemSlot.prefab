@@ -95,6 +95,7 @@ MonoBehaviour:
   slotIndex: 0
   showQuantityText: {fileID: 4384418713394300553}
   showSlotImage: {fileID: 5687958565103889059}
+  EmptySlotImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   selectedshader: {fileID: 9035641970847985495}
   isItemSelect: 0
   showDescriptionNameZone: {fileID: 0}

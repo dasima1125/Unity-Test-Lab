@@ -29,6 +29,14 @@ public class DataManager : MonoBehaviour
                 InventoryList.Add(new InventoryItem(0, 0)); 
             }
         }
+        foreach (EquipmentTypeEnums type in System.Enum.GetValues(typeof(EquipmentTypeEnums)))
+        {
+            if (type == EquipmentTypeEnums.Null) continue; // Null 타입은 스킵
+
+            if (!EquipedDatas.ContainsKey(type)) EquipedDatas.Add(type, 0);
+        }
+        
+        
     }
     /// <summary>
     /// ID , 수량 순

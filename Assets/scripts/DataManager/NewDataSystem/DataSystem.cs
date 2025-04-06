@@ -34,7 +34,7 @@ public class DataSystem
                 +storage.ItemData[item.ItemID].ItemName);
         }
         // 인벤토리 데이터 설정(일단 빈칸임)
-        int maximumSize = 20;
+        int maximumSize = 5;
         if (storage.InventoryList.Count < maximumSize)
         {
             while (storage.InventoryList.Count < maximumSize)

@@ -8,54 +8,59 @@ using UnityEngine.UI;
 public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitHandler ,IPointerClickHandler ,IBeginDragHandler ,IDragHandler, IEndDragHandler
 {
     // Slot Data //
-    public int slotIndex;
+    public int SlotIndex;
     [SerializeField] private TMP_Text showQuantityText;
     [SerializeField] private Image showSlotImage;
-    private Sprite EmptySlotImage;
+    [SerializeField] private Sprite EmptySlotImage;
     // Slot State // 
     public GameObject selectedshader;
     public bool isItemSelect;
     
     // Description Connect //
-    public TMP_Text showDescriptionNameZone;
-    public TMP_Text showDescriptionTextZone;
+    //public TMP_Text showDescriptionNameZone;
+    //public TMP_Text showDescriptionTextZone;2
     //초기화 구획
 
-    void Start()
+    private Inventory_ViewModel Order;
+    public void Init(Inventory_ViewModel Order , int SlotIndex)
     {
-        EmptySlotImage = showSlotImage.sprite;// 이미지로 보내버리면 참조를 걸어서 문제가 생김
-        showDescriptionNameZone = Inventory_ViewModel.Inventory.DescriptionName_TMP;
-        showDescriptionTextZone = Inventory_ViewModel.Inventory.DescriptionText_TMP;
+        this.Order = Order;
+        this.SlotIndex = SlotIndex;
         SlotUpdate();
-        
         
     }
     // 슬롯 상태 서비스
     public void SlotUpdate()
     {
-        var ItemData = DataManager.data.InventoryList[slotIndex];
-        if (ItemData.Quantity <= 0)// 수량이 0일때
+        var IndexInfo = Order.GetSlotDatabyIndex(SlotIndex);
+        if(IndexInfo == null) 
         {
-            EmptySlot();
+            Debug.Log("데이터 스토리지 접근 실패 : 인덱스에 해당되는 공간이없습니다");
             return;
-        } 
-        ItemData_SO GetItemData = Inventory_ViewModel.Inventory.UpadateData(ItemData.ID);
-        if(GetItemData == null)// ID를 찾을수 없을때 
+        }
+        if (IndexInfo.ID == 0 || IndexInfo.Quantity == 0)// 수량이 0일때
         {
-            Debug.LogWarning("잘못된 인수 선언 : 인벤토리 데이터를 초기화합니다.");
+         
             EmptySlot();
             return;
         }
-        showSlotImage.sprite     = GetItemData.Sprite;
-        showQuantityText.text    = ItemData.Quantity.ToString();
- 
+        var ItemInfo = Order.GetItemDatabyID(IndexInfo.ID);
+        showSlotImage.sprite     = ItemInfo.Sprite;
+        showQuantityText.text    = IndexInfo.Quantity.ToString();
+
         showQuantityText.enabled = true;
+
     }
     private void EmptySlot()
     {
         showQuantityText.text    = "0";
         showQuantityText.enabled = false;
         showSlotImage.sprite     = EmptySlotImage;
+    }
+    public void Select(bool type)
+    {
+        isItemSelect = type;
+        selectedshader.SetActive(type);
     }
     public void DeSelect()
     {
@@ -80,16 +85,9 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
     // 마우스 클릭 서비스
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(eventData.button == PointerEventData.InputButton.Left) {
-            OnLeftclicked();
-            
-        }
-        if(eventData.button == PointerEventData.InputButton.Right) {
-            OnRightclicked();
-        }
-        if(eventData.button == PointerEventData.InputButton.Middle) {
-            //TestClicked();
-        }
+        if(eventData.button == PointerEventData.InputButton.Left) OnLeftclicked();
+        if(eventData.button == PointerEventData.InputButton.Right) OnRightclicked();
+        
     }
     public void OnLeftclicked()
     {
@@ -98,39 +96,42 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         }
         else
         {
-            Inventory_ViewModel.Inventory.DeSelectAll();
+            Order.DeSelectAll();
+            var data = Order.GetSlotDatabyIndex(SlotIndex);
+            if (data.ID == 0) return;
 
+            //이거도 뷰모델에서 뿌려줘야함
+            
             selectedshader.SetActive(true);
             isItemSelect = true;
-
-            var ItemData = DataManager.data.InventoryList[slotIndex];
-            if (ItemData.ID == 0) return;
-        
-            var data = Inventory_ViewModel.Inventory.UpadateData(ItemData.ID);
-            showDescriptionNameZone.text = data.ItemName;
-            showDescriptionTextZone.text = data.ItemDescription;
+            //TODO 뷰모델 예하 아마 뷰모델에계속둘껀데 예외적으로 그냥 뷰모델에서 처리하게 할예정
+            //즉 이기능을 안쓸꺼임여기서
+            //showDescriptionNameZone.text = data.ItemName;
+            //showDescriptionTextZone.text = data.ItemDescription;
         }
 
     }
     public void OnRightclicked()
     {
-        if(isItemSelect && DataManager.data.InventoryList[slotIndex].ID != 0)
+        if(isItemSelect && Order.GetSlotDatabyIndex(SlotIndex).ID != 0)
         CreateContext();
     }
     public void CreateContext() 
     {
-        var Manager = Inventory_ViewModel.Inventory;
+        
         string target ="ContextPanelUI";
 
-        if(!Manager.ContextUIDictionary.ContainsKey(target)) return;
-        GameObject contextPanel = Instantiate(Manager.ContextUIDictionary[target]);
+        if(!Order.ContextUIDictionary.ContainsKey(target)) return;
+        GameObject contextPanel = Instantiate(Order.ContextUIDictionary[target]);
         
         contextPanel.transform.SetParent(UImanager.manager.canvas.transform, false);
-        Manager.ContextUI.Push(contextPanel);
+        Order.ContextUI.Push(contextPanel);
         contextPanel.SetActive(false);
 
         //인덱스 부여
-        contextPanel.GetComponent<Inventory_View_Context>().slotIndex = slotIndex;  
+        //나중에 init로 할예정 생각해보니 이거도 뷰가 해야함
+        //아닌가?
+        contextPanel.GetComponent<Inventory_View_Context>().slotIndex = SlotIndex;  
         
         RectTransform slotPos    = gameObject.GetComponent<RectTransform>();                            // 슬롯 위치
         RectTransform buttonRect = contextPanel.transform.GetChild(0).GetComponent<RectTransform>();    //버튼위치 조정
@@ -143,12 +144,14 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
             var ContextPanle = contextPanel.transform.GetChild(0).GetChild(i);
             childrenPanel.Add(ContextPanle.name,ContextPanle.gameObject);
         }
-
-        ItemData_SO SlotItemData = Inventory_ViewModel.Inventory.GetItemDatabyIndex(slotIndex);
+        Debug.Log("컨텍스트 생성 슬롯인덱스 : " + SlotIndex);
+        ItemData_SO SlotItemData = Order.GetItemDatabyID(Order.GetSlotDatabyIndex(SlotIndex).ID);
+        Debug.Log("슬롯인덱스 정보: " + SlotIndex);
+        Debug.Log("슬롯아이템 정보: " + SlotItemData.ItemName);
         
         IfDisableButton(SlotItemData.ItemType != ItemTypeEnums.Equipment       ,"Equip_Panel"  ,childrenPanel);
         IfDisableButton(SlotItemData.ItemType != ItemTypeEnums.Consumable      ,"Use_Panel"    ,childrenPanel);
-        IfDisableButton(DataManager.data.InventoryList[slotIndex].Quantity < 2 ,"Split_Panel"  ,childrenPanel);
+        IfDisableButton(Order.GetSlotDatabyIndex(SlotIndex).Quantity < 2 ,"Split_Panel"  ,childrenPanel);
         
                 
         contextPanel.SetActive(true);
@@ -171,6 +174,8 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
     private RectTransform MoveTarget;
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(Order.GetSlotDatabyIndex(SlotIndex).ID == 0 || Order.GetSlotDatabyIndex(SlotIndex).Quantity == 0) return;
+        
         MoveTarget        =  transform.Find("ItemImage").GetComponent<RectTransform>();
         originalPosition  =  MoveTarget.position;
         originalSize      =  MoveTarget.sizeDelta;
@@ -196,12 +201,19 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         MoveTarget.SetParent(originalLayer);
         var swapTarget = eventData.pointerCurrentRaycast.gameObject.GetComponent<Inventory_View>();
         
-        if(swapTarget != null && swapTarget.slotIndex != slotIndex)
+        if(swapTarget != null && swapTarget.SlotIndex != SlotIndex)
         {
-            Inventory_ViewModel.Inventory.SwapItemData(slotIndex, swapTarget.slotIndex);
+            Inventory_ViewModel.Inventory.SwapItemSlot(SlotIndex, swapTarget.SlotIndex);
         }
        
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///
+    /// 버전.2 의존성 주입 구현
+    /// 
+    ///
 
 
 }

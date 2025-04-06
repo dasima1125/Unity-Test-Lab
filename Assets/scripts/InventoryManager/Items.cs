@@ -64,7 +64,7 @@ public class Items : MonoBehaviour
                 var data = DataManager.data.ItemData[NewItemSystem_ID];
                 if(data != null && Inventory_ViewModel.Inventory != null)
                 {
-                    int count = Inventory_ViewModel.Inventory.ItemAdd(NewItemSystem_ID,NewItemSystem_Quantity);
+                    int count = Inventory_ViewModel.Inventory.ItemIncrease(NewItemSystem_ID,NewItemSystem_Quantity);
                     
                     if(count <= 0) Destroy(gameObject);
                     else NewItemSystem_Quantity = count;

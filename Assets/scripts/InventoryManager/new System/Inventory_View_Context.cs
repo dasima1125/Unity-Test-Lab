@@ -54,7 +54,7 @@ public class Inventory_View_Context : MonoBehaviour
                     .GetChild(0)  
                     .GetComponent<TMP_Text>();
                     
-        MaxQuantity = DataManager.data.InventoryList[TargetItemIndex].Quantity;
+        MaxQuantity = Manager.GetSlotDatabyIndex(slotIndex).Quantity;
         if(MaxQuantity < 2)
         {   
             
@@ -97,13 +97,21 @@ public class Inventory_View_Context : MonoBehaviour
             break;
             
             case "use":
-                return;
+               
             
             break;
             
             case "ContextSplitlUI":
+                
+                var slotData = Manager.GetSlotDatabyIndex(slotIndex);
+                if(
+                    slotData.ID == 0 ||
+                    SelectQuantity <= 0 ||
+                    slotData.Quantity < SelectQuantity 
+                    ) break;
+
                 var targetIndex = Manager.SplitItem(slotIndex,SelectQuantity);
-                if(targetIndex < 0)  return;
+                if(targetIndex == -1)  break; //실패 선언 
 
                 Manager.UpdateSlot(slotIndex);
                 Manager.UpdateSlot(targetIndex);
@@ -113,20 +121,23 @@ public class Inventory_View_Context : MonoBehaviour
                 GameObject dropItem = Instantiate(itemBulk);
                 dropItem.transform.position = GameObject.Find("player").transform.position;
                 
-                var OutputData = Manager.GetItemDatabyIndex(slotIndex);
-                var OutputQuantity = Manager.ItemDecrease(slotIndex,SelectQuantity == 0 ? 1 : SelectQuantity);
-                
-                if(OutputData == null ||OutputQuantity == 0)
+                var OutputData = Manager.GetItemDatabyID(Manager.GetSlotDatabyIndex(slotIndex).ID);
+                if(OutputData == null)
                 {
                     Debug.Log("데이터 추출실패. 작업을 취소합니다..");
-                    Destroy(dropItem);
-                    return;
+                    break;
                 }
+
+                int quantityToDrop = SelectQuantity == 0 ? 1 : SelectQuantity;
+                Manager.TakeOutItem(slotIndex,quantityToDrop);
+
                 var setting = dropItem.GetComponent<Items>();
-                setting.Setup(OutputData.ItemID,OutputQuantity);
+
+                setting.Setup(OutputData.ItemID,quantityToDrop);
                 setting.CanPick = false;
 
                 Manager.UpdateSlot(slotIndex);
+                
             break;
             
             default:

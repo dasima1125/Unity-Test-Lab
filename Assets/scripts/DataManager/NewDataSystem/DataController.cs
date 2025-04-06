@@ -33,10 +33,14 @@ public class DataController
     {
         var data = storage.InventoryList[index];
         var itemdata = storage.ItemData;
-        if(data.Quantity >= itemdata[ID].MaxNumberItems)
-        {
-            return Quantity; 
-        } 
+        
+        if(ID == 0 || Quantity == 0) 
+        {   ClearItem(index);
+            return 0;
+        }
+        
+        if(data.Quantity >= itemdata[ID].MaxNumberItems) return Quantity; 
+    
         data.ID = ID;     
         data.Quantity += Quantity;
         
@@ -52,6 +56,7 @@ public class DataController
     public int TakeOutItem(int index,int Quantity)
     {
         var data = storage.InventoryList;
+       
         if(data[index].Quantity <= 0 || data[index].Quantity < Quantity) return Quantity;
         
         data[index].Quantity -= Quantity;
@@ -90,8 +95,7 @@ public class DataController
     {
         if (index < 0 || index >= storage.InventoryList.Count) return null; 
         var data = storage.InventoryList[index];
-        if (data.ID == 0 && data.Quantity == 0) return null;
-
+       
         return new InventoryItem(data.ID ,data.Quantity);
     }
     
@@ -142,7 +146,7 @@ public class DataController
     {
         var data = storage.InventoryList;
 
-        for(int i = 0; i < data.Count; i++) 
+        for (int i = data.Count - 1; i >= 0; i--)
         {
             if(data[i].ID == ID && data[i].Quantity > 0)
             {
@@ -161,7 +165,9 @@ public class DataController
     #region 장비 관리 시스템
     public int EquipedItem(EquipmentTypeEnums type , int ID)
     {
-        var data = storage.EquipedDatas[type];
+        //var data = storage.EquipedDatas[type]; 잠시 테스트용
+        
+        /**
         if(data != 0)
         {
             int SwapItemID = data;
@@ -170,7 +176,17 @@ public class DataController
             return SwapItemID;
         }
         else storage.EquipedDatas[type] = ID;
+        */
         
+        var data = DataManager.data.EquipedDatas[type];
+        if(data != 0)
+        {
+            int SwapItemID = data;
+            DataManager.data.EquipedDatas[type] = ID;
+            
+            return SwapItemID;
+        }
+        else DataManager.data.EquipedDatas[type] = ID;
         return 0;
     }
     public int UnequipedItem(EquipmentTypeEnums type)
