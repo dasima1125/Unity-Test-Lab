@@ -10,7 +10,9 @@ public class DataManager : MonoBehaviour
         get => instance ?? (instance = FindObjectOfType<DataManager>()); 
     }
     private void Start() {
+        /**
         var data = Resources.LoadAll<ItemData_SO>("itemData");
+
         foreach (var item in data)
         {
             //Debug.Log("Item ID: " + item.ItemID + ", Item Name: " + item.ItemName);
@@ -29,12 +31,7 @@ public class DataManager : MonoBehaviour
                 InventoryList.Add(new InventoryItem(0, 0)); 
             }
         }
-        foreach (EquipmentTypeEnums type in System.Enum.GetValues(typeof(EquipmentTypeEnums)))
-        {
-            if (type == EquipmentTypeEnums.Null) continue; // Null 타입은 스킵
-
-            if (!EquipedDatas.ContainsKey(type)) EquipedDatas.Add(type, 0);
-        }
+        */
         
         
     }
@@ -43,10 +40,10 @@ public class DataManager : MonoBehaviour
     /// </summary>
     /// 아이템 데이터
     /// 나중에 이부분들음 .. 음 아마 모듈이있는지 확인하고 생성한다음 데이터를 끌어오는식? 이런식으로 개선해봐야할듯
-    public Dictionary<int,ItemData_SO> ItemData = new();
+    //public Dictionary<int,ItemData_SO> ItemData = new();
     
     // 인벤토리 데이터
-    public List<InventoryItem> InventoryList = new();
+    //public List<InventoryItem> InventoryList = new();
     
     // 장비칸 데이터
     public Dictionary<EquipmentTypeEnums,int> EquipedDatas = new();

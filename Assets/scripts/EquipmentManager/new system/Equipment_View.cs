@@ -11,7 +11,7 @@ public class Equipment_View : MonoBehaviour ,IPointerEnterHandler, IPointerExitH
     public Image SlotImage;
     [SerializeField]private Sprite nullImage;
     [SerializeField]private bool EquipedSlot;
-    private bool IsFull;
+    [SerializeField]private bool IsFull;
 
 
     public GameObject selectedshader;
@@ -45,13 +45,13 @@ public class Equipment_View : MonoBehaviour ,IPointerEnterHandler, IPointerExitH
             
     
     }
-    public void SetUpEquipedSlot(bool EquipedSlot ,int ? itemID = null)
+    public void SetUpEquipedSlot(bool EquipedSlot ,int itemID = 0)
     {
         SlotImage.sprite = nullImage;
         this.EquipedSlot = EquipedSlot;
-        if(itemID != null) //아이디가있으면 이미지업데이트
+        if(itemID != 0) //아이디가있으면 이미지업데이트
         {
-            var data = Equipment_ViewModel.Equipment.GetDataInfoByID(itemID.Value);
+            var data = Equipment_ViewModel.Equipment.GetDataInfoByID(itemID);
             if(data == null) 
             {
                 Debug.Log("데이터 호출 실패");
@@ -90,9 +90,7 @@ public class Equipment_View : MonoBehaviour ,IPointerEnterHandler, IPointerExitH
         if(!IsFull) return;
         MoveTarget = transform.Find("ItemImage").GetComponent<RectTransform>();
         Equipment_ViewModel.Equipment.DeRaycastOther(false);
-        //
-        //이미지 이동 제어
-        //
+      
 
         originalPosition = MoveTarget.position;
         originalSize     = MoveTarget.sizeDelta;
@@ -143,6 +141,9 @@ public class Equipment_View : MonoBehaviour ,IPointerEnterHandler, IPointerExitH
             Equipment_ViewModel.Equipment.UnequipItem(MoveTargetType);
         }
     
+    
     }
+    
+    
     
 }

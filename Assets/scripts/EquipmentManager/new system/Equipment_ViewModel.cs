@@ -25,16 +25,16 @@ public class Equipment_ViewModel : MonoBehaviour
     // Data
 
     //모델로 보내야함
-    public Dictionary<int, ItemData_SO> ItemData = new();
+
     public List<InventoryItem> InventoryList = new();
     public Dictionary<EquipmentTypeEnums,int> EquipedData = new();
+    private DataCommandHandler _data;
     
     void Start()
     {
-        ItemData = DataManager.data.ItemData;
-        InventoryList = DataManager.data.InventoryList;
-        EquipedData = DataManager.data.EquipedDatas;
-        if(ItemData == null || EquipedData ==null) 
+        _data =GameManager.DataSystem.commandHandler;
+
+        if(EquipedData ==null) 
         {
             Debug.LogWarning("장비 모듈이 준비되어있지않습니다 : 원인, 장비데이터 색인불가");
           
@@ -44,29 +44,29 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     public void SetUp()
     {
-        if(InventoryManager.Inventory == null) return;
-        
- 
+     
         if(panels == null || slotprefeb == null) return; 
+        Debug.Log("업데이트 시작");
         CreateEquippedItems();
         CreateInventoryItems();
-        Debug.Log(string.Join(",", DataManager.data.EquipedDatas.Keys));
+        
         
     }
     public void CreateEquippedItems()
     {
-        //EquipedSlots.Clear();
+
         foreach (Transform child in EquipedContent)
         {
-            var target = child.GetComponent<Equipment_View>();   
-            //아이디호출은  모델로 전이시켜야함
-            var grapTest = DataManager.data.EquipedDatas;
+            Debug.Log("장비칸 업데이트 : " +  child.name);
+            var target = child.GetComponent<Equipment_View>();
+            var slotType = target.EquipedSlotType;
+            var EquipID = _data.Excute_GetEquipedItemID(slotType);
 
-            if (target != null && !EquipedSlots.ContainsKey(target.EquipedSlotType)) EquipedSlots.Add(target.EquipedSlotType,child.gameObject); 
-            if(grapTest.ContainsKey(target.EquipedSlotType))// 저장된아이템이있을경우
+            if (target != null && !EquipedSlots.ContainsKey(slotType)) EquipedSlots.Add(slotType,child.gameObject); 
+            if(EquipID != 0)// 저장된아이템이있을경우
             {
-                Debug.Log("장비창 업데이트 :" + target.EquipedSlotType);
-                target.GetComponent<Equipment_View>().SetUpEquipedSlot(true,grapTest[target.EquipedSlotType]);
+                Debug.Log("장비창 업데이트 :" + slotType);//아이디 넘겨주면됨
+                target.GetComponent<Equipment_View>().SetUpEquipedSlot(true,EquipID);
             }
             else// 저장된아이템이없을경우
                 target.GetComponent<Equipment_View>().SetUpEquipedSlot(true);
@@ -75,14 +75,8 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     public void CreateInventoryItems()
     {
-        //초기화작업
-        //foreach (Transform child in ScrollContent)
-        //{
-        //    Destroy(child.gameObject);
-        //}
-        //InventorySlots.Clear();
         
-        Dictionary<EquipmentTypeEnums, List<(int,int)>> data = InventoryDataGrap_delta();
+        Dictionary<EquipmentTypeEnums, List<(int,int)>> data = _data.Excute_GetEquipmentGropbyInventory();
         Debug.Log("타입들 : " + string.Join(", ", data.Keys));
         
         foreach (EquipmentTypeEnums type in Enum.GetValues(typeof(EquipmentTypeEnums)))
@@ -132,7 +126,8 @@ public class Equipment_ViewModel : MonoBehaviour
             Debug.LogWarning("슬롯접근 실패: " + type);
             return;
         }
-        if (DataManager.data.EquipedDatas.TryGetValue(type, out var ID))
+        var ID = _data.Excute_GetEquipedItemID(type);
+        if (ID != 0)
             EquipedSlots[type].GetComponent<Equipment_View>().SetUpEquipedSlot(true, ID);
         
         else
@@ -140,7 +135,7 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     public void UpdateInventoryItems(EquipmentTypeEnums type)
     {
-        Dictionary<EquipmentTypeEnums, List<(int, int)>> dataDict = InventoryDataGrap_delta();
+        Dictionary<EquipmentTypeEnums, List<(int, int)>> dataDict = _data.Excute_GetEquipmentGropbyInventory();
         if (!dataDict.TryGetValue(type, out var data)) data = new List<(int, int)>();
         
         for(int i = 0; i < data.Count - InventorySlots[type].Count;i++)//빈칸확장
@@ -152,8 +147,8 @@ public class Equipment_ViewModel : MonoBehaviour
         }
         //새로운 데이터 순회
     
-        Debug.Log("재배치할 슬롯 상태 : " +data.Count);
-        Debug.Log("재배치할 슬롯 크기 : " +InventorySlots[type].Count);
+        //Debug.Log("재배치할 슬롯 상태 : " +data.Count);
+        //Debug.Log("재배치할 슬롯 크기 : " +InventorySlots[type].Count);
         for(int i = 0; i < InventorySlots[type].Count ; i++) 
         {
             if (i < data.Count)
@@ -166,23 +161,25 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     
     //모델로 가야지
+    
     public ItemData_SO GetDataInfoByIndex(int index)
     {
-        var target = DataManager.data.InventoryList[index];
-    
-        var data = DataManager.data.ItemData;
-        if(index < 0 || index >= DataManager.data.InventoryList.Count)//이부분 좀 sus함
+        var ID = _data.Execute_InventoryIndexInfo_Solo(index).ID;
+        var data2 = _data.Execute_GetItemSOID(ID);
+        
+        if(index < 0 || index >= _data.InventoryCount())//이부분 좀 sus함
         {
             Debug.LogWarning("잘못된 인벤토리 인덱스를 가져온 상태입니다.");
             return null;
         }
        
-        return data[target.ID];
+        return data2;
     }
+    
     public ItemData_SO GetDataInfoByID(int ID)
     {
         if(ID == 0) return null;
-        return DataManager.data.ItemData[ID];
+        return _data.Execute_GetItemSOID(ID);
     }
     public void DeRaycastOther(bool type)
     {
@@ -208,79 +205,48 @@ public class Equipment_ViewModel : MonoBehaviour
             }
         }
     }
-    //너도가야지
-    public Dictionary<EquipmentTypeEnums, List<(int,int)>> InventoryDataGrap_delta()
-    {
-        Dictionary<EquipmentTypeEnums, List<(int,int)>> output = new();
-
-        var pickItem = InventoryList
-            .Select((item, index) => new { item, index })
-            .Where(a => ItemData.TryGetValue(a.item.ID, out var data) && data.ItemType == ItemTypeEnums.Equipment);
-        
-        foreach (var target in pickItem)
-        {
-            if(!output.ContainsKey(ItemData[target.item.ID].EquipmentType)) output[ItemData[target.item.ID].EquipmentType] = new();
-            
-            output[ItemData[target.item.ID].EquipmentType].Add((target.index ,target.item.ID));
-        }
-        // 장비 enum순으로 재배치
-        return output
-                .OrderBy(kvp => (int)kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                           
-    }
+    
+    
     /// 서비스 구획
     public void HighlightOnHover(EquipmentTypeEnums Type , bool check)
     {
         if (Type == EquipmentTypeEnums.Null) return;
         EquipedSlots[Type].GetComponent<Equipment_View>().PointHighligt(check);
     }
-    public void EquipItem(EquipmentTypeEnums Type ,int targetIndex)
+   
+
+    public void EquipItem(EquipmentTypeEnums Type ,int ItemslotIndex)
     {
-        Debug.Log(" 슬롯크기 "+ InventorySlots[Type].Count);
+        Debug.Log("명령실행");
         HighlightOnHover(Type,false);
-        var output = DataManager.data.InventoryList[targetIndex];//빼야할곳
-        
-        if (DataManager.data.EquipedDatas.TryGetValue(Type, out var previousItem))
+        var item = _data.Execute_InventoryIndexInfo_Solo(ItemslotIndex);
+        var EquipItemID = _data.Excute_GetEquipedItemID(Type);
+       
+        int leftEquip = _data.Execute_EquipedItem(Type,item.ID);
+        Debug.Log("있는 값 :" + leftEquip);
+        _data.Execute_ClearItem(ItemslotIndex);
+        if(leftEquip > 0)
         {
-            Debug.Log(" 교체 실시");
-            var copyID = previousItem;
-            DataManager.data.EquipedDatas[Type] = DataManager.data.InventoryList[targetIndex].ID;
-            DataManager.data.InventoryList[targetIndex] = new InventoryItem(copyID,1);
+            Debug.Log("교체대상 :" + leftEquip);
+            _data.Execute_InsertItem(ItemslotIndex,EquipItemID,1);
         }
-        else
+            
+            
+        UpdateEquippedItems(Type);
+        UpdateInventoryItems(Type);
+    }
+    public void UnequipItem(EquipmentTypeEnums Type)
+    {
+        var Equipedid = _data.Execute_UnequipedItem(Type);
+        
+        int leftover  = _data.Execute_IncreaseItem(Equipedid,1);
+        if (leftover > 0)
         {
-            Debug.Log(" 장착 실시");
-            DataManager.data.EquipedDatas[Type] = DataManager.data.InventoryList[targetIndex].ID;
-            output.ID = 0;
-            output.Quantity = 0;
+            _data.Execute_EquipedItem(Type, Equipedid);
         }
         UpdateEquippedItems(Type);
         UpdateInventoryItems(Type);
- 
     }
-
+   
     
-    public void UnequipItem(EquipmentTypeEnums Type)
-    {
-        var target = DataManager.data.EquipedDatas;
-        var data = DataManager.data.InventoryList;
-        if(!target.ContainsKey(Type) || target[Type] == 0)
-        {
-            Debug.Log("빈슬롯");
-            return;
-        }
-
-        int emptyIndex = data.FindIndex(item => item.ID == 0);
-        if (emptyIndex != -1)
-        {
-            data[emptyIndex] = new InventoryItem(target[Type], 1);
-            target.Remove(Type);
-            Debug.Log("삭제완료" + target.Count);
-            UpdateEquippedItems(Type);
-            UpdateInventoryItems(Type);
-        }
-        
-        Debug.Log("해제 실패 : 빈공간이 없습니다");
-    }
 }

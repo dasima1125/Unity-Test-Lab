@@ -12,13 +12,21 @@ public class GameManager : MonoBehaviour
     }
 
     //각 시스템 접근 인스턴스
-    public static DataSystem Data { get; private set; }
+
+    //데이터 시스템
+    public static DataSystem DataSystem { get; private set; }
+    
+    //인벤토리 시스템
+    public static Inventory_ViewModel Inventory_ViewModel { get; private set; }
+    public InventoryNotifier InventoryNotify = new(); 
     
     void Awake()
     {
         Debug.Log("작동중");
-        Data ??= new DataSystem();
-        Inventory_Model.Inventory.Init(Data);
+        DataSystem ??= new DataSystem();
+        //Inventory_ViewModel ??= FindObjectOfType<Inventory_ViewModel>();
+
+        //Inventory_Model.Inventory.Init(Data);
     }
 
 }

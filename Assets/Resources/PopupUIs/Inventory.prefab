@@ -518,6 +518,7 @@ GameObject:
   - component: {fileID: 6837987878273391677}
   - component: {fileID: 7189800640839685322}
   - component: {fileID: 503624193809012511}
+  - component: {fileID: 610327968921727988}
   - component: {fileID: 7905233502495361220}
   m_Layer: 5
   m_Name: Inventory
@@ -598,6 +599,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &610327968921727988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6747916432303733261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 520dd184fbf35e04ca5aa8cdcb5c8940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InventoryPanel: {fileID: 7813432208461932656}
+  slotPostion: {fileID: 6053419588852187950}
+  DescriptionName_TMP: {fileID: 5567069682926363270}
+  DescriptionText_TMP: {fileID: 8924358624467080575}
+  Itemslot: {fileID: 866947409386731623, guid: 94fa2cca6aff9634184cf218bc7677c9, type: 3}
 --- !u!114 &7905233502495361220
 MonoBehaviour:
   m_ObjectHideFlags: 0

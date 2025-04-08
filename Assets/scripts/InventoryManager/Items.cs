@@ -17,13 +17,20 @@ public class Items : MonoBehaviour
     [SerializeField] private string ItemDescription;
 
     public bool CanPick = true;
+    private static DataCommandHandler _data;
+    void Awake()
+    {
+        _data =GameManager.DataSystem.commandHandler;
+        
+    }
+    
 
     void Start()
     {
         //셀프 업데이트
         if(NewItemSystem_ID != 0 && NewItemSystem_Quantity != 0)
         {
-            var data = DataManager.data.ItemData[NewItemSystem_ID];
+            var data = _data.Execute_GetItemSOID(NewItemSystem_ID);
             GetComponent<SpriteRenderer>().sprite = data.Sprite;
         }
         
@@ -47,7 +54,10 @@ public class Items : MonoBehaviour
     
     public void Setup(int id,int quantity)
     {
-        var data = DataManager.data.ItemData[id];
+        var data = _data.Execute_GetItemSOID(id);
+        CanPick = false;
+        if(data == null) return;
+
         NewItemSystem_ID = data.ItemID;
         NewItemSystem_Quantity = quantity;
         GetComponent<SpriteRenderer>().sprite = data.Sprite;
@@ -61,15 +71,14 @@ public class Items : MonoBehaviour
             
             if(NewItemSystem_ID != 0)
             {
-                var data = DataManager.data.ItemData[NewItemSystem_ID];
-                if(data != null && Inventory_ViewModel.Inventory != null)
+                var data = _data.Execute_GetItemSOID(NewItemSystem_ID);
+                if(data != null && _data != null)
                 {
-                    int count = Inventory_ViewModel.Inventory.ItemIncrease(NewItemSystem_ID,NewItemSystem_Quantity);
-                    
+                    int count = _data.Execute_IncreaseItem(NewItemSystem_ID,NewItemSystem_Quantity);
+
+                    GameManager.Game.InventoryNotify.Notify(InventoryNotifierType.InventoryUpdated);
                     if(count <= 0) Destroy(gameObject);
                     else NewItemSystem_Quantity = count;
-
-                    //Debug.Log("인벤토리 상태 :"+string.Join(", ", DataManager.data.InventoryList.Select(item => item.ID)));
                 }
                 else
                 {
@@ -78,20 +87,8 @@ public class Items : MonoBehaviour
                         + " 인벤토리 시스템 모듈 : " + (Inventory_ViewModel.Inventory != null ? "True" : "Null"));
 
                 }
-                
             }
            
-            else{
-            int leftoverItme = ItemSlotController.controll.Add_ver(ItemName,ItemQuantity,Sprite,ItemDescription,ItemType,EquipmentType);
-            if(leftoverItme <= 0)
-            {
-                Destroy(gameObject);
-            } 
-            else
-            {
-                ItemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
-            }
-            }
         }
         
     }

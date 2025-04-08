@@ -203,7 +203,7 @@ public class Inventory_View : MonoBehaviour ,IPointerEnterHandler ,IPointerExitH
         
         if(swapTarget != null && swapTarget.SlotIndex != SlotIndex)
         {
-            Inventory_ViewModel.Inventory.SwapItemSlot(SlotIndex, swapTarget.SlotIndex);
+           Order.SwapItemSlot(SlotIndex, swapTarget.SlotIndex);
         }
        
     }

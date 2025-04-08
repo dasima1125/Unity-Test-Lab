@@ -33,13 +33,7 @@ public class UImanager_PopupUI : MonoBehaviour
 
         GameObject panelInstance = Instantiate(manager.popupUIDictionary[uiName]);
         panelInstance.transform.SetParent(manager.canvas.transform, false);
-        
-        var send = InventoryManager.Inventory;
-        send.slotPostion = panelInstance.transform.Find("inventorySlot");
-        send.DescriptionName_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionName/Name").GetComponent<TMP_Text>();
-        send.DescriptionText_TMP = panelInstance.transform.Find("inventoryDescirption/DescriptionText/Text").GetComponent<TMP_Text>();
-        //send.Updating();
-        Inventory_ViewModel.Inventory.InventoryOpen(panelInstance);
+        Inventory_ViewModel.Inventory.InventoryOpen();
        
         manager.currentPopupUI.Push(panelInstance);
     

@@ -130,11 +130,8 @@ public class Inventory_View_Context : MonoBehaviour
 
                 int quantityToDrop = SelectQuantity == 0 ? 1 : SelectQuantity;
                 Manager.TakeOutItem(slotIndex,quantityToDrop);
-
-                var setting = dropItem.GetComponent<Items>();
-
-                setting.Setup(OutputData.ItemID,quantityToDrop);
-                setting.CanPick = false;
+                Debug.Log("버리는 값 :" + OutputData.ItemID + " /" + quantityToDrop);
+                dropItem.GetComponent<Items>().Setup(OutputData.ItemID,quantityToDrop);
 
                 Manager.UpdateSlot(slotIndex);
                 

@@ -13,6 +13,7 @@ public class DataCommandHandler
     }
     //아이템 정보 검색 
     public ItemData_SO Execute_GetItemSOIndex(int index) => controller.GetItemSOIndex(index);
+    public ItemData_SO Execute_GetItemSOID(int ID) => controller.GetItemSOByID(ID);
     
     //인벤토리 - 전체 배열 조작구조
     public int InventoryCount() => controller.InventoryCount();
@@ -25,7 +26,10 @@ public class DataCommandHandler
     public int Execute_TakeOutItem(int index, int Quantity) => controller.TakeOutItem(index,Quantity);
     public InventoryItem Execute_InventoryIndexInfo_Solo(int index) => controller.InventoryIndexInfo_Solo(index);
     //장비 - 타입 집중 조작구조
+    public int Excute_GetEquipedItemID(EquipmentTypeEnums type) => controller.GetEquipedItemID(type);
     public int Execute_EquipedItem(EquipmentTypeEnums type , int ID) => controller.EquipedItem(type,ID);
+    public int Execute_UnequipedItem(EquipmentTypeEnums type) => controller.UnequipedItem(type);
+    public Dictionary<EquipmentTypeEnums, List<(int,int)>> Excute_GetEquipmentGropbyInventory() => controller.GetEquipmentGropbyInventory();
 
     
 }

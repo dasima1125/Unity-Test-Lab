@@ -17,7 +17,7 @@ public class DataController
         var data = storage.ItemData;
         if (!data.ContainsKey(ID))
         {
-            Debug.LogWarning("잘못된 ID가 저장된 상태입니다.");
+            Debug.LogWarning("잘못된 ID가 저장된 상태입니다. 해당 ID : " + ID + "");
             return null;
         }
         return data[ID];
@@ -163,38 +163,26 @@ public class DataController
     #endregion
 
     #region 장비 관리 시스템
-    public int EquipedItem(EquipmentTypeEnums type , int ID)
+    public int GetEquipedItemID(EquipmentTypeEnums type)
     {
-        //var data = storage.EquipedDatas[type]; 잠시 테스트용
-        
-        /**
-        if(data != 0)
-        {
-            int SwapItemID = data;
-            storage.EquipedDatas[type] = ID;
-            
-            return SwapItemID;
-        }
-        else storage.EquipedDatas[type] = ID;
-        */
-        
-        var data = DataManager.data.EquipedDatas[type];
-        if(data != 0)
-        {
-            int SwapItemID = data;
-            DataManager.data.EquipedDatas[type] = ID;
-            
-            return SwapItemID;
-        }
-        else DataManager.data.EquipedDatas[type] = ID;
+        if(storage.EquipedDatas.TryGetValue(type, out var id))return id; 
+    
         return 0;
+    }
+    public int EquipedItem(EquipmentTypeEnums type , int ID)
+    {   
+        int previous = storage.EquipedDatas[type];
+        
+        Debug.Log("데이터 장비 내부값"+previous);
+        storage.EquipedDatas[type] = ID;
+        return previous; 
     }
     public int UnequipedItem(EquipmentTypeEnums type)
     {
         var data = storage.EquipedDatas[type];
-        if (data == 0) return 0;
         
         storage.EquipedDatas[type] = 0;
+        if (data == 0) return 0;
         return data;
     }
     public Dictionary<EquipmentTypeEnums, List<(int,int)>> GetEquipmentGropbyInventory()
