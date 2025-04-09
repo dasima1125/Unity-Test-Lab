@@ -75,10 +75,15 @@ public class Items : MonoBehaviour
                 if(data != null && _data != null)
                 {
                     int count = _data.Execute_IncreaseItem(NewItemSystem_ID,NewItemSystem_Quantity);
-
                     GameManager.Game.InventoryNotify.Notify(InventoryNotifierType.InventoryUpdated);
+
+                    GameManager.Game.EquipmentNotify.Notify();
+                    GameManager.Game.EquipmentNotify.Notify(NewItemSystem_ID);
+
                     if(count <= 0) Destroy(gameObject);
                     else NewItemSystem_Quantity = count;
+
+                    //Debug.Log("인벤토리 상태 :"+string.Join(", ", DataManager.data.InventoryList.Select(item => item.ID)));
                 }
                 else
                 {

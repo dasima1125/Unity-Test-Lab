@@ -15,15 +15,16 @@ public class GameManager : MonoBehaviour
 
     //데이터 시스템
     public static DataSystem DataSystem { get; private set; }
-    
-    //인벤토리 시스템
-    public static Inventory_ViewModel Inventory_ViewModel { get; private set; }
-    public InventoryNotifier InventoryNotify = new(); 
+
+    public InventoryNotifier InventoryNotify { get; private set; }
+    public EquipmentNotifier EquipmentNotify { get; private set; }
     
     void Awake()
     {
         Debug.Log("작동중");
         DataSystem ??= new DataSystem();
+        InventoryNotify ??= new InventoryNotifier();
+        EquipmentNotify ??= new EquipmentNotifier();
         //Inventory_ViewModel ??= FindObjectOfType<Inventory_ViewModel>();
 
         //Inventory_Model.Inventory.Init(Data);

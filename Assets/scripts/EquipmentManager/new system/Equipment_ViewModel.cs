@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,39 +23,42 @@ public class Equipment_ViewModel : MonoBehaviour
     // Data
 
     //모델로 보내야함
-
-    public List<InventoryItem> InventoryList = new();
-    public Dictionary<EquipmentTypeEnums,int> EquipedData = new();
     private DataCommandHandler _data;
+    private Equipment_ViewModel _viewmodel;
+    private Equipment_Model _model;
+    
     
     void Start()
     {
-        _data =GameManager.DataSystem.commandHandler;
+        _data = GameManager.DataSystem.commandHandler;
+        
+        _model = new Equipment_Model(_data);
+        _viewmodel = this;
+        
 
-        if(EquipedData ==null) 
-        {
-            Debug.LogWarning("장비 모듈이 준비되어있지않습니다 : 원인, 장비데이터 색인불가");
-          
-            Destroy(gameObject);
-        }
         SetUp();
     }
+    void OnEnable()
+    {
+        GameManager.Game.EquipmentNotify.Subscribe(HandleEquipmentAcquisition);
+    }
+    void OnDisable()
+    {
+        GameManager.Game.EquipmentNotify.Unsubscribe(HandleEquipmentAcquisition);
+    }
+    
     public void SetUp()
     {
-     
         if(panels == null || slotprefeb == null) return; 
-        Debug.Log("업데이트 시작");
+     
         CreateEquippedItems();
-        CreateInventoryItems();
-        
-        
+        CreateInventoryItems();  
     }
     public void CreateEquippedItems()
     {
 
         foreach (Transform child in EquipedContent)
         {
-            Debug.Log("장비칸 업데이트 : " +  child.name);
             var target = child.GetComponent<Equipment_View>();
             var slotType = target.EquipedSlotType;
             var EquipID = _data.Excute_GetEquipedItemID(slotType);
@@ -65,7 +66,7 @@ public class Equipment_ViewModel : MonoBehaviour
             if (target != null && !EquipedSlots.ContainsKey(slotType)) EquipedSlots.Add(slotType,child.gameObject); 
             if(EquipID != 0)// 저장된아이템이있을경우
             {
-                Debug.Log("장비창 업데이트 :" + slotType);//아이디 넘겨주면됨
+            
                 target.GetComponent<Equipment_View>().SetUpEquipedSlot(true,EquipID);
             }
             else// 저장된아이템이없을경우
@@ -75,12 +76,11 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     public void CreateInventoryItems()
     {
-        
         Dictionary<EquipmentTypeEnums, List<(int,int)>> data = _data.Excute_GetEquipmentGropbyInventory();
-        Debug.Log("타입들 : " + string.Join(", ", data.Keys));
         
         foreach (EquipmentTypeEnums type in Enum.GetValues(typeof(EquipmentTypeEnums)))
         {
+            //뭐 장비타입인데 나중에 손보자 
              if (type == EquipmentTypeEnums.Null || 
                  type == EquipmentTypeEnums.Tools||
                  type == EquipmentTypeEnums.MainWeapon || 
@@ -96,8 +96,7 @@ public class Equipment_ViewModel : MonoBehaviour
             
             int minslotcount = 10;
             int nowSlotCount = 0;
-            
-            if(data.ContainsKey(type)) Debug.Log("타입 : " + type + " 수량 : " + data[type].Count);
+        
             if (data.ContainsKey(type) && data[type] != null && data[type].Count > 0)    
             foreach(var item in data[type])
             {
@@ -145,10 +144,7 @@ public class Equipment_ViewModel : MonoBehaviour
             slot.GetComponent<Equipment_View>().SetupSlot(false,type);
             InventorySlots[type].Add(slot);
         }
-        //새로운 데이터 순회
-    
-        //Debug.Log("재배치할 슬롯 상태 : " +data.Count);
-        //Debug.Log("재배치할 슬롯 크기 : " +InventorySlots[type].Count);
+
         for(int i = 0; i < InventorySlots[type].Count ; i++) 
         {
             if (i < data.Count)
@@ -159,27 +155,10 @@ public class Equipment_ViewModel : MonoBehaviour
         }
 
     }
-    
-    //모델로 가야지
-    
-    public ItemData_SO GetDataInfoByIndex(int index)
+    public void HighlightOnHover(EquipmentTypeEnums Type , bool check)
     {
-        var ID = _data.Execute_InventoryIndexInfo_Solo(index).ID;
-        var data2 = _data.Execute_GetItemSOID(ID);
-        
-        if(index < 0 || index >= _data.InventoryCount())//이부분 좀 sus함
-        {
-            Debug.LogWarning("잘못된 인벤토리 인덱스를 가져온 상태입니다.");
-            return null;
-        }
-       
-        return data2;
-    }
-    
-    public ItemData_SO GetDataInfoByID(int ID)
-    {
-        if(ID == 0) return null;
-        return _data.Execute_GetItemSOID(ID);
+        if (Type == EquipmentTypeEnums.Null) return;
+        EquipedSlots[Type].GetComponent<Equipment_View>().PointHighligt(check);
     }
     public void DeRaycastOther(bool type)
     {
@@ -206,44 +185,34 @@ public class Equipment_ViewModel : MonoBehaviour
         }
     }
     
-    
-    /// 서비스 구획
-    public void HighlightOnHover(EquipmentTypeEnums Type , bool check)
+
+    public void HandleEquipmentAcquisition(int ID)
     {
-        if (Type == EquipmentTypeEnums.Null) return;
-        EquipedSlots[Type].GetComponent<Equipment_View>().PointHighligt(check);
+        if (_model.TryGetEquipmentType(ID, out var type) && EquipedSlots.ContainsKey(type))
+            UpdateInventoryItems(type);
     }
-   
+    public ItemData_SO GetDataInfoByIndex(int index)
+    {
+        return _model.GetDataInfoByIndex(index);
+    }
+    
+    public ItemData_SO GetDataInfoByID(int ID)
+    {
+        return _model.GetDataInfoByID(ID);
+    }
+    
 
     public void EquipItem(EquipmentTypeEnums Type ,int ItemslotIndex)
     {
-        Debug.Log("명령실행");
-        HighlightOnHover(Type,false);
-        var item = _data.Execute_InventoryIndexInfo_Solo(ItemslotIndex);
-        var EquipItemID = _data.Excute_GetEquipedItemID(Type);
-       
-        int leftEquip = _data.Execute_EquipedItem(Type,item.ID);
-        Debug.Log("있는 값 :" + leftEquip);
-        _data.Execute_ClearItem(ItemslotIndex);
-        if(leftEquip > 0)
-        {
-            Debug.Log("교체대상 :" + leftEquip);
-            _data.Execute_InsertItem(ItemslotIndex,EquipItemID,1);
-        }
-            
-            
+        _model.EquipItem(Type,ItemslotIndex);
+
         UpdateEquippedItems(Type);
         UpdateInventoryItems(Type);
     }
     public void UnequipItem(EquipmentTypeEnums Type)
     {
-        var Equipedid = _data.Execute_UnequipedItem(Type);
-        
-        int leftover  = _data.Execute_IncreaseItem(Equipedid,1);
-        if (leftover > 0)
-        {
-            _data.Execute_EquipedItem(Type, Equipedid);
-        }
+        _model.UnequipItem(Type);
+
         UpdateEquippedItems(Type);
         UpdateInventoryItems(Type);
     }

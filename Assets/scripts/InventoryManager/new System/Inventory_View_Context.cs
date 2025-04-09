@@ -84,8 +84,8 @@ public class Inventory_View_Context : MonoBehaviour
         switch (orderType)
         {
             case "Equip":
-                if(DataManager.data.EquipedDatas == null)
-                return;
+                
+            
                 Debug.Log("명령 진행");
                 //데이터 전송
                 Manager.EquipedItem(slotIndex);

@@ -238,7 +238,7 @@ public class scThing : MonoBehaviour
             case 0:
                 //되도록 이부분은 함수내에서 처리해야할거같아
                 scManager insert0= playerManager.GetComponent<scManager>();
-
+                /**  폐기된 시스템
                 insert0.player_NowHealth += 25;
                 insert0.hp.fillAmount = insert0.player_NowHealth / insert0.player_Health;
         
@@ -248,6 +248,7 @@ public class scThing : MonoBehaviour
                 string [] set1 ={"체력" , "+ 25"};
 
                 UImanager.manager.ShowItemInfo(set1);
+                
                 // 아이템 얻는 로직 //
                 int leftoverItme = ItemSlotController.controll.Add_ver(itemName,itemQuantity,sprite,itemDescription,ItemType.Null,EquipmentType.Null);
                 if(leftoverItme <= 0)
@@ -259,6 +260,7 @@ public class scThing : MonoBehaviour
                     itemQuantity = leftoverItme; //이거 없어될거같은데 << ㄴㄴ있어야함
                     //Debug.Log("남은 수량 : "+leftoverItme);
                 }
+                */
             
 
             break;

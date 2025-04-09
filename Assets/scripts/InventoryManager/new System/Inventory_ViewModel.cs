@@ -49,8 +49,7 @@ public class Inventory_ViewModel : MonoBehaviour
     }
     public void InventoryOpen()
     {
-        Debug.Log("인벤토리 생성");
-      
+        //Debug.Log("인벤토리 생성");
         if(ContextUIDictionary.Count == 0)ContextUpdate();
 
         if(slotPostion == null) return;
@@ -60,7 +59,6 @@ public class Inventory_ViewModel : MonoBehaviour
             Destroy(child.gameObject);
         }
         ItemSlots.Clear();
-        
         
         for(int i = 0; i < _data.InventoryCount(); i++) 
         {

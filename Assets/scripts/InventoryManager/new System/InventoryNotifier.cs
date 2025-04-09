@@ -32,7 +32,6 @@ public class InventoryNotifier
         }
         
     }
-
     public void Notify(InventoryNotifierType type)
     {
         if (notifyDict.TryGetValue(type, out var action))

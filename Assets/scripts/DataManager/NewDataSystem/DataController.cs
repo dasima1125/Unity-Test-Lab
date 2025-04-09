@@ -172,8 +172,6 @@ public class DataController
     public int EquipedItem(EquipmentTypeEnums type , int ID)
     {   
         int previous = storage.EquipedDatas[type];
-        
-        Debug.Log("데이터 장비 내부값"+previous);
         storage.EquipedDatas[type] = ID;
         return previous; 
     }
