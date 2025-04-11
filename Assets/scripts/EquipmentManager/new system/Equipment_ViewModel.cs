@@ -26,6 +26,8 @@ public class Equipment_ViewModel : MonoBehaviour
     private DataCommandHandler _data;
     private Equipment_ViewModel _viewmodel;
     private Equipment_Model _model;
+
+    private Action<Notification> _notificationRoute;
     
     
     void Start()
@@ -35,18 +37,17 @@ public class Equipment_ViewModel : MonoBehaviour
         _model = new Equipment_Model(_data);
         _viewmodel = this;
         
-
         SetUp();
     }
     void OnEnable()
     {
-        GameManager.Game.EquipmentNotify.Subscribe(HandleEquipmentAcquisition);
+        Debug.Log(GetType().Name); // TODO 업데이트 매니저 만들고 이름 바꾸는게좋을거같음
+        GameManager.NotificationSystem.Port.SubscribePayload<int>("EquipmentSystem", HandleEquipmentAcquisition);
     }
     void OnDisable()
     {
-        GameManager.Game.EquipmentNotify.Unsubscribe(HandleEquipmentAcquisition);
+        GameManager.NotificationSystem.Port.UnsubscribePayload<int>("EquipmentSystem", HandleEquipmentAcquisition);
     }
-    
     public void SetUp()
     {
         if(panels == null || slotprefeb == null) return; 
@@ -66,7 +67,6 @@ public class Equipment_ViewModel : MonoBehaviour
             if (target != null && !EquipedSlots.ContainsKey(slotType)) EquipedSlots.Add(slotType,child.gameObject); 
             if(EquipID != 0)// 저장된아이템이있을경우
             {
-            
                 target.GetComponent<Equipment_View>().SetUpEquipedSlot(true,EquipID);
             }
             else// 저장된아이템이없을경우

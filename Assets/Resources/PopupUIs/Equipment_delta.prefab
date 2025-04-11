@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4046427774773002431}
   - component: {fileID: 8576299935251410734}
   - component: {fileID: 1231974733478308762}
-  - component: {fileID: 8645435826075117338}
   - component: {fileID: 6501025204040356060}
   m_Layer: 5
   m_Name: Equipment_delta
@@ -110,19 +109,6 @@ MonoBehaviour:
   panels: {fileID: 795089335372896893, guid: 37c57bb63a1c9d046a59e46bbec9ff15, type: 3}
   EquipedContent: {fileID: 3720391577888986039}
   ScrollContent: {fileID: 2599926008113055962}
-  InventoryList: []
---- !u!114 &8645435826075117338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194311416697734344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 843b010bb18b56644b15c548e84ceb31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6501025204040356060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,6 +500,7 @@ MonoBehaviour:
   SlotImage: {fileID: 5025132652897760405}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 354895066836921840}
 --- !u!114 &4882010899045718103
 MonoBehaviour:
@@ -915,6 +902,7 @@ MonoBehaviour:
   SlotImage: {fileID: 5245386764061944107}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 8438582310418102374}
 --- !u!114 &1364949733957480691
 MonoBehaviour:
@@ -1241,6 +1229,7 @@ MonoBehaviour:
   SlotImage: {fileID: 1077726803091846968}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 238694165819106035}
 --- !u!114 &8808409077150954784
 MonoBehaviour:
@@ -1356,6 +1345,7 @@ MonoBehaviour:
   SlotImage: {fileID: 27251173457741656}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 1346321696645702295}
 --- !u!114 &5372758390771906583
 MonoBehaviour:
@@ -2131,6 +2121,7 @@ MonoBehaviour:
   SlotImage: {fileID: 7143014342836821065}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 7166485077660620550}
 --- !u!114 &4029236112345134206
 MonoBehaviour:
@@ -2396,6 +2387,7 @@ MonoBehaviour:
   SlotImage: {fileID: 1307965741084730881}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 6577873834571747798}
 --- !u!114 &4642672239687213291
 MonoBehaviour:
@@ -2799,6 +2791,7 @@ MonoBehaviour:
   SlotImage: {fileID: 1307965741084730881}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 4617441154236469418}
 --- !u!114 &6091319559056656066
 MonoBehaviour:
@@ -3150,6 +3143,7 @@ MonoBehaviour:
   SlotImage: {fileID: 1805941962668622416}
   nullImage: {fileID: 21300000, guid: 570ae5527303e574c866b867f12d6eb9, type: 3}
   EquipedSlot: 0
+  IsFull: 0
   selectedshader: {fileID: 1284330476572061121}
 --- !u!114 &1178232698982077223
 MonoBehaviour:

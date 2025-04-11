@@ -2,10 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using DG.Tweening;
 
 public class scNextSceen : MonoBehaviour
 {
     [SerializeField] private string nextSceen;
+    [SerializeField] private float delayBeforeLoad = 2f;
+
+    private bool isTransitioning = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,10 +25,17 @@ public class scNextSceen : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         
-        if (other.CompareTag("player")) // 예: "Player" 태그를 가진 오브젝트와 충돌하면
+        if (other.CompareTag("player") && !isTransitioning)
         {
-            Debug.Log("포탈작동");
-            SceneManager.LoadScene(nextSceen); // "NextScene"은 이동하고자 하는 씬 이름입니다.
+            isTransitioning = true;
+            Debug.Log("포탈작동 - 씬 전환 예정");
+            StartCoroutine(LoadSceneWithDelay());
         }
+    }
+    private IEnumerator LoadSceneWithDelay()
+    {
+        yield return new WaitForSeconds(delayBeforeLoad);
+        DOTween.KillAll(); 
+        GameManager.SceneSystem.LoadSceneAsync(nextSceen);
     }
 }

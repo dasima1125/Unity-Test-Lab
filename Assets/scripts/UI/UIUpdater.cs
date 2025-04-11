@@ -82,7 +82,7 @@ public class UIUpdater : MonoBehaviour
     }
     public void NewSceenUpdate()
     {
-        //Debug.Log("씬 전환");
+        Debug.Log("씬 전환");
         UImanager.manager.canvas = FindObjectOfType<Canvas>();
         
         while (UImanager.manager.currentPopupUI.Count > 0)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -28,6 +29,7 @@ public class Inventory_ViewModel : MonoBehaviour
     
     //슬롯 주소
     private List<Inventory_View> ItemSlots = new();
+    private Action<Notification> _notificationRoute;
 
     //최초생성 서비스
     void Awake()
@@ -37,15 +39,11 @@ public class Inventory_ViewModel : MonoBehaviour
     }
     void OnEnable()
     {
-        //일단은 단일 이벤트 추가 차후 딕셔너리를 통한 복합 이벤트 구독구현예정
-       
-        GameManager.Game.InventoryNotify.Subscribe(InventoryNotifierType.InventoryUpdated, UpdateAllSlot);
+        GameManager.NotificationSystem.Port.SubscribePayload("InventorySystem", UpdateAllSlot);
     }
-
     void OnDisable()
     {
-        GameManager.Game.InventoryNotify.Unsubscribe(InventoryNotifierType.InventoryUpdated, UpdateAllSlot);
-        
+        GameManager.NotificationSystem.Port.UnsubscribePayload("InventorySystem", UpdateAllSlot);
     }
     public void InventoryOpen()
     {
