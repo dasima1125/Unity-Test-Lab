@@ -34,8 +34,8 @@ public class scNextSceen : MonoBehaviour
     }
     private IEnumerator LoadSceneWithDelay()
     {
-        yield return new WaitForSeconds(delayBeforeLoad);
+        yield return null;
         DOTween.KillAll(); 
-        GameManager.SceneSystem.LoadSceneAsync(nextSceen);
+        GameManager.SceneSystem.LoadSceneAsync(nextSceen , ()=> Debug.Log("신규시스템 시작"));
     }
 }
