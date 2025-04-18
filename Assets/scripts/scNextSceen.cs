@@ -28,14 +28,12 @@ public class scNextSceen : MonoBehaviour
         if (other.CompareTag("player") && !isTransitioning)
         {
             isTransitioning = true;
-            Debug.Log("포탈작동 - 씬 전환 예정");
             StartCoroutine(LoadSceneWithDelay());
         }
     }
     private IEnumerator LoadSceneWithDelay()
     {
         yield return null;
-        DOTween.KillAll(); 
-        GameManager.SceneSystem.LoadSceneAsync(nextSceen , ()=> Debug.Log("신규시스템 시작"));
+        GameManager.SceneSystem.LoadSceneAsync(nextSceen,SceneTransformType.SceneToScene);
     }
 }
