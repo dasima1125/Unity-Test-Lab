@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneSystem 
 {
+    private const float MaxProgress = 90f;
     private readonly GameManager _game;
     private readonly GameObject prefab;
     private LoadingScene _loading;
     
-    private Canvas LodingSceneCanvas;
     private bool _isLoading = false;
     
     
@@ -24,7 +24,7 @@ public class SceneSystem
     {
         if(_isLoading || !Application.CanStreamedLevelBeLoaded(name))
         { 
-            Debug.LogWarning($"Scene '{name}' 접근불능, 작업정지.");
+            Debug.LogWarning($"Scene '{name}' 접근불능 : 작업중단.");
             return;
         }
         _isLoading = true;
@@ -41,73 +41,126 @@ public class SceneSystem
             case SceneTransformType.LoadingScene:
                 _game.StartCoroutine(CallScene_LodingScene(name));
                 return;
+
         }
     }
+
     IEnumerator CallScene_Debug(string name)
     {
-        AsyncOperation op = SceneManager.LoadSceneAsync(name);
-        op.allowSceneActivation = true;
-        
-        while (!op.isDone) yield return null;
+        yield return SwapSceneAsync(name);
         _isLoading = false;
     }
     IEnumerator CallScene_SceneToScene(string name)
     {
-        yield return SwapSceneAsync(name,SceneTransformType.Debug);
+        yield return FadePanelCreate(FadeType.FadeIn);
+        yield return CallProgress(SceneTransformType.SceneToScene);
+        yield return SwapSceneAsync(name, SceneTransformType.SceneToScene);
+        yield return FadePanelCreate(FadeType.FadeOut);
         _isLoading = false;
     }
    
     private IEnumerator CallScene_LodingScene(string name)
     {
-        yield return SwapSceneAsync("LodingScene1",SceneTransformType.Debug);
+        yield return FadePanelCreate(FadeType.FadeIn);
+        yield return SwapSceneAsync("LodingScene1");
+        yield return FadePanelCreate(FadeType.FadeOut);
+        yield return CallProgress(SceneTransformType.LoadingScene);
+        
+        AsyncOperation op = SceneManager.LoadSceneAsync(name);
+        op.allowSceneActivation = false;
+        while (op.progress < 0.9f)
+        {
+            SetProgress(op.progress * 100f, SceneTransformType.LoadingScene);
+            yield return null;
+        }
+        SetProgress(MaxProgress, SceneTransformType.LoadingScene);
 
-        yield return SwapSceneAsync(name,SceneTransformType.SceneToScene);
+        for (int i = 1; i <= 10 ; i++)
+        {
+            SetProgress(MaxProgress + i, SceneTransformType.LoadingScene);
+            yield return new WaitForSeconds(0.1f *  UnityEngine.Random.Range(0.5f, 1f)); 
+        }
+        yield return _loading.UpdateInfo();
+        yield return FadePanelCreate(FadeType.FadeIn);
+        
+        op.allowSceneActivation = true; 
+        while (!op.isDone) yield return null;
+        yield return FadePanelCreate(FadeType.FadeOut);
+
         _isLoading = false;
     }
 
-    IEnumerator FadePanel(FadeType Fade , SceneTransformType transformType)
+    IEnumerator FadePanelCreate(FadeType Fade)
     {
-        _loading = UnityEngine.Object.Instantiate(prefab).GetComponent<LoadingScene>();
-        yield return _loading.StartCoroutine(_loading.FadeAction(Fade, transformType));
+        UnityEngine.Object.Instantiate(prefab);
+        SetLoadingClass();
+        yield return _loading.Fade(Fade);
         
         if(Fade == FadeType.FadeIn)
             DOTween.KillAll();
         else
-            _loading.Destroy();
+            _loading.DestroySelf();
+        
+        yield return null;
     }
-    void FindLodingSceneCanvers()
+    IEnumerator SwapSceneAsync(string targetScene, SceneTransformType type = SceneTransformType.Debug)
     {
-        LodingSceneCanvas = null;
-        LodingSceneCanvas = GameObject.Find("LodingSceneCanvas").GetComponent<Canvas>();
-    }
-    
-    IEnumerator SwapSceneAsync(string targetScene ,SceneTransformType transformType)
-    {
-        yield return FadePanel(FadeType.FadeIn, transformType);
-
         AsyncOperation op = SceneManager.LoadSceneAsync(targetScene);
         op.allowSceneActivation = false; 
 
         while (op.progress < 0.9f)
         {
-            _loading.UpdatePer((int)(op.progress * 100f), transformType);
+            SetProgress(op.progress * 100f ,type);
             yield return null;
         }
-        _loading.UpdatePer(90, transformType);
         
-        if(transformType != SceneTransformType.Debug)
-        for (int i = 1; i <= 10 ; i++)
+        if(type != SceneTransformType.Debug)
         {
-            _loading.UpdatePer(90 + i, transformType);
-            yield return new WaitForSeconds(0.1f *  UnityEngine.Random.Range(0.5f, 1f)); 
+            SetProgress(MaxProgress ,type);
+
+            for (int i = 1; i <= 10 ; i++)
+            {
+                SetProgress(MaxProgress + i ,type);
+                yield return new WaitForSeconds(0.1f *  UnityEngine.Random.Range(0.5f, 1f)); 
+            }
         }
         op.allowSceneActivation = true; 
         while (!op.isDone) yield return null;
-
-        yield return FadePanel(FadeType.FadeOut, transformType);
     }
+    IEnumerator CallProgress(SceneTransformType type)
+    {
+        if(type == SceneTransformType.SceneToScene)
+            yield return _loading.CallProgressSceneToScene();
+        else if(type == SceneTransformType.LoadingScene)
+        {
+            SetLoadingClass();
+            yield break;
+        }
+    }
+    void SetLoadingClass()
+    {
+        _loading = null;
+        _loading = LoadingScene.Call;
+    }
+    
+    
+    void SetProgress(float percent, SceneTransformType type = SceneTransformType.Debug)
+    {
+        int intPercent = (int)percent;
+        if (type != SceneTransformType.Debug)
+        {
+            _loading.UpdatePer(intPercent, type);
 
+        }
+            
+    }
 } 
+public enum FadeType
+{
+    FadeIn,
+    FadeOut
+}
+
 public enum SceneTransformType
 {
     Debug,

@@ -6,19 +6,22 @@ using UnityEngine;
 
 public class LoadingScene : MonoBehaviour
 {
-    private static LoadingScene instance;
     public static LoadingScene Call
     { 
-        get => instance ?? (instance = FindObjectOfType<LoadingScene>()); 
+        get => FindObjectOfType<LoadingScene>(); 
     }
     CanvasGroup canvasGroup;
     CanvasGroup canvasGroup_Loding;
+
+    TMP_Text loadingSceneTMP;
+
+
     void Awake()
     {
         canvasGroup = transform.GetChild(0).GetComponent<CanvasGroup>();
         canvasGroup_Loding = transform.GetChild(1).GetComponent<CanvasGroup>();
     }
-    public void UpdatePer(int percent,SceneTransformType ? type = null)
+    public void UpdatePer(int percent,SceneTransformType type)
     {
         if(type == SceneTransformType.SceneToScene)
         {
@@ -27,70 +30,66 @@ public class LoadingScene : MonoBehaviour
         }
         else if(type == SceneTransformType.LoadingScene)
         {
+            if(loadingSceneTMP == null)
+            {
+                loadingSceneTMP = transform.GetChild(1).GetComponent<TMP_Text>();
+            }
+            if(loadingSceneTMP == null)
+            {
+                return;
+            }
+            
+            loadingSceneTMP.text = percent.ToString() + "%";
+        }
+    }
+    public IEnumerator UpdateInfo()
+    {
+        string maybe = "Complete";
+
+        loadingSceneTMP = transform.GetChild(2).GetComponent<TMP_Text>();
+        while(loadingSceneTMP.text.Length > 0)
+        {
+            loadingSceneTMP.text = loadingSceneTMP.text.Substring(0, loadingSceneTMP.text.Length - 1);
+            yield return new WaitForSeconds(0.015f);
 
         }
-        
-        
+        for(int i = 0; i < 3; i++) 
+        {
+            yield return new WaitForSeconds(0.5f);
+            loadingSceneTMP.text = "_";
+            yield return new WaitForSeconds(0.5f);
+            loadingSceneTMP.text = "";
+        }
+        for(int i = 0; i < maybe.Length; i++) 
+        {
+            loadingSceneTMP.text += maybe[i];
+            yield return new WaitForSeconds(0.05f);
+        }
+        yield return null;
     }
-
-    public IEnumerator FadeAction(FadeType type , SceneTransformType SceneToScene)
+    public IEnumerator Fade(FadeType type)
     {
-        gameObject.SetActive(true);
         if(canvasGroup == null)
         {
-            Debug.Log("캔버스 증발"); 
-            Destroy(gameObject);
-            yield break;
-        }
-        canvasGroup.alpha = (type == FadeType.FadeOut) ? 1f : 0f;
-        
-        if (type == FadeType.FadeIn)
-        {
-            yield return canvasGroup.DOFade(1, 1f).WaitForCompletion();
-            if(SceneToScene == SceneTransformType.SceneToScene)
-                yield return canvasGroup_Loding.DOFade(1, 1f).WaitForCompletion();
-            yield break;
-        }
-        else if(type == FadeType.FadeOut)
-        {
-            yield return canvasGroup.DOFade(0f, 1f).WaitForCompletion();
-            yield break;
-        }
-    }
-    public IEnumerator Fade(FadeType ? type = null)
-    {
-        if(type == null)
-        {
-            Destroy();
+            DestroySelf();
             yield break;
         } 
-            
         gameObject.SetActive(true);
-        if(canvasGroup == null)
-        {
-            Destroy(gameObject);
-            yield break;
-        }
-        canvasGroup.alpha = 0f;
+        canvasGroup.alpha = (float)type;
         
         if (type == FadeType.FadeIn)
-        {
             yield return canvasGroup.DOFade(1, 1f).WaitForCompletion();
-            yield break;
-        }
+        
         else if(type == FadeType.FadeOut)
-        {
             yield return canvasGroup.DOFade(0f, 1f).WaitForCompletion();
-            yield break;
-        }
     }
-    public void Destroy()
+    public IEnumerator CallProgressSceneToScene()
     {
+        yield return canvasGroup_Loding.DOFade(1, 1f).WaitForCompletion();
+    }
+    public void DestroySelf()
+    {
+        if (this == null || gameObject == null) return;
         Destroy(gameObject);
     }
-}
-public enum FadeType
-{
-    FadeIn,
-    FadeOut
 }

@@ -34,6 +34,6 @@ public class scNextSceen : MonoBehaviour
     private IEnumerator LoadSceneWithDelay()
     {
         yield return null;
-        GameManager.SceneSystem.LoadSceneAsync(nextSceen,SceneTransformType.SceneToScene);
+        GameManager.SceneSystem.LoadSceneAsync(nextSceen,SceneTransformType.LoadingScene);
     }
 }
