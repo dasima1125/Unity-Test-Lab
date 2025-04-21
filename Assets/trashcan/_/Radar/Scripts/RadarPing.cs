@@ -1,40 +1,34 @@
-﻿/* 
-    ------------------- Code Monkey -------------------
-    
-    Thank you for downloading the Code Monkey Utilities
-    I hope you find them useful in your projects
-    If you have any questions use the contact form
-    Cheers!
-
-               unitycodemonkey.com
-    --------------------------------------------------
- */
- 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RadarPing : MonoBehaviour {
 
+    private SRC_Radar SRC;
     private SpriteRenderer spriteRenderer;
     private float disappearTimer;
     private float disappearTimerMax;
     private Color color;
+    private Vector3 baseScale; 
 
     private void Awake() {
+        SRC = FindAnyObjectByType<SRC_Radar>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        
         disappearTimerMax = 1f;
         disappearTimer = 0f;
+
         color = new Color(1, 1, 1, 1f);
+        baseScale = transform.localScale;
     }
 
     private void Update() {
         disappearTimer += Time.deltaTime;
+        transform.localScale = baseScale * SRC.size;
 
         color.a = Mathf.Lerp(disappearTimerMax, 0f, disappearTimer / disappearTimerMax);
         spriteRenderer.color = color;
 
         if (disappearTimer >= disappearTimerMax) {
+            SRC.SignalList.Remove(this);
             Destroy(gameObject);
         }
     }
@@ -45,7 +39,6 @@ public class RadarPing : MonoBehaviour {
     public void SetSize(float i)
     {
         transform.localScale = transform.localScale * i;
-
     }
 
     public void SetDisappearTimer(float disappearTimerMax) {

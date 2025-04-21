@@ -17,8 +17,6 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("작동중");
-        
         DataSystem ??= new DataSystem();
         SceneSystem ??= new SceneSystem(this);
         NotificationSystem ??= new NotificationSystem();
