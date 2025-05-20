@@ -53,6 +53,7 @@ https://github.com/dasima1125/Unity-Test-Lab/tree/main/Assets/scripts/UI
     - 2025-02-18 구현 기능 ==> 핸들러,옵저버,트리거 > 매니저 > 각 타입별 컨트롤러 순의 객체간 역활분리 및 스트림 구성, 의존성 감소 및 확장성 증대와 동시에 하드코딩을 통한 자원수집을 폴더서칭을 통한 자동초기화
     - 2025-02-24 구조변경 ![Image](https://github.com/user-attachments/assets/6405519a-2074-4cc5-abc6-f5a2b0d81d8d)
       컴포저를 통한 명령조합방식으로 교체 또한 매니저에 UI관련 정보들 중앙집중화, chatbox기능과 alarm기능을 객체화함으로 컨트롤러 확장 예정
+
 https://github.com/dasima1125/Unity-Test-Lab/tree/main/Assets/scripts/InventoryManager/new%20System
 - 인벤토리 시스템 구현
 
