@@ -72,7 +72,7 @@ public class UIUpdater : MonoBehaviour
     public void fullScreenUIs()
     {
         var manager = UImanager.manager;
-        GameObject[] fullScreenUIs = Resources.LoadAll<GameObject>("FullScreenUIs");
+        GameObject[] fullScreenUIs = Resources.LoadAll<GameObject>("InventorySystem/FullScreenUIs");
         foreach(GameObject fullScreenUI in fullScreenUIs)
         {
             if(!manager.fullScreenUIDictionary.ContainsKey(fullScreenUI.name))

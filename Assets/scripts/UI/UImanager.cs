@@ -101,8 +101,8 @@ public class UImanager : MonoBehaviour
         }
         if (control == "Tab")
         {
-            if(currentfullScreenUI == null)
-            UIComposer.Call.Execute(() => action.showScreen_Alpha("Overlay"));
+            if (currentfullScreenUI == null)
+                UIComposer.Call.Execute(() => action.showScreen_Alpha("Overlay"));
         }
     }
 

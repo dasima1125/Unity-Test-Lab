@@ -44,10 +44,11 @@ public class Inventory_ViewModel : MonoBehaviour
     void OnDisable()
     {
         GameManager.NotificationSystem.Port.UnsubscribePayload("InventorySystem", UpdateAllSlot);
+        GameManager.NotificationSystem.Port.UnsubscribePayload("InventorySystem", InventoryOpen);
+        GameManager.NotificationSystem.Port.UnsubscribePayload("sInventorySystem", InventoryOpen);
     }
     public void InventoryOpen()
     {
-        //Debug.Log("인벤토리 생성");
         if(ContextUIDictionary.Count == 0)ContextUpdate();
 
         if(slotPostion == null) return;
@@ -57,12 +58,13 @@ public class Inventory_ViewModel : MonoBehaviour
             Destroy(child.gameObject);
         }
         ItemSlots.Clear();
+
         
-        for(int i = 0; i < _data.InventoryCount(); i++) 
+        for (int i = 0; i < _data.InventoryCount(); i++)
         {
             GameObject Slot = Instantiate(Itemslot);
             Slot.transform.SetParent(slotPostion.transform, false);
-            Slot.GetComponent<Inventory_View>().Init(this,i);
+            Slot.GetComponent<Inventory_View>().Init(this, i);
 
             ItemSlots.Add(Slot.GetComponent<Inventory_View>());
         } 

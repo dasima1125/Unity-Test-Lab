@@ -26,12 +26,12 @@ public class NotificationSystem
         string senderStr = notification.Sender != null ? notification.Sender.ToString() : "null";
         string result = success ? "✔" : "✘";;
         
-        Debug.Log($"📢 [NotifySys] 주소: {key}\n호출자: {senderStr}\n매개인수: {payloadStr}\n상태: {result}");
+        Debug.Log($"📢 [NotifySys] 주소: {key}\n호출자: {senderStr}\n매개인수: {payloadStr}\n호출 여부: {result}");
     }
-    private void LogSubscription(string key, Action<Notification> handler, bool isSubscribed)
+    private void LogSubscription(string key,  bool isSubscribed)
     {
         if (!DebugLogEnabled) return;
-
+  
         string status = isSubscribed ? "구독됨" : "구독 해제됨";
         Debug.Log($"📢 [NotifySys] {status}: 키: {key}");
     }

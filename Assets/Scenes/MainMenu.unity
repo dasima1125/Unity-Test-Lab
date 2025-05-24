@@ -615,7 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 93ae726fde610b247a8444191eb8267e, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: dff6abb61874e544f80c21b2169ab9b0, type: 3}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -677,8 +677,8 @@ MonoBehaviour:
     m_ActionId: 7ff05640-4486-4fd3-8eac-43f35f16618d
     m_ActionName: "UI/\uBC18\uC751[/Keyboard/e]"
   m_NeverAutoSwitchControlSchemes: 1
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: test
+  m_DefaultControlScheme: Keyboard&Mouse
+  m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!114 &509369440
@@ -7352,6 +7352,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 878673483416397547, guid: 3be1152410a35544786ee1ae1e44ce26, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2915848040273322064, guid: 3be1152410a35544786ee1ae1e44ce26, type: 3}
       propertyPath: m_Pivot.x
       value: 0

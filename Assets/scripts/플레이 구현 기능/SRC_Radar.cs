@@ -31,9 +31,7 @@ public class SRC_Radar : MonoBehaviour
         SignalList = new();
         
     }
-    void Start()
-    {
-    }
+    
     //[HideInInspector]
     [NonSerialized] //또는 프리베이트 설정
     public List<RadarPing> SignalList; 
@@ -45,6 +43,7 @@ public class SRC_Radar : MonoBehaviour
         Search();
         TrackRadarArea();
         MoveHeadonbeam();
+        CheckTargetTrackingValid();
 
         Action();
 
@@ -67,7 +66,7 @@ public class SRC_Radar : MonoBehaviour
                 ContectList.Add(rayhit.collider);
                 DOVirtual.DelayedCall(1f, () => ContectList.Remove(rayhit.collider));
 
-                if(rayhit.collider.gameObject.GetComponent<Signal>() != null && rayhit.collider.gameObject.GetComponent<Signal>().Tracked == false)
+                if(rayhit.collider.gameObject.GetComponent<Signal>() != null && !rayhit.collider.gameObject.GetComponent<Signal>().Track())
                 {
                     RadarPing Ping = Instantiate(RadarPing,rayhit.point,Quaternion.identity).GetComponent<RadarPing>();
                     float angle = (SweepBarTransForm.eulerAngles.z - 90f + 360f) % 360f;  
@@ -105,10 +104,8 @@ public class SRC_Radar : MonoBehaviour
         if (Input.GetKey(KeyCode.A))input = 1f;
         else if (Input.GetKey(KeyCode.D)) input = -1f;
 
-        if (input != 0f)
-        {
-            HeadOnBeam.localRotation *= Quaternion.Euler(0, 0, input * ManualRotationSpeed * Time.deltaTime);
-        }
+        if (input != 0f) HeadOnBeam.localRotation *= Quaternion.Euler(0, 0, input * ManualRotationSpeed * Time.deltaTime);
+        
     }
     void Action()
     {
@@ -127,44 +124,14 @@ public class SRC_Radar : MonoBehaviour
             //Debug.Log("실제 각, 좌현 각도 :" + LeftAngle +" 우현각도 : "+ RightAngle); //이건 레이더상 범위 구현에 사용할거
 
             //StartCoroutine(RotateOnce(LeftAngle,RightAngle));
-            StartCoroutine(RotateOnce2(LeftAngle,trackBeamWidth_beta));
+            StartCoroutine(ACQ(LeftAngle,trackBeamWidth_beta));
         }
 
     }
     [SerializeField] private Transform TrackBeam;
     [SerializeField] private float TrackBeamSpeed;
-    IEnumerator RotateOnce(float startAngle, float endAngle)
-    {
-        List<Collider2D> Coll = new();
-        float currentAngle = startAngle;
-        Debug.Log("시작각도" + startAngle + "종단각" + endAngle);
-        //커런트 값이 종단값보다  작아질경우
- 
-        //while (Mathf.Abs(currentAngle - endAngle) > 1f) //근사값 해결
-        while (currentAngle >= endAngle)
-        {
-            currentAngle -= TrackBeamSpeed * Time.deltaTime;
     
-            if (currentAngle < 0) currentAngle = 360f - currentAngle; 
-            TrackBeam.localEulerAngles = new Vector3(0, 0, currentAngle);
-
-            Vector3 startPosition = TrackBeam.position;
-            RaycastHit2D[] rayhitArr = Physics2D.RaycastAll(startPosition, GetVectorFromAngle(currentAngle + transform.eulerAngles.z), radarDistance);
-            foreach (var rayhit in rayhitArr)
-            {
-                if(!Coll.Contains(rayhit.collider))
-                {
-                    Coll.Add(rayhit.collider);
-                }
-            }
-
-            Vector3 endPosition = startPosition + GetVectorFromAngle(currentAngle + transform.eulerAngles.z) * radarDistance;
-            Debug.DrawLine(startPosition, endPosition, Color.red);
-            yield return null;
-        }
-        foreach (var collider in Coll) Debug.Log(collider.name); // 딕셔너리로 어째뜬알아서 처리
-    }
-    IEnumerator RotateOnce2(float startAngle, float angleWidth)
+    IEnumerator ACQ(float startAngle, float angleWidth)
     {
         
         HashSet<(float angle ,Collider2D)> Coll = new();
@@ -194,31 +161,48 @@ public class SRC_Radar : MonoBehaviour
                     Coll.Add(tuple);
                 }
             }
-            //Vector3 endPosition = startPosition + GetVectorFromAngle(currentAngle + transform.eulerAngles.z) * radarDistance;
-            //Debug.DrawLine(startPosition, endPosition, Color.red);
-
+    
             totalRotation -= deltaRotation;
             yield return null;
         }
         
         var sortedColl = Coll.OrderBy(t => Mathf.Abs(Mathf.DeltaAngle(t.angle, beamShotMiddleAngle))).ToList();
        
-        if(Lockedtarget_STT != null) Lockedtarget_STT.GetComponent<Signal>().Tracked = false; //기존 처리
-       
+        if(Lockedtarget_STT != null) 
+        {
+            Lockedtarget_STT.GetComponent<Signal>().UnLock(); //기존 처리
+            TrackLine.Decupuling();
+        }
         Lockedtarget_STT = sortedColl.Count > 0 ? sortedColl[0].Item2.gameObject : null;
-        if(Lockedtarget_STT != null) Lockedtarget_STT.GetComponent<Signal>().Tracked = true; // 차후 지정
+        if(Lockedtarget_STT != null)
+        {
+            Lockedtarget_STT.GetComponent<Signal>().Lock(); // 차후 지정
+            TrackLine.Cupuling(Lockedtarget_STT.transform);
+
+        } 
         
     }
     public GameObject Lockedtarget_STT;
-    void HardLock_STT()
+    public LineLenderTest TrackLine;
+
+    void CheckTargetTrackingValid()
     {
-        if (Lockedtarget_STT != null)
-        {
-            var STT =Lockedtarget_STT.GetComponent<Signal>();
-            STT.Locked();
-        }
-        
+        if (Lockedtarget_STT == null) return;
+    
+        float angleToTarget = Mathf.Atan2(Lockedtarget_STT.transform.position.y 
+                                    - transform.position.y, Lockedtarget_STT.transform.position.x 
+                                    - transform.position.x) * Mathf.Rad2Deg;
+                                    
+        angleToTarget -= transform.eulerAngles.z;
+    
+        if (angleToTarget < 0) angleToTarget += 360f;
+        else if (angleToTarget >= 360) angleToTarget -= 360f;
+
+        //Debug.Log("추적중 : " + Lockedtarget_STT.name + ", 각도 : " + angleToTarget);
     }
+
+
+    
     Vector3 GetVectorFromAngle(float angle)
     {
         float angleRadian = angle * (Mathf.PI/180f); 

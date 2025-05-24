@@ -11,8 +11,7 @@ public class NotificationCore
         _debugLog = debugLog;
     }
     public void Register(string key, string eventName, Action<Notification> listener)
-    {
-        
+    {   
         if(!_listeners.TryGetValue(key, out var eventDict))
         {
             eventDict = new Dictionary<string, Action<Notification>>();
@@ -20,13 +19,18 @@ public class NotificationCore
         }
         eventDict[eventName] = listener;
     }
-   
-    public void Unregister(string key, string eventName, Action<Notification> listener)
+
+    public void Unregister(string key, string eventName)
     {
         if (_listeners.TryGetValue(key, out var eventDict))
         {
-            if(eventDict.ContainsKey(eventName)) eventDict.Remove(eventName);
-            if(eventDict.Count == 0) _listeners.Remove(key);
+            if (eventDict.ContainsKey(eventName)) eventDict.Remove(eventName);
+            if (eventDict.Count == 0) _listeners.Remove(key);
+            //Debug.Log("명령성공" + eventName);
+        }
+        else
+        {
+            //Debug.Log("명령실패" + eventName);
         }
     }
     public void ClearAllSubscribers()
@@ -36,15 +40,16 @@ public class NotificationCore
    
     public void Notify(string key, string eventName, Notification notification)
     {
-        if(_listeners.TryGetValue(key, out var eventDict) && eventDict.TryGetValue(eventName, out var handler))
+        bool logCheck = false;
+
+        if (_listeners.TryGetValue(key, out var eventDict) && eventDict.TryGetValue(eventName, out var handler))
         {
-            _debugLog?.Invoke(key, notification, true);
             handler?.Invoke(notification);
-            return;
+            logCheck = true;
         }
 
-        _debugLog?.Invoke(key, notification, false);
-        return;
+        _debugLog?.Invoke(key, notification, logCheck);
+
     }
         
 }

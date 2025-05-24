@@ -41,7 +41,7 @@ public class Equipment_ViewModel : MonoBehaviour
     }
     void OnEnable()
     {
-        Debug.Log(GetType().Name); // TODO 업데이트 매니저 만들고 이름 바꾸는게좋을거같음
+        //Debug.Log(GetType().Name); // TODO 업데이트 매니저 만들고 이름 바꾸는게좋을거같음
         GameManager.NotificationSystem.Port.SubscribePayload<int>("EquipmentSystem", HandleEquipmentAcquisition);
     }
     void OnDisable()

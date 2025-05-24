@@ -13,13 +13,15 @@ public class GameManager : MonoBehaviour
     public static DataSystem DataSystem { get; private set; }
     public static SceneSystem SceneSystem { get; private set; }
     public static NotificationSystem NotificationSystem { get; private set; }
-    
+
 
     void Awake()
     {
         DataSystem ??= new DataSystem();
         SceneSystem ??= new SceneSystem(this);
         NotificationSystem ??= new NotificationSystem();
+        
+        //Debug.Log(GameManager.DataSystem.commandHandler.InventoryCount());
       
     }
     void Update()

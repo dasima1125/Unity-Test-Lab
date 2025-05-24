@@ -16,10 +16,7 @@ public class Notification
         Payload = payload; //매개없으면 인수할당 X
         
     }
-    public Notification Copy()
-    {
-        return new Notification(Key, Sender, Payload);
-    }
+
     public bool TryGetPayload<T>(out T payload)
     {
         if (Payload is T typedPayload)
@@ -40,7 +37,7 @@ public static class NotificationExtensions
     {
         port.Subscribe(key, onPayload.Method.Name,notification =>
         {
-            if(notification.TryGetPayload(out T typed))
+            if (notification.TryGetPayload(out T typed))
                 onPayload(typed);
         });
     }
@@ -56,18 +53,10 @@ public static class NotificationExtensions
 
     public static void UnsubscribePayload<T>(this NotificationPort port, string key, Action<T> onPayload)
     {
-        port.Unsubscribe(key, onPayload.Method.Name, notification =>
-        {
-            if(notification.TryGetPayload(out T typed))
-                onPayload(typed);
-        });
+        port.Unsubscribe(key, onPayload.Method.Name);
     }
     public static void UnsubscribePayload(this NotificationPort port, string key, Action onNotification)
     {
-        port.Unsubscribe(key, onNotification.Method.Name, notification =>
-        {
-            if(notification.Payload == null)
-                onNotification();
-        });
+        port.Unsubscribe(key, onNotification.Method.Name);
     }
 }

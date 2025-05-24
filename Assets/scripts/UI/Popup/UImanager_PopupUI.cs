@@ -30,7 +30,7 @@ public class UImanager_PopupUI : MonoBehaviour
     public void ShowInventory(string uiName) 
     {
         var manager = UImanager.manager;
-
+        
         GameObject panelInstance = Instantiate(manager.popupUIDictionary[uiName]);
         panelInstance.transform.SetParent(manager.canvas.transform, false);
         Inventory_ViewModel.Inventory.InventoryOpen();

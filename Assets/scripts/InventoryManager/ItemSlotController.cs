@@ -153,13 +153,13 @@ public class ItemSlotController : MonoBehaviour
             break;
             
             case 2: 
-                //수량순
-                //
-                // 같은 아이템끼리 그룹화
-                // 그룹 내 수량 합으로 내림차순 정렬
-                // 이름순 정렬
-                //
-                //  List<IGrouping<string, ItemDTO>> 타입 //
+                /// 수량순
+                ///
+                /// 같은 아이템끼리 그룹화
+                /// 그룹 내 수량 합으로 내림차순 정렬
+                /// 이름순 정렬
+                ///
+                ///  List<IGrouping<string, ItemDTO>> 타입 //
                 var sortGroupItems_2 = targetDatas
                                             .Where(item => item.ItemQuantity > 0)
                                             .GroupBy(item => item.ItemName)                                   
@@ -176,14 +176,14 @@ public class ItemSlotController : MonoBehaviour
             break;
 
             case 3:
-                //타입순
-                //
-                // 같은 아이템끼리 그룹화
-                // num 순서대로 정렬
-                // 그룹 내 수량 합으로 내림차순 정렬
-                // 이름순 정렬
-                //
-                //  List<IGrouping<string, ItemDTO>> 타입 //
+                /// 타입순
+                ///
+                /// 같은 아이템끼리 그룹화
+                /// num 순서대로 정렬
+                /// 그룹 내 수량 합으로 내림차순 정렬
+                /// 이름순 정렬
+                ///
+                ///  List<IGrouping<string, ItemDTO>> 타입 //
                 int arrayType = 2;
                 var sortGroupItems_3 = targetDatas
                                             .Where(item => item.ItemQuantity > 0)

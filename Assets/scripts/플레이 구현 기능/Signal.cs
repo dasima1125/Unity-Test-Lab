@@ -4,23 +4,31 @@ using UnityEngine;
 
 public class Signal : MonoBehaviour
 {
-    public bool Tracked = false;
-    // Start is called before the first frame update
-    void Start()
+    private bool Tracked = false;
+    
+
+    public bool Track()
     {
-        
+        return Tracked; 
     }
-    public void Locked()
+    public void Lock()
     {
-        if (!Tracked) return;
-       
+        Tracked = true; 
+    }
+    public void UnLock()
+    {
+        Tracked = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Locked();
-
+        Lock_Tracked();
+    }
+    public void Lock_Tracked()
+    {
+        if (!Tracked) return;
+        //Debug.Log("락온됨 : " + gameObject.name + ", 위치 : " +gameObject.transform.position);
     }
     void OnDrawGizmos()
     {
@@ -44,5 +52,4 @@ public class Signal : MonoBehaviour
         Gizmos.DrawLine(bottomLeft, topLeft);  // 좌측
     }
 
-    //Debug.Log("락온됨 : " + gameObject.name + ", 위치 : " +gameObject.transform.position);
 }

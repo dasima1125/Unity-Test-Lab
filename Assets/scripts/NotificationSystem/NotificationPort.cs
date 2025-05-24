@@ -4,9 +4,9 @@ using UnityEngine;
 public class NotificationPort 
 {
     private readonly NotificationCenter _center;
-    private readonly Action<string, Action<Notification> ,bool> _debugLog; 
+    private readonly Action<string ,bool> _debugLog; 
 
-    public NotificationPort(NotificationCenter center ,Action<string, Action<Notification> ,bool> debugLog = null)
+    public NotificationPort(NotificationCenter center ,Action<string,bool> debugLog = null)
     {
         _center = center;
         _debugLog = debugLog;
@@ -15,13 +15,13 @@ public class NotificationPort
     public void Subscribe(string key, string eventName, Action<Notification> listener)
     {   
         _center.AddListener(key, eventName, listener);
-        _debugLog?.Invoke(key, listener, true);
+        _debugLog?.Invoke(key, true);
     }
 
-    public void Unsubscribe(string key, string eventName, Action<Notification> listener)
+    public void Unsubscribe(string key, string eventName)
     {
-        _center.RemoveListener(key, eventName, listener);
-        _debugLog?.Invoke(key, listener, false);
+        _center.RemoveListener(key, eventName);
+        _debugLog?.Invoke(key, false);
     }
 
     #nullable enable

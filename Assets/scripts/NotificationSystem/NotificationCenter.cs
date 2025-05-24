@@ -29,9 +29,9 @@ public class NotificationCenter
         _core.Register(key, eventName, listener);
     }
 
-    public void RemoveListener(string key, string eventName, Action<Notification> listener)
+    public void RemoveListener(string key, string eventName)
     {
-        _core.Unregister(key, eventName, listener);
+        _core.Unregister(key, eventName);
     }
 
     public void Post(string key, string eventName, object sender, object? data = null, BufferSpeed? priority = null)

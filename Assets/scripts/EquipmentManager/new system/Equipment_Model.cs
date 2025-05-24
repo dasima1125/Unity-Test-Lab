@@ -30,7 +30,7 @@ public class Equipment_Model
         return _data.Execute_GetItemSOID(ID);
     }
 
-    public bool TryGetEquipmentType(int ID, out EquipmentTypeEnums type)//명명 규칙상 아웃이나 
+    public bool TryGetEquipmentType(int ID, out EquipmentTypeEnums type)
     {
         type = EquipmentTypeEnums.Null;
         var data = GetDataInfoByID(ID);
