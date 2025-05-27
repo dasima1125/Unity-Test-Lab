@@ -25,7 +25,7 @@
             baseScale = transform.localScale;
         }
         private void Start() {
-            CMDebug.TextPopup("포착된 각도: " + GetAngle(), transform.position);
+            //CMDebug.TextPopup("포착된 각도: " + GetAngle(), transform.position);
         }
 
         private void Update() {
