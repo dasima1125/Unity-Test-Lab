@@ -1,40 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Target_Test : MonoBehaviour
 {
     private Vector2 A, B;
     private Vector2 targetPos;
     public float speed;
+    public string way;
+
+    private Rigidbody2D rb;
 
     void Start()
     {
-        A = new Vector2(transform.position.x, transform.position.y + 100f);
-        B = new Vector2(transform.position.x, transform.position.y - 100f);
+        rb = GetComponent<Rigidbody2D>();
+
+        A = new Vector2(transform.position.x, transform.position.y + 120f);
+        B = new Vector2(transform.position.x, transform.position.y - 120f);
 
         targetPos = A;
     }
 
-
     void FixedUpdate()
     {
-        if (Vector2.Distance(transform.localPosition, targetPos) < 0.05f)
+
+        // 목표 위치 근접 시 방향 전환
+        if (Vector2.Distance(rb.position, targetPos) < 1f)
         {
             targetPos = targetPos == A ? B : A;
+            way = targetPos == A ? "A" : "B";
+      
         }
-        transform.localPosition = Vector2.MoveTowards(transform.localPosition, targetPos, speed * Time.fixedDeltaTime);
+        Vector2 direction = (targetPos - rb.position).normalized;
+        rb.velocity = direction * speed;
 
-        Vector2 direction = targetPos - (Vector2)transform.localPosition;
-
-        if (direction != Vector2.zero)
-        {
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
-        }
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        rb.MoveRotation(angle - 90f);
     }
+
     public void Hit()
     {
-
+        Debug.Log("피격당함");
     }
 }
