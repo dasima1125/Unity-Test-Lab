@@ -44,8 +44,7 @@ public class Inventory_ViewModel : MonoBehaviour
     void OnDisable()
     {
         GameManager.NotificationSystem.Port.UnsubscribePayload("InventorySystem", UpdateAllSlot);
-        GameManager.NotificationSystem.Port.UnsubscribePayload("InventorySystem", InventoryOpen);
-        GameManager.NotificationSystem.Port.UnsubscribePayload("sInventorySystem", InventoryOpen);
+        
     }
     public void InventoryOpen()
     {
