@@ -22,7 +22,7 @@ public class Target_Test : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Vector2.Distance(rb.position, targetPos) < 0.1f)
+        if (Vector2.Distance(rb.position, targetPos) < 1f)
         {
             targetPos = targetPos == A ? B : A;
         }
