@@ -15,8 +15,8 @@ public class Target_Test : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        A = new Vector2(transform.position.x, transform.position.y - 400f);
-        B = new Vector2(transform.position.x, transform.position.y );
+        A = new Vector2(transform.position.x, transform.position.y - 100f);
+        B = new Vector2(transform.position.x, transform.position.y  + 100f);
         targetPos = A;
     }
 
@@ -36,6 +36,6 @@ public class Target_Test : MonoBehaviour
 
     public void Hit()
     {
-        Debug.Log("피격당함");
+        Debug.Log("Hit");
     }
 }

@@ -1,7 +1,6 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class TestLunch_Beta : MonoBehaviour
@@ -9,9 +8,15 @@ public class TestLunch_Beta : MonoBehaviour
     Rigidbody2D rb;
     public GameObject Projectile;
     public Transform Target;
+    [Header("Firing Control")]
+    public bool LockMode;
+    public AimingMode TrackMode;
+    [Header("Guidance Configuration")]
+    //public 
+    public GuidanceAuthority GuidanceType;
+    public TrackLogicType InjectLogic;
 
-
-    [Header("투사체 정보기입")]
+    [Header("Projectile Parameters")]
     public float projectileSpeed = 0;
     public float maxAngularVelocity = 0;
 
@@ -23,20 +28,49 @@ public class TestLunch_Beta : MonoBehaviour
     {
         if (Target == null)
         {
-            Debug.Log("타겟이 없음");
+            Debug.Log("Non Target");
             return;
         }
         //발사 로직
-        //Projectile testBullet = Instantiate(Projectile, transform.position, transform.rotation).AddComponent<Projectile>();
-        PassiveGuided testBullet = Instantiate(Projectile, transform.position, transform.rotation).AddComponent<PassiveGuided>();
-        testBullet.Guideinit(this,projectileSpeed,maxAngularVelocity);
+        TrackLogicInjector();
     }
 
     void FixedUpdate()
     {
-        rb.rotation = TraceStright2D(TargetPos(), transform.position);
-        //rb.rotation = TraceRead2D(TargetPos(), transform.position, TargetVelocity(), projectileSpeed);
+        aim(LockMode);
     }
+    void aim(bool trace)
+    {
+        if (!trace) return;
+        switch (TrackMode)
+        {
+            case AimingMode.Intuitive:
+                rb.rotation = TraceStright2D(TargetPos(), transform.position);
+                break;
+
+            case AimingMode.Lead:
+                rb.rotation = TraceRead2D(TargetPos(), transform.position, TargetVelocity(), projectileSpeed);
+                break;
+        }
+    }
+    void TrackLogicInjector()
+    {
+        switch (GuidanceType)
+        {
+            case GuidanceAuthority.None:
+                Projectile Projectile_None = Instantiate(Projectile, transform.position, transform.rotation).AddComponent<Projectile>();
+                Projectile_None.Init(projectileSpeed);
+                break;
+
+            case GuidanceAuthority.Command:
+                Guided Projectile_Command = Instantiate(Projectile, transform.position, transform.rotation).AddComponent<Guided>();
+                Projectile_Command.GuideInit(this, projectileSpeed, InjectLogic, maxAngularVelocity, 10);
+                break;
+        }
+
+    }
+
+
 
 
 
@@ -56,7 +90,6 @@ public class TestLunch_Beta : MonoBehaviour
         float discriminant = b * b - 4 * a * c;
         if (discriminant < 0 || Mathf.Abs(a) < 0.0001f)
         {
-            //Debug.Log("예측 불가 : 방정식 해 존재 x");
             float fallbackTime = 7f;
 
             Vector2 fallbackPos = targetPos + targetVel * fallbackTime;
@@ -79,21 +112,34 @@ public class TestLunch_Beta : MonoBehaviour
 
         return Target.position;
     }
-    Vector3 TargetVelocity()
+    public Vector3 TargetVelocity()
     {
         if (Target == null) return Vector3.zero;
 
         return Target.GetComponent<Rigidbody2D>().velocity;
     }
-    
-
-    void OnDrawGizmos()
+    public TNS2DData GetTNS2D()
     {
-        if (Target == null) return;
-
-        Gizmos.color = Color.yellow;
-        //Gizmos.DrawLine(transform.position, TargetPos());
-
+        return new TNS2DData
+        {
+            position = Target.position,
+            velocity = Target.GetComponent<Rigidbody>().velocity,
+        };
     }
-    
+
+}
+
+public enum AimingMode
+{
+    Intuitive ,Lead
+
+}
+public enum GuidanceAuthority
+{
+    None,
+    Command          
+}
+public enum TrackLogicType
+{
+    Pure ,Lead ,Pn
 }
