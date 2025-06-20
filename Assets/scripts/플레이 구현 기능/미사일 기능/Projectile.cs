@@ -7,31 +7,27 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private float ProjectileSpeed;
+    private float LifeTime;
     private Rigidbody2D rb;
-    protected bool Override;
+    protected bool isOverride;
 
 
-    public void Init(float ProjectileSpeed)
+    public void Init(float ProjectileSpeed, float LifeTime)
     {
         this.ProjectileSpeed = ProjectileSpeed;
-    }
-    protected virtual void OverrideInit(float ProjectileSpeed)
-    {
-        Override = true;
-        this.ProjectileSpeed = ProjectileSpeed;
+        this.LifeTime = LifeTime;
     }
 
     protected virtual void Start()
     {
-        
         rb = GetComponent<Rigidbody2D>();
-        Destroy(gameObject , 25f);
-        if (!Override)
-            ThrustRotation(0);
 
+        Destroy(gameObject, LifeTime);
+        if (!isOverride )
+            ThrustRotation(0);
     }
     
-    protected void ThrustRotation(float clamped )
+    protected void ThrustRotation(float clamped)
     {
         rb.rotation += clamped;
 
@@ -46,7 +42,7 @@ public class Projectile : MonoBehaviour
             return;
         }
             
-        rb.angularVelocity = clamped.Value;
+        rb.angularVelocity = clamped.Value * Mathf.Rad2Deg;
 
         Vector2 dir = new(Mathf.Cos(rb.rotation * Mathf.Deg2Rad), Mathf.Sin(rb.rotation * Mathf.Deg2Rad));
         rb.velocity = dir * ProjectileSpeed;
@@ -77,8 +73,7 @@ public class Projectile : MonoBehaviour
 public class Guided : Projectile
 {
     /// Debug
-    
-    public bool DebugPath = false;
+    bool DebugPath;
     Vector2 leadPoint;
     // Projectile Settings
     TestLunch_Beta Link;
@@ -88,59 +83,67 @@ public class Guided : Projectile
     // Runtime Memory
     
     INS2DData INS;
+    TNS2DData TNS;
     TrackLogicType Logic;
     Vector2 targetMem;
     
     
     
-    public void GuideInit(TestLunch_Beta Link, float projectileSpeed,TrackLogicType Logic ,float maxAngularVelocity, float navigationConstant = 0)
+    public void Init(TestLunch_Beta Link, TrackLogicType Logic ,float projectileSpeed, float maxAngularVelocity, float LifeTime, float navigationConstant = 0)
     {
         this.Link = Link;
         this.Logic = Logic;
         this.maxAngularVelocity = maxAngularVelocity;
         this.navigationConstant = navigationConstant;
 
-        base.OverrideInit(projectileSpeed);
+        isOverride  = true;
+
+        base.Init(projectileSpeed ,LifeTime);
     }
     protected override void Start()
     {
-        targetMem = Link.TargetPos();
+        targetMem = Link.GetTNS2D().position;
+        DebugPath = Link.PathDebugMode;
+
         base.Start();
     }
     private void FixedUpdate()
     {
         INS = GetINS2D();
-        LogicSelectot();
+        TNS = Link.GetTNS2D();
+        LogicSelector();
     }
-    void LogicSelectot()
+    void LogicSelector()
     {
         switch (Logic)
         {
             case TrackLogicType.Pure:
-                ThrustRotation(TLogic2D.PureLeadClamped(Link.GetTNS2D(), INS, maxAngularVelocity, out leadPoint));
+                ThrustRotation(TLogic2D.PureLeadClamped(TNS, INS, maxAngularVelocity, out leadPoint));
                 break;
 
             case TrackLogicType.Lead:
-                ThrustRotation(TLogic2D.LeadLineClamped(Link.GetTNS2D(), INS, maxAngularVelocity, out leadPoint));
+                ThrustRotation(TLogic2D.LeadLineClamped(TNS, INS, maxAngularVelocity, out leadPoint));
                 break;
 
             case TrackLogicType.Pn:
-                float ? cacl = TLogic2D.PN(Link.GetTNS2D(), INS, ref targetMem, maxAngularVelocity, navigationConstant , out leadPoint);
-                if (cacl != null) ThrustAngular(cacl);
+                ThrustAngular(TLogic2D.PN(TNS, INS, ref targetMem, maxAngularVelocity, navigationConstant , out leadPoint));
                 break;
         }
     }
 
     void OnDrawGizmos()
     {
-        if (leadPoint == Vector2.zero && !DebugPath) return;
+        if (leadPoint == Vector2.zero || !DebugPath) return;
       
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, Link.TargetPos());
+        Gizmos.DrawLine(transform.position, TNS.position);
        
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(leadPoint, 3f);
-        Gizmos.DrawLine(transform.position, leadPoint);
+        Gizmos.DrawWireSphere(leadPoint, 1f);
+        Gizmos.DrawWireCube(TNS.position,Vector3.one * 2);
+      
+        Gizmos.DrawLine(TNS.position, leadPoint);
+
     }
 
 
@@ -148,6 +151,7 @@ public class Guided : Projectile
     {
         if (collision.gameObject.name == "TestTarget")
         {
+            Debug.Log("Type : " + Logic.ToString());
             base.OnTriggerEnter2D(collision);
         }
     }
@@ -178,12 +182,23 @@ public static class TLogic2D
         float b = Vector2.Dot(displacement, TNS.velocity) * 2;
         float c = Vector2.Dot(displacement, displacement);
         float discriminant = b * b - 4 * a * c;
-        if (discriminant < 0 || Mathf.Abs(a) < 0.0001f)
+
+        if (discriminant < 0 || Mathf.Abs(a) < 0.0001f || TNS.velocity.magnitude >= INS.Speed)
         {
-            Debug.LogAssertion("Lead calculation failed: no valid interception solution (discriminant < 0 or degenerate geometry).");
-            leadTarget = Vector2.zero;
-            return 0;
+            float over = TNS.velocity.magnitude + 1;
+            Vector2 correctionbackPos = TNS.position + TNS.velocity.normalized * over;
+            Vector2 correctionfallDir = (correctionbackPos - INS.position).normalized;
+
+            leadTarget = correctionbackPos;
+
+            float fixtargetAngle = Mathf.Atan2(correctionfallDir.y, correctionfallDir.x) * Mathf.Rad2Deg;
+            float fixangleDiff = Mathf.DeltaAngle(INS.rotation, fixtargetAngle);
+            float fixmaxDelta = maxAngularVelocity * Time.fixedDeltaTime;
+            
+            return Mathf.Clamp(fixangleDiff, -fixmaxDelta, fixmaxDelta);
         }
+        
+
         float rootP = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
         float rootM = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
         float t = Mathf.Max(rootP, rootM);
@@ -200,30 +215,35 @@ public static class TLogic2D
         return clampedLead;
     }
     
-    public static float? PN(TNS2DData TNS, INS2DData INS, ref Vector2 LastPos, float maxAngularVelocity, float navigationConstant, out Vector2 leadTarget)
+    public static float ? PN(TNS2DData TNS, INS2DData INS, ref Vector2 LastPos, float maxAngularVelocity, float navigationConstant, out Vector2 leadTarget)
     {
-        Vector2 caclTargetVel = (TNS.position - LastPos) / Time.fixedDeltaTime;
+        // Although we could directly use TNS.velocity,
+        // here velocity is manually calculated by dividing the difference between the previous position
+        // and the current position by the elapsed time .
+
+        Vector2 calcTargetVel = (TNS.position - LastPos) / Time.fixedDeltaTime;
+        Vector2 calcTargetVel2 = TNS.velocity;
 
         Vector2 LOS = TNS.position - INS.position;
         float LOSsq = LOS.sqrMagnitude;
 
         if (LOSsq < 0.0001f)
         {
-            Debug.LogAssertion("Unable to compute angular velocity: LOS ≈ 0 (missile near target)");
             leadTarget = Vector2.zero;
             return null;
         }
 
         Vector2 LOSdir = LOS.normalized;
-        Vector2 relVel = caclTargetVel - INS.velocity;
+        Vector2 relVel = calcTargetVel - INS.velocity;
         float LDot = ((LOSdir.x * relVel.y) - (LOSdir.y * relVel.x)) / LOSsq;
+
         float Omega = navigationConstant * INS.Speed * LDot;
         float clampedOmega = Mathf.Clamp(Omega, -maxAngularVelocity * Mathf.Deg2Rad, maxAngularVelocity * Mathf.Deg2Rad);
 
         LastPos = TNS.position;
 
-        float leadTime = Mathf.Clamp(Vector2.Distance(TNS.position, INS.position) / (INS.Speed + caclTargetVel.magnitude), 0.1f, 50f);
-        leadTarget = TNS.position + caclTargetVel * leadTime;
+        float leadTime = Mathf.Clamp(Vector2.Distance(TNS.position, INS.position) / (INS.Speed + calcTargetVel.magnitude), 0.1f, 50f);
+        leadTarget = TNS.position + calcTargetVel * leadTime;
 
         return clampedOmega;
     }
