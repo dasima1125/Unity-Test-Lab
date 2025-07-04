@@ -3,186 +3,311 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using DG.Tweening;
 using System.Collections;
 using System.Linq;
+
 
 
 public class SRC_Radar : MonoBehaviour
 {
     private Transform SweepBarTransForm;
-    private float radarSpeed;
+    [SerializeField] private Transform RadarPing;
+
+    [Header("탐색 레이더 시스템")]
+    public bool EchoStandBy;
+    public bool AutoSearchMode;
+
+    public float radarSpeed;
     private float radarDistance;
     [HideInInspector]
     public int size = 1;
-    private HashSet<Collider2D> ContectList;
-
-    [SerializeField] private Transform RadarPing;
-    [SerializeField] private Camera RadarCam;
-
 
     void Awake()
     {
-        SweepBarTransForm = transform.Find("SweepBar");
-        radarSpeed = 240;
+        SweepBarTransForm = transform.Find("SweepBar");// 스윕 바 부여
+
         radarDistance = 150f;
-
-        ContectList = new();
-        SignalList = new();
-
     }
-
-    //[HideInInspector]
-    [NonSerialized] //또는 프리베이트 설정
-    public List<RadarPing> SignalList;
-    //public HashSet<RadarPing> SignalList; //리스트를 사용하면 문제가생김
-    //문제해결 직렬화 문제 인스펙터 조작하면 아모르겠다 문제가한두개가아님 직렬화가 문제의중심임
-    // 블로그에서 따로 정리를 해볼예정 이건 좀,., 중요할듯
+    
     void Update()
     {
-        Search();
-        TrackRadarArea();
-        MoveHeadonbeam();
-        CheckTargetTrackingValid();
+        if (AutoSearchMode)
+            RotateSweepBar(radarSpeed * Time.deltaTime);
 
+        timer += Time.deltaTime;
+        if (timer >= interval)
+        {
+            timer -= interval;  // interval만큼 뺌 (누적 오차 최소화)
+            if(EchoStandBy)
+            Search();
+        }
+
+        //TrackRadarArea();
         Action();
-
+        //CheckTargetTrackingValid();
         //HardLock_STT();
 
-        //기능정리구조
-
-
     }
+    //타이밍 연구중
+    float timer = 0f;
+    float interval = 0.02f; // 50Hz
+    // 0.01 100Hz
+    // 0.0075 150hz
+
+    public void RemovePing(Collider2D collider, RadarPing ping)
+    {
+        pingList.RemoveAll(a => a.ping == ping);
+        pingMap.Remove(collider);
+        //if (ping == selectPing)
+        //    selectPing = null;
+    }
+    public void RemovePingList()
+    {
+        foreach (var item in pingList.ToList())
+        {
+            item.ping.KillPing();
+        }
+    }
+    void MoveHeadonbeamSingle(float way = 0)
+    {
+        if (way != 0f) HeadOnBeam.localRotation *= Quaternion.Euler(0, 0, way * ManualRotationSpeed * Time.deltaTime);
+    }
+ 
+    private Dictionary<Collider2D, RadarPing> pingMap = new();// 핑 존재여부 확인용
+    private List<(RadarPing ping,bool isSelected)> pingList = new(); // 핑 제어용
+
+    //RadarPing selectPing; TODO :차후 성능 계량을 위한 리펙터링 예정
+    //int selectPingIndex;        선택된 핑 인덱스 추적용 
+
+    //연속 콜라이드 방지용
+    HashSet<Collider2D> lastFrameDetected = new(); //기록용
+    HashSet<Collider2D> currentDetected = new(); //갱신용 
     void Search()
     {
-        SweepBarTransForm.eulerAngles -= new Vector3(0, 0, radarSpeed * Time.deltaTime);
-
+        currentDetected.Clear();
         RaycastHit2D[] rayhitArr = Physics2D.RaycastAll(transform.position, GetVectorFromAngle(SweepBarTransForm.eulerAngles.z), radarDistance);
         foreach (RaycastHit2D rayhit in rayhitArr)
         {
-            if (rayhit.collider != null)
-                if (!ContectList.Contains(rayhit.collider))
+            Collider2D collider = rayhit.collider;
+            currentDetected.Add(collider);
+
+            if (pingMap.TryGetValue(rayhit.collider, out RadarPing ping))
+            {
+                //ReMatch
+                if (lastFrameDetected.Contains(collider)) continue;
+                float angle = 360f - (SweepBarTransForm.eulerAngles.z - 90f + 360f) % 360f;
+                ping.transform.position = rayhit.point;
+                ping.Init_Regucy(angle, 5f, collider);
+                // 핑제어부
+                int i = pingList.FindIndex(x => x.ping == ping);
+                if (i != -1 && !pingList.Any(item => item.isSelected))
                 {
-                    ContectList.Add(rayhit.collider);
-                    DOVirtual.DelayedCall(1f, () => ContectList.Remove(rayhit.collider));
+                    pingList[i] = (pingList[i].ping, true);
+                    pingList[i].ping.Searchselect();
+                }                    
+            }
+            else
+            {
+                //first Conctect
+                var signal = collider.gameObject.GetComponent<Signal>();
+                if (signal != null && !signal.IsTrack())
+                {
+                    RadarPing NewPing = Instantiate(RadarPing, rayhit.point, Quaternion.identity).GetComponent<RadarPing>();
+                    float angle = 360f - (SweepBarTransForm.eulerAngles.z - 90f + 360f) % 360f;
 
-                    if (rayhit.collider.gameObject.GetComponent<Signal>() != null && !rayhit.collider.gameObject.GetComponent<Signal>().Track())
+                    NewPing.Init_Regucy(angle, 5f, collider);
+                    pingMap.Add(collider, NewPing);
+
+                    // 핑제어부 --> 문제는 이거 자원을 엄청먹을거같단말이지..
+                    if (!pingList.Any(item => item.isSelected))
                     {
-                        RadarPing Ping = Instantiate(RadarPing, rayhit.point, Quaternion.identity).GetComponent<RadarPing>();
-                        float angle = (SweepBarTransForm.eulerAngles.z - 90f + 360f) % 360f;
-                        angle = 360f - angle;
-
-                        Ping.SetAngle(angle);
-                        Ping.SetColor(Color.green);
-                        SignalList.Add(Ping);
-
-                        Ping.SetDisappearTimer(360f / radarSpeed);
+                        NewPing.Searchselect();
+                        pingList.Add((NewPing, true));
                     }
+                    else
+                        pingList.Add((NewPing, false));
                 }
+            }
         }
-
+        (currentDetected, lastFrameDetected) = (lastFrameDetected, currentDetected);
     }
+    void SelectPing()
+    {
+        if (pingList.Count < 1) return;
+        int i = pingList.FindIndex(x => x.isSelected == true);
+        if (i == -1) // none
+        {
+            pingList[0] = (pingList[0].ping, true);
+            pingList[0].ping.Searchselect();
+        }
+        else // change
+        {
+            pingList[i] = (pingList[i].ping, false);
+            pingList[i].ping.Desearchselect();
+
+            int targetIndex = (i + 1 == pingList.Count) ? 0 : i + 1;
+            pingList[targetIndex] = (pingList[targetIndex].ping, true);
+            pingList[targetIndex].ping.Searchselect();
+        }
+    }
+    protected void RotateSweepBar(float deltaAngle)
+    {
+        SweepBarTransForm.eulerAngles -= new Vector3(0, 0, deltaAngle);
+    }
+    
+
+    Vector3 GetVectorFromAngle(float angle)
+    {
+        float angleRadian = angle * (Mathf.PI / 180f);
+        return new Vector3(Mathf.Cos(angleRadian), Mathf.Sin(angleRadian));
+    }
+
+
     [Header("추적 레이더 기능")]
     [SerializeField] private Transform HeadOnBeam; //해드온 방향 빔 오브젝트
     [SerializeField] private Transform TrackArea;  //추적 범위 아크 오브젝트
     [SerializeField, Range(0, 360)] private float trackBeamWidth_beta = 20;//추적범위 넒이 
     [SerializeField] private float TrackAreaRotateSpeed = 10f;//추적 범위 속도
     [SerializeField] private float TrackAreaAngle = 0f; //지금 트랙 범위가보고있는 범위
-    private float DebugAngle;
+
+    [SerializeField] private Signal hardLockTarget;
+
+    //이건 조만간 없앨꺼임 중요
+    public GameObject trail;
+   
+
+    IEnumerator TrackCallSingle()
+    {
+        if (hardLockTarget != null) // 이미 락이있을때
+        {
+            trail.SetActive(true);
+           
+            TrackLine.Decupuling();
+            AutoSearchMode = true;
+            EchoStandBy = true;
+            hardLockTarget = null;
+            yield break;
+        }
+
+        if (!TrackStandby) yield break; // 중복 작동 방지
+        trail.SetActive(false);
+
+        TrackStandby = false;
+        EchoStandBy = false;
+        AutoSearchMode = false;
+        
+        Debug.Log("실행");
+
+        var Targets = new List<(Collider2D collider, float score)>();// ACQ 타겟 저장용
+        float TargetAngle = 0f; // 목표 대상
+        foreach (var (ping, isSelected) in pingList) //대상 앵글 획득 => 튜플이라 Find쓰기엔 모호함 어쩔수없음
+        {
+            if (isSelected)
+            {
+                TargetAngle = ping.GetAngle();
+                break;
+            }
+        }
+        RemovePingList();//신호 초기화
+        while (true)
+        {
+            float correctedAngle = (450f - SweepBarTransForm.eulerAngles.z) % 360f;
+            float delta = Mathf.DeltaAngle(correctedAngle, TargetAngle);
+
+            if (Mathf.Abs(delta) < 0.2f)
+                break;
+
+            float direction = Mathf.Sign(delta);
+            RotateSweepBar(radarSpeed * Time.deltaTime * direction);
+            yield return null;
+    
+        }
+
+        yield return New_ACQ(SweepBarTransForm.eulerAngles.z - 90, trackBeamWidth_beta / 2, 1, 0.1f, (callback) =>
+        {
+            Collider2D[] hits = callback;
+            foreach (Collider2D coli in hits)
+            {
+               
+                Vector2 direction = coli.transform.position - transform.position;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                if (angle < 0) angle += 360f;
+                float angleOffset = Mathf.Abs(Mathf.DeltaAngle(TrackAreaAngle + 90, angle));
+
+                float distance = Vector2.Distance(coli.transform.position, transform.position);
+                var weight = trackType.GetWeights();
+                float score = (weight.weightAngle * angleOffset) + (weight.weightRange * distance);
+
+                Targets.Add((coli, score));
+            }
+
+            Targets.Sort((a, b) => a.score.CompareTo(b.score));
+
+        });
+        Debug.Log("검색한 수량 " + Targets.Count)  ;
+
+        
+        if (Targets.Count <= 0) //목표가 없을때
+        {
+            trail.SetActive(true);
+            AutoSearchMode = true;
+            EchoStandBy = true;
+
+            TrackStandby = true;
+            TrackLine.Decupuling();            
+            yield break;
+        }
+        TrackLine.Cupuling(Targets[0].collider.transform);
+        hardLockTarget = Targets[0].collider.GetComponent<Signal>(); 
+
+        Targets.Clear();
+        
+        
+        //명령 복귀
+
+        Debug.Log("종료");
+        TrackStandby = true;
+        yield return null;
+    }
+    
+
     void TrackRadarArea()
     {
         TrackAreaAngle = Mathf.MoveTowardsAngle(TrackAreaAngle, HeadOnBeam.localRotation.eulerAngles.z, 360f / TrackAreaRotateSpeed * Time.deltaTime);
         TrackArea.GetComponent<Image>().fillAmount = trackBeamWidth_beta / 360f;
         TrackArea.localRotation = Quaternion.Euler(0, 0, TrackAreaAngle + (trackBeamWidth_beta / 2f));
-
-        DebugAngle = 360f - TrackAreaAngle;
     }
     [SerializeField] float ManualRotationSpeed; // 회전 속도 (초당 도 단위)
-    void MoveHeadonbeam()
+    void MoveHeadonbeamTrack()
     {
         float input = 0f;
         if (Input.GetKey(KeyCode.A)) input = 1f;
         else if (Input.GetKey(KeyCode.D)) input = -1f;
 
         if (input != 0f) HeadOnBeam.localRotation *= Quaternion.Euler(0, 0, input * ManualRotationSpeed * Time.deltaTime);
-
     }
     void Action()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            RemovePingList();
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(TrackCall());
-            //Debug.Log("현재 빔 각도 :"+ DebugAngle);
-            float LeftAngle = TrackAreaAngle + (trackBeamWidth_beta / 2);
-            if (LeftAngle > 359)
-                LeftAngle -= 360f;
-
-            float RightAngle = TrackAreaAngle - (trackBeamWidth_beta / 2);
-            if (RightAngle < 0)
-                RightAngle = 360f + RightAngle;
-
-            //Debug.Log("표현 각, 좌현 각도 :" + (360f -LeftAngle) +" 우현각도 : "+ (360f -RightAngle)); //이건 리스트상 핑검색에 사용될거
-            //Debug.Log("실제 각, 좌현 각도 :" + LeftAngle +" 우현각도 : "+ RightAngle); //이건 레이더상 범위 구현에 사용할거
-
-            //StartCoroutine(RotateOnce(LeftAngle,RightAngle));
-            //StartCoroutine(ACQ(LeftAngle,trackBeamWidth_beta));
+            StartCoroutine(TrackCallSingle());
         }
-
+        if (Input.GetMouseButtonDown(2))
+        {
+            SelectPing();
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        {
+            MoveHeadonbeamSingle(Input.GetKey(KeyCode.A) ? 1f : -1);
+        }
+        
     }
-    [SerializeField] private Transform TrackBeam;
-    [SerializeField] private float TrackBeamSpeed;
 
-    IEnumerator ACQ(float startAngle, float angleWidth)
-    {
-
-        HashSet<(float angle, Collider2D)> Coll = new();
-
-        float currentAngle = startAngle;
-        float totalRotation = Mathf.Abs(angleWidth);
-        float beamShotMiddleAngle = TrackAreaAngle;
-
-        while (totalRotation > 0f)
-        {
-            float deltaRotation = TrackBeamSpeed * Time.deltaTime;
-
-            if (totalRotation < deltaRotation)
-                deltaRotation = totalRotation;
-
-            currentAngle -= Mathf.Sign(angleWidth) * deltaRotation;
-            currentAngle = (currentAngle + 360f) % 360f;
-            TrackBeam.localEulerAngles = new Vector3(0, 0, currentAngle);
-
-            Vector3 startPosition = TrackBeam.position;
-            RaycastHit2D[] rayhitArr = Physics2D.RaycastAll(startPosition, GetVectorFromAngle(currentAngle + transform.eulerAngles.z), radarDistance);
-            foreach (var rayhit in rayhitArr)
-            {
-                var tuple = (currentAngle, rayhit.collider);
-                if (!Coll.Any(t => t.Item2 == rayhit.collider))
-                {
-                    Coll.Add(tuple);
-                }
-            }
-
-            totalRotation -= deltaRotation;
-            yield return null;
-        }
-
-        var sortedColl = Coll.OrderBy(t => Mathf.Abs(Mathf.DeltaAngle(t.angle, beamShotMiddleAngle))).ToList();
-
-        if (Lockedtarget_STT != null)
-        {
-            Lockedtarget_STT.GetComponent<Signal>().UnLock(); //기존 처리
-            TrackLine.Decupuling();
-        }
-        Lockedtarget_STT = sortedColl.Count > 0 ? sortedColl[0].Item2.gameObject : null;
-        if (Lockedtarget_STT != null)
-        {
-            Lockedtarget_STT.GetComponent<Signal>().Lock(); // 차후 지정
-            TrackLine.Cupuling(Lockedtarget_STT.transform);
-
-        }
-
-    }
     bool TrackStandby = true;
     public TrackType trackType = TrackType.Manual;
     IEnumerator TrackCall()
@@ -191,7 +316,7 @@ public class SRC_Radar : MonoBehaviour
         TrackStandby = false;
         var Targets = new List<(Collider2D collider, float score)>();
 
-        yield return New_ACQ(TrackAreaAngle, trackBeamWidth_beta / 2, 3, 0.3f, (callback) =>
+        yield return New_ACQ(TrackAreaAngle, trackBeamWidth_beta / 2, 1, 0.3f, (callback) =>
         {
             Collider2D[] hits = callback;
             foreach (Collider2D coli in hits)
@@ -236,7 +361,6 @@ public class SRC_Radar : MonoBehaviour
         {
             float sectorStart = NormalizeAngle(startAngle + anglePerSector * i);
             float sectorEnd = NormalizeAngle(startAngle + anglePerSector * (i + 1));
-            Debug.Log($"{i + 1}번째 색인.");
 
             ///디버그용
             Vector3 center = transform.position;
@@ -249,12 +373,12 @@ public class SRC_Radar : MonoBehaviour
             Debug.DrawLine(center, startPoint, Color.green, Duration / sectorCount);
             Debug.DrawLine(center, endPoint, Color.green, Duration / sectorCount);
             Debug.DrawLine(startPoint, endPoint, Color.green, Duration / sectorCount);
-
+          
             ///뭐 지워도됨 성능이나 기능상 문제는 없음
 
             Collider2D[] hits = AreaScan.Arc2D(transform.position, 150f, sectorStart, sectorEnd);
 
-            if (hits.Length > 0) Debug.Log("  목표 감지!");
+            if (hits.Length > 0) Debug.Log($"{i + 1}섹터  목표 감지!");
             storage.UnionWith(hits);
             yield return new WaitForSeconds(Duration / sectorCount);
         }
@@ -270,6 +394,7 @@ public class SRC_Radar : MonoBehaviour
 
     public GameObject Lockedtarget_STT;
     public LineLenderTest TrackLine;
+    /**
 
     void CheckTargetTrackingValid()
     {
@@ -287,14 +412,11 @@ public class SRC_Radar : MonoBehaviour
 
         //Debug.Log("추적중 : " + Lockedtarget_STT.name + ", 각도 : " + angleToTarget);
     }
+    */
 
 
 
-    Vector3 GetVectorFromAngle(float angle)
-    {
-        float angleRadian = angle * (Mathf.PI / 180f);
-        return new Vector3(Mathf.Cos(angleRadian), Mathf.Sin(angleRadian));
-    }
+    
 
 }
 // TODO 차후 위치 분할 

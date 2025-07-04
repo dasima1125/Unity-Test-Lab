@@ -7,7 +7,7 @@ public class Signal : MonoBehaviour
     private bool Tracked = false;
     
 
-    public bool Track()
+    public bool IsTrack()
     {
         return Tracked; 
     }

@@ -11,7 +11,7 @@ public static class AreaScan
         Collider2D[] hits = Physics2D.OverlapCircleAll(point, radius);
         foreach (Collider2D hit in hits)
         {
-            float angle = GetAngleBound(point, hit);
+            float angle = GetAnglePoint(point, hit);
             if (IsAngleBetween(angle, startAngle, endAngle))
             {
                 output.Add(hit);
@@ -28,14 +28,9 @@ public static class AreaScan
 
         return angle;
     }
-    private static float GetAngleBound(Vector2 point, Collider2D hit)
-    {
-        Vector2 closestPoint = hit.ClosestPoint(point);
-        Vector2 direction = closestPoint - point;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        if (angle < 0) angle += 360f;
-        return angle;
-    }
+    //나중에 처리 : TODO 이론상 .. 원형 콜라이더라면 중심점을 잡되 반지름만큼 여유분을 준다면?
+    // 실제 아크는각 계산을 할때  IsAngleBetween 여기 넘기기직전 콜라이더의 반지름을  보정해 넘기는방법을 써봐도 될려나?
+
 
     // Returns true if 'angle' lies between 'start' and 'end' angles.
     // Note:

@@ -55,13 +55,13 @@ public class Radar : MonoBehaviour {
                     //radarPing.transform.SetParent(transform);
                     if (raycastHit2D.collider.gameObject.GetComponent<ItemHandler>() != null) {
                         // Hit an Item
-                        radarPing.SetColor(new Color(0, 1, 0));
+                        //radarPing.SetColor(new Color(0, 1, 0));
                     }
                     if (raycastHit2D.collider.gameObject.GetComponent<CharacterWaypointsHandler>() != null) {
                         // Hit an Enemy
-                        radarPing.SetColor(new Color(1, 0, 0));
+                        //radarPing.SetColor(new Color(1, 0, 0));
                     }
-                    radarPing.SetDisappearTimer(360f / rotationSpeed * 1f);
+                    //radarPing.SetDisappearTimer(360f / rotationSpeed * 1f);
                 }
             }
         }
